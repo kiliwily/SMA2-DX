@@ -1,0 +1,460 @@
+2c28
+ 26C
+2e94
+
+6643E
+11744Ch
+
+Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyAf6C7EPXo20CdVlbwUttp2RXHoY2U/edit?gid=0#gid=0
+
+0C = 0000 1100
+2C = 0010 1100
+2A = 0010 1010
+2B = 0010 1011
+
+2340
+ 854 = 2B94 Button Input I (1=A, 2=B, 4=Select, 8=Start, 10=Right, 20=Left, 40=Up, 80=Down, 100=R, 200=L)
+ 856 = 2B96 Button Input II (1=A, 2=B, 4=Select, 8=Start, 10=Right, 20=Left, 40=Up, 80=Down, 100=R, 200=L)
+ 888 = 2BC8 Slot
+ 889 = 2BC9 Language
+
+234C SMW Top Score
+2350 MB Top Score
+
+2355 Language Kopie
+2000395 Language Speicher
+
+80083D0
+80032E0
+
+2B68 Sound related
+2B6C Current Player ? (used in Play Sound Routine)
+
+2BC3 if 1 then open pause menu in level
+
+2BC6 Event
+2BC7 Current Overworld Action
+	00	Nothing. Set in 0E, 11, 12.
+	01	Activate overworld events.
+	02	Runs as soon as a level is beaten and the events have run.
+	04	Standing still on a level tile.
+	05	Player is moving in a certain direction.
+	07	Runs before settling on a level tile.
+	xx	Fading out to #$07.
+	xx	Switching between Mario and Luigi.
+	xx	Fading in from #$07.
+	0B	Follows up #$08, sets the value to #$04.
+	0C	Switching between two submaps (not via warp pipe/star).
+	0D	Activate star warp.
+	0E	Player intro march (entering overworld for the first time).
+	11	Player uses pipe warp.
+	12	Player uses star warp.
+2BC8 Current Game (0=Single Player, 1=Multiplayer; in Game Choose: 0=SMW, 1=MB)
+2BD4 Frame Counter
+2C28 OAM Data
+
+3028 if C1 then (not?) GameOver 6A884
+30F4 Start of Reward pop-ups Ram
+3696 Screen shake timer (?)
+36CD Number of red berries eaten by Yoshi, resets when 10 are consumed
+36CE Number of pink berries eaten by Yoshi, resets when 2 are consumed
+36CF Type of sprite in Yoshis Mouth (0=enemy, 1=red berry, 2=pink berry, 3=green berry)
+36A6 Timer for Sprite in Yoshis Mouth (Value in 7A48h + 67Ah)
+36A8 Timer for when Yoshi got punched (Value in 7A48h + 67Ch)
+36AA Yoshi ypos
+36AC Yoshi xpos
+36AE Sprite Id of Sprite in Yoshi egg after eating 10 berries
+36B0 Reward counter for enemies that change to a coin at the goal and for silver coins
+36B2 Yoshis Spriteslot - 1 (temporary)
+36B4 Generator related (if 9 then super koopas spawn)
+36B5 Yoshis Spriteslot - 1
+36D1 Yoshi growing animation timer
+36D5 if 9 the rip van fish wakes up (set by whistlin chuck)
+36F2 Yoshi related
+36F4 solid sprite related
+36F8 Start of Enemy Ram (Adress in 3007A48 + 6CC), 64h bytes per enemy 
+	(Byte 
+	0h xPos with more Precision (for some sprites)
+	4h yPos with more Precision (for some sprites)
+	8h xMomentum (?)
+	0Ch yMomentum (?)
+	10h xpos
+	12h ypos
+	1Ah Sprite Id
+	1Bh if yoshi then current state (0=normal, 1=riding, 2= running), if lakitus cloud then Mario in the cloud flag
+	1Ch (=8) != 0 then sprite is alive
+	1Fh if yoshi then length of tongue else if yoshi egg then sprite id of sprite inside
+	21h if powerup then itembox drop flag
+	2Bh blocked status. Sprite is blocked in direction:
+     (x8h=up, x4h=down, x2h=left, x1h = right, 1x=Sprite is inside block, 8x=Sprite touches side of screen)
+	2Dh if yoshi then tongue animation
+	35h Palette
+	36h Animation frame
+	37h if yoshi then slot of enemy in mouth)
+	Slot 0: 36F8
+	Slot 1: 375C
+	Slot 2: 37C0
+	Slot 3: 3824
+	Slot 4: 3888
+	Slot 5: 38EC
+	Slot 6: 3950
+	Slot 7: 39B4
+	Slot 8: 3A18
+	Slot 9: 3A7C
+	Slot A: 3AE0
+	Slot B: 3B44
+	Byte 1Ch:
+		00	Empty slot.
+		01	Slot taken, but INIT has not yet been called.
+		02	Killed and falling off screen.
+		03	Killed by smushing. (e.g. shell-less Koopa, P-switch)
+		04	Killed with a spinjump.
+		05	Killed by lava/mud.
+		06	Turned into a coin by the goal tape.
+		07	Inside Yoshi's mouth.
+		08	Normal routine.
+		09	Stationary / Carryable.
+		0A	Kicked.
+		0B	Being carried.
+		0C	Turned into a powerup by the goal tape.
+3EE0/8 Related to Player xpos??
+3EE2/A Related to Player ypos??
+3F01 Spriteslot related
+3F06/7 Player is carrying a sprite flag
+3F50 Number of coins to give the player (Adress in 7A48h + 0F24h)
+3F52 Yoshi has a key in his mouth flag
+3F53 Sprite slot of the sprite in yoshis mouth
+3FA0 Player animation:
+	00 no animation
+	01 big player got hit,
+	02 small mario got a mushroom,
+	03 player got a cape,
+	04 player got a flower,
+	05 player enters a horizontal warp pipe,
+	06 player enters a vertical warp pipe,
+	07 player gets shoot from a diagonal pipe
+	08 player gets shoot up in the sky by yoshi wings,
+	09 player dies,
+	0A player enters castle cutscene,
+	0B player freezes after defeating bowser,
+	0C player destroyes castle cutscene
+	0D player enters a door
+	0E cape/flower player got hit
+3FA1 Player is in the air flag
+3FA2 if = 80h then the player is ducking (Player ducking flag)
+3FA3 Player climbing flag
+Format: n--sifhb
+	n: Net/vine flag. 1 - net, 0 - vine. Determines whether Mario can move diagonally.
+	s: Side body collision point with climbing. If clear, block horizontal movement.
+	i: Side head collision point with climbing.
+	f: Feet collision point with climbing.
+	h: Head collision point with climbing.
+	b: Body collision point with climbing.
+3FA4 Player in water flag
+3FA5 Direction the player is facing (0=left, 1=right)
+3FA6 Player blocked status. Player is blocked in direction:
+     (x8h=up, x4h=down, x2h=left, x1h = right, 1x=Player is inside block, 8x=Player touches side of screen)
+3FA8 Player x Momentum?
+3FAC Player y Momentum?
+3FB0 Player xpos equivalent to 3FB4
+3FB4 Player ypos used to determine death (1 block is 10h high, Player is fully underground if A0h, 80h is Ground)
+3FB8 Player previous xpos
+3FBC Player previous ypos
+3FD0 Player xpos
+3FD4 Player ypos
+	zero pos is at the top left corner
+3FDC Player xpos related
+3FDE Player ypos related
+3FE0 Player is looking up flag (if = 03h then Player looks up) 
+3FE1 Flag that controls which image of the cape must be shown
+3FE2 Players current pose
+3FF4 Player sliding flag (0=no sliing, 1C=normal sliding, 80=cape sliding)
+400D if = 80h, the player bounces off of a pink triangle
+400E current cape flying phase
+400F Next step in cape flight
+4010 Diving stage (FFh = minimal diving, C8h = completely diving (Player causes an eathquake when landing))
+402D Flashing invulnerability timer (?)
+402E Picking up timer
+4043 Blue P-Switch active
+
+422A+LevelId Levelbyte
+428C Player Points
+42C0 Player Lifes
+42C4(/4C6A?) Current Level Id (Adress written in 4224(/3F98?))
+42F8 Unlocked Switch Palaces (RBYG 0000)
+42F9 Number of Exits found
+42FA Number of levels with Yoshi Coins collected
+42FB Unlocked Yoshis (0000 RBYG)
+4300 Current Player (0 = Mario, 1 = Luigi)
+4301 Player Starpoints
+4302 Map, the Player is currently on
+4303 Player Coins
+4304 Player Power-Up (0 = small, 1 = big, 2 = cape, 3 = fire)
+4305 Reserve Item (0 = none, 1 = mushroom, 2 = flower, 3 = star, 4 = feather, 5 = 1up mushroom)
+4306 !=0: Yoshi exists
+4307 Yoshicolor (04h = yellow, 06h = blue, 08h = red, 0Ah = green)
+430A Mario Exits
+430B Luigi Exits
+430E Found All Exits Flag
+430F Have all Yoshi Coins collected Flag
+432E Leveltype? (Overworld icon of the current level)
+4332 Number of moons collected
+4334 Game Over Flag
+4335 if 2 then save prompt?
+4339 Checkpoint\Level End reached Flag
+4340 Star block coin counter
+4342 Yoshicolor Overworld
+4343-434F ???
+4350 if And 02 != 0: Moon in W2 collected
+4351 if And 01 != 0: Moon in W4 collected
+4354 if And 20 != 0: Moon in W6 collected
+4355 if And (40,02) != 0: Moon in W(1,3) collected
+4357 if And 20 != 0: Moon in W7 collected
+4358 if And 40 != 0: Moon in W5 collected
+4434 BG3 scrolling speed
+408A
+546C No. of 1ups you get from a life chain (via Star, Stomping or Cape 1up trick)
+546E Timer between the 1ups when geting >1up (2up, 3up, 5up etc.)
+5476 Riding Yoshi flag
+54D4 Star Timer
+54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
+54E5 Timer between in game time updates
+54E6 ingame time hundreds
+54E7 ingame time tens
+54E8 ingame time ones
+550C Something with player animation
+5578 Overworld path animation related
+558E Overworld path animation related (if = 1 the don't trigger animation)
+558F Current Overworld unlock event
+559B Current exit triggered (0=none, 1=normal, 2=secret, 80=exit already triggered)
+559F
+55A2
+55C9 Timer for screen shake and music change during the rise bowser skull cutscene
+55CC
+
+79FE	Mario Bros. Status?
+
+2BC3 = 1
+
+7C18A
+
+425B Burgtor
+425C Seitentor
+
+600BC2E
+2013E60
+80E814E
+
+Credits:
+
+e8b9a
+e8bce
+200C9F0
+600C1F0
+8004bb8
+3002bc6
+8009116
+
+001B 0012 0019 00FC 001F 000A 0017 00FC 000F 0012 001C 0011 RIP VAN FISH
+
+08038A1E	Call block hit routine
+08070B08	Check Yoshi Coins at the end of a level
+0809BFC4	change music when riding yoshi
+0809C004	Get current music track
+0809C1C4	Play Sound
+
+Levelformat: abcd efgh
+	a: 1 = Level beaten
+	b: 1 = Checkpoint activated
+	c: 1 = Yoshi coins found
+	d: 1 = Secret exit found (?)
+Directions player can go from this level:
+	e: down
+	f: up
+	g: left
+	h: right
+
+080EE168
+080EBF08
+080EE219
+
+080EE1B2 1B -> 1A
+
+080FA318
+080F9EF8
+
+3E7C8	Chuck fireball hits
+4282E	Chuck stomp hits
+=> use the same counter
+20th byte in enemy ram
+
+66AAC Morton/Ludwig/Roy fireball hits
+64FFC Morton/Ludwig/Roy stomp hits
+=> they use the same counter
+3Ath bit in enemy ram
+
+6DE34 Check if Mario/Luigi fell in a hole
+
+0807C610	Pause Menu
+0807C52C
+
+0806B4C4 Call Handle message
+
+2BC7
+DD1C
+08000424 Do current state
+08002208 Do Mario Palette stuff
+0800923C Load Palette
+080092A8 Load Inlevel Palettes
+08009460 Load Overworld Palettes
+0800CF3C Load New Enemy Sprites
+080188E8 Check if spawn 3up-moon (or something else ???)
+0802F4C4 Store default property values in enemy ram
+08030D90 Handle message when got >10up in a row
+08030E9C Update life chain counter I
+08037C58 Handle blocks hit with content in them
+08037C9A If player = Luigi, then check if coin spit out on multi coin block
+0803816C Set contents of yoshi egg
+08038B88 Drop item from itembox
+0803B984 Handle coins from ?-Blocks and from chucks when killed with fire balls
+0803BD68 Spawn 3 coins after killing a chuck with fire balls
+0803BBA0 Give coins to the player
+0803DBC0 Handle OAM of Bravo Mario/Luigi message
+0803DEC6 Update life chain counter II
+0803E13C Handle reward pop-ups
+0803E432 Give the player points and lifes
+0805CC38 Yoshi AI
+0805D834 Yoshi Stuff
+0805EABC Process Yoshi
+0805EC34 Handle hit while riding yoshi
+0806BF14 Update player previous Positions
+0806BFBC Update player xPos
+0806C018 Update player yPos
+0806E382 Set hidden 1ups as collected
+0806E4F8 Set 3up-moon as collected
+0801EC30 Check for save prompt etc.
+08022E32 Increase Found-Exit-Counter at the end of a level
+08023962 Check if call 1ec30, even if level wasn't beaten for the first time
+08028458 Load Level Table Routine
+08028834 Check if Level name should be displayed in Level Table
+08028EA4 Level Table check Exits of Mario\Luigi
+08028FC8 Level Table check if Bowser defeated
+08029234 Level Table related
+08029898 Handle Level Table OAM
+0802B2C0 Call sprite AI (for init?)
+0802B2F0 Call sprite AI
+0802B3D6 Some sprite death stuff
+080328D4 Check set killed by lava/mud
+08032338 Set enemy as killed by lava/mud
+08032DC4 Check is sprite invincible
+080352E2 Set sprit to killed, falling off screen
+08037A50 Give the player 1ups from the 1up chain
+08039418 Add remaining lifes in life chain when level ends
+0804D754 Something with the New Enemy Sprites
+0804EBB0 Handle yoshi hatching (set growing animation timer)
+08069810 Handle player animaions
+08071428 Kill the player
+080729D0 Load New Enemy Sprites
+08022570 Timer "R" in Overworld
+08011A3A Set State to 1B after castle beaten for the first time
+0801301C Set State to 1B after beating an already beaten castle 
+0801D3F8 Check Checkpoint before level
+0802F2F0 Sprite death
+080714F0 Cancel button input
+0807ED7A Set state to 1B after yoshi cutscenes
+08003AA4 Set state to 1D
+
+1088CC Sprite related pointer (used with byte 1Ch of sprite ram)
+108D60 Sprite related pointer (used with byte 1Ch of sprite ram)
+108D94 Sprite AI pointer (for init?)
+1090DC Sprite AI pointer
+13A76C Sprite related
+
+109880 Related to sprite clipping
+1098BF Related to sprite clipping
+1098FE Related to sprite clipping
+10993D Related to sprite clipping
+10A0EC Related to sprite that is spit out by yoshi
+110138 SpriteId of sprite that is spit out by yoshi
+110338 Palette to sprite thatbis spit out by yoshi
+10A0EC Needed for cape tricks (used with byte 1Ah of sprite ram)
+Format: uuucuuuu
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	c=Can be used to get extra lifes with cape
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	u=Unknown
+10A538 Pointer related to sprite OAM (used with byte 1Ah of sprite ram)
+13A76C Sprite related pointer (used with byte 1Ah of sprite ram)
+
+109C00 First sprite property byte (3Eh in Enemy Ram) (Size: 0D2h)
+Format: sSjJcccc
+	s=Disappear in cloud of smoke
+	S=Hop in/kick shells
+	j=Dies when jumped on
+	J=Can be jumped on (false = player gets hurt if they jump on the sprite, but can bounce off with a spin jump)
+	cccc=Object clipping
+
+109CD2 Second sprite property byte (3Fh in Enemy Ram) (Size: 0D2h)
+Format: dscccccc
+	d=Falls straight down when killed
+	s=Use shell as death frame
+	cccccc=Sprite clipping
+
+109DA4 Third sprite property byte (40h (&0Fh in 35h) in Enemy Ram) (Size: 0D2h)
+Format: lwcfpppg
+	l=Don't interact with layer 2 (or layer 3 tides)
+	w=Disable water splash
+	c=Disable cape killing
+	f=Disable fireball killing
+	ppp=Palette
+	g=Use second graphics page
+
+109E76 Fourth sprite property byte (41h in Enemy Ram) (Size: 0D2h)
+Format: dpmksPiS
+	d=Don't use default interaction with player
+	p=Gives power-up when eaten by Yoshi
+	m=Process interaction with player every frame
+	k=Can't be kicked like a shell
+	s=Don't change into a shell when stunned
+	P=Process while off screen
+	i=Invincible to star/cape/fire/bouncing bricks
+	S=Don't disable clipping when killed with star
+
+109F48 Fifth sprite property byte (42h in Enemy Ram) (Size: 0D2h)
+Format: dnctswye
+	d=Don't interact with objects
+	n=Spawns a new sprite
+	c=Don't turn into a coin when goal passed
+	t=Don't change direction if touched
+	s=Don't interact with other sprites
+	w=Weird ground behavior (Falling through solid blocks)
+	y=Stay in Yoshi's mouth
+	e=Inedible
+
+10A01A Sixth sprite property byte (43h in Enemy Ram) (Size: 0D2h)
+Format: wcdj5sDp
+	w=Don't get stuck in walls (carryable sprites)
+	c=Don't turn into a coin with silver POW
+	d=Death frame 2 tiles high
+	j=Can be jumped on with upward Y speed
+	5=Takes 5 fireballs to kill. If not set, the sprite is killed with a single fireball. The counter for hits is controlled by $1528.
+	s=Can't be killed by sliding
+	D=Don't erase when goal passed
+	p=Make platform passable from below
+	
+10A0EC (44h in Enemy Ram)
+Format: uuuuuuus
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	u=Unknown
+	s=solid for yoshi
+
+10FC70 Related to spawn new sprite enemies
