@@ -366,7 +366,7 @@ FreeSpaceFIC1:
 	add r0,r3,r6
 	ldrb r0,[r0]
 	orr r1,r0
-	add r6,1Bh
+	add r6,1Ah
 	add r0,r3,r6
 	ldrb r0,[r0]
 	bx r14
