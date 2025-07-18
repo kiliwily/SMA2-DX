@@ -177,6 +177,9 @@ Format: n--sifhb
 402E Picking up timer
 4043 Blue P-Switch active
 
+4100 Intro state
+4140 if != 0 the A or Start was pressed during the Intro
+
 422A+LevelId Levelbyte
 428C Player Points
 42C0 Player Lifes

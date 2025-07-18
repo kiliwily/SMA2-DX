@@ -32,6 +32,7 @@
 
 ## Bug Fixes
 - Fixed wendys castle has the wrong background color at the begin of the intro
+- Fixed a bug, that caused the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro
 - Fixed a tiling error in the intro level
 - Fixed a bug that caused the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level
 - Fixed Yoshis bongos play in bonus room music even when Yoshi is not present

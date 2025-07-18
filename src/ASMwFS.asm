@@ -1699,6 +1699,11 @@ DownFRW2:
 	.halfword 0x0000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix smoke of yoshis house becomes garbeled when pressing A or Start during the beginning of the intro (YHI)
+.org 0x8074C40
+	bl FreeSpaceYHI
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Part 2 of Prevent 1ups from beeing omited when exiting a level earlier than expected (ELO)
 .org 0x807C6E4
 	bl FreeSpaceELO2

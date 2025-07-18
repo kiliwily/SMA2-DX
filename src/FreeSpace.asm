@@ -1232,6 +1232,19 @@ MakePeachCoins:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceYHI:
+	ldr r1,[r4]
+	ldrb r0,[r1,14h]
+	add r1,54h
+	ldrb r1,[r1]
+	cmp r1,0h
+	beq NoButtonPressedDuringIntro
+	mov r0,0h
+NoButtonPressedDuringIntro:
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceELO2:
 	push r14
 	bl 8039418h
