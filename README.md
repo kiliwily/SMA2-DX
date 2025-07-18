@@ -1,6 +1,10 @@
 # SMA2-DX
 SMA2 SMW DX Mod
 
+SMA2 DX is an enhancement mod for Super Mario Advance 2 Super Mario World.
+
+Warning: The source code of this mod is a mess!
+
 Currently only works with the european version of SMA2.
 
 * Super Mario Advance 2 - Super Mario World (Europe) (En,Fr,De,Es).gba
