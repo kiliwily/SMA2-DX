@@ -1,7 +1,7 @@
 # Changelog
 
 ## Changes
-- The highscores on the title screen start at 0.
+- The highscores on the title screen starts at 0.
 - Removed a button combo showing a build date at the begin of the intro
 - The game saves which save data was saved last
 - The Yoshi coin in the second intro level changes in to a Peach coin once they are unlocked
