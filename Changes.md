@@ -85,4 +85,4 @@
 - Fixed a bug that makes the splitters of a turn block using the wrong pallette when being destroyed by a chuck.
 - Fixed a bug that causes th Player to activate a secret exit with a key after dying through time up while yoshi has the key in his mouth.
 - Fixed a bug that causes Yoshi to uses his go through a pipe animation even if he doesn't go through a pipe.
-- Fixed a bug that prevented the music from playing faster with <100 secs remaining, when star music is playing while the timer hits 100 sec.
+- Fixed a bug that prevented the music from playing faster with <100 time remaining, when star music is playing while the timer hits 100.
