@@ -1657,38 +1657,83 @@ ReturnYCC:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix Mario gets pushed inside the wall in roy boss fight (FRW)
-.org 0x80716C8
+.org 0x807163E
+	ldr r0,=3007A48h
+	ldr r4,=300302Ch
+
+.org 0x8071648
+	ldr r0,=0FFFFF314h
+	
+.org 0x807165E
+	ldr r1,=0FD7h
+	add r0,r4,r1
+	ldrb r6,[r0]
+	ldr r2,=0F81h
+
+.org 0x8071670
+	ldr r7,=0FA8h
+	add r3,r4,r7
+	ldr r1,=811A440h
+
+.org 0x807168E
+	ldr r1,=0F84h
+	add r0,r4,r1
+	ldr r2,=0FFFFFB3Ch
+
+.org 0x807169A
+	ldr r1,=828h
+
+.org 0x80716A4
+	ldr r1,=811A440h
+
+.org 0x80716B2
+	bne DownFRW4
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	mov r2,0A5h
+	lsl r2,r2,4h
+	add r7,r0,r2
+	ldrb r0,[r7,1Ah]
+	cmp r0,29h
+	bne DownFRW4
+	mov r0,r7
+	add r0,37h
+	ldrb r3,[r0]
+	add r3,1h
 	ldr r5,=3002340h
 	ldr r4,=1C90h
 	add r0,r5,r4
-
-.org 0x80716DA
-	b DownFRW1
-
-.org 0x8071708
+	ldrh r1,[r0]
+	mov r6,0h
+	ldsh r0,[r0,r6]
+	cmp r3,r0
+	bgt DownFRW1
+	mov r2,0h
+	b DownFRW2
 	.pool
+DownFRW1:
 	add r0,r5,r4
-	ldrh r0,[r0]
-	add r0,0Fh
-	lsl r0,r0,10h
-	lsr r3,r0,10h
-	mov r0,r2
+	ldrh r3,[r0]
+	add r3,0Fh
+	mov r0,r7
 	add r0,21h
 	ldrb r1,[r0]
 	mov r2,1h
-DownFRW1:
+DownFRW2:
 	lsl r0,r3,10h
 	asr r0,r0,10h
 	lsl r1,r1,10h
 	asr r1,r1,10h
 	sub r3,r1,r0
 	cmp r3,1h
-	ble DownFRW2
+	ble DownFRW3
 	sub r3,1h
 	bl FreeSpaceFRW
-DownFRW2:
+DownFRW3:
 	bl 8071918h
+DownFRW4:
 	b 8071804h
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 3 of ChangeYoshiCoins (CYC)
