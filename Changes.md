@@ -1,87 +1,88 @@
 # Changelog
 
 ## Changes
-- The highscores on the title screen starts at 0.
-- Removed a button combo showing a build date at the begin of the intro
-- The game saves which save data was saved last
-- The Yoshi coin in the second intro level changes in to a Peach coin once they are unlocked
-- The status of the two intro cutscenes (color palette, sprite set, yoshi coin) now change depending on what is unlocked inthe last used save data
-- Checkpoints get reset when you save & quit the game to make collecting yoshi coins easier
-- Save and choosing back to return to the overworld can be used in Yoshis House and Top Secert Area at any time
-- The save promt no longer appears after beating a ghost house, the ghost ship or a level in the special world because you can save at any time by pressing start
-- Wrap around (pressing up while on the top entry in a menu puts the cursor to the bottom entry and vice versa) has been added on several menus that didn't have it before
-- Mushrooms no longer overwrite flowers and feathers in the item inventory
+- The highscores on the title screen start at 0.
+- Removed a button combo showing a build date at the begin of the intro.
+- The game saves which save data was saved last.
+- The Yoshi coin in the second intro level changes in to a Peach coin once they are unlocked.
+- The status of the two intro cutscenes (color palette, sprite set, yoshi coin) now change depending on what is unlocked inthe last used save data.
+- Checkpoints get reset when you save & quit the game to make collecting yoshi coins easier.
+- Save and choosing back to return to the overworld can be used in Yoshis House and Top Secert Area at any time.
+- The save promt no longer appears after beating a ghost house, the ghost ship or a level in the special world because you can save at any time by pressing start.
+- Wrap around (pressing up while on the top entry in a menu puts the cursor to the bottom entry and vice versa) has been added on several menus that didn't have it before.
+- Mushrooms no longer overwrite flowers and feathers in the item inventory.
+- Items in the inventory no longer auto drop when Mario/Luigi becomes small (to prevent Mario/Luigi being unable to get the item).
 - A sprite that was carried over the goal no longer gets changed into a red mushroom if Mario/Luigi is already big and the inventory is not empty. It gets changed to a 1up mushroom instead.
 - Mario/Luigi get 100p for collecting a regular coin (like in virtually every other Mario game). Coins from a coin block also give 100p each.
 - Several sprites (red mushroom, flower, feather, star, p-ballon, etc.) get changed to a coin when they're on screen while Mario/Luigi enters the goal (inspired by SMA4/SMB3). This does not happen to items in the inventory.
 - Yoshi now stays in Lakitus cloud even when Mario/Luigi unmounts him.
-- Removed the time limit in Top Secret Area
-- Yoshi now swallows null sprites immediately, because he is not able to spite them out in SMA2 anyway
+- Removed the time limit in Top Secret Area.
+- Yoshi now swallows null sprites immediately, because he is not able to spite them out in SMA2 anyway.
 - ?-Block with yoshi inside and star blocks respawn after resetting the area (coin counter for star block still gets reseted after getting a 1up out of it).
-- 3up moons and hidden 1ups reapear when reentering a level instead of having to reload the save file
-- The background in Forest Secret now moves slower
-- The smasher in several fortresses are behind other sprites (like in the SNES version)
+- 3up moons and hidden 1ups reapear when reentering a level instead of having to reload the save file.
+- The background in Forest Secret now moves slower.
+- The smasher in several fortresses are behind other sprites (like in the SNES version).
 - Line guided Fuzzy can be killed and eaten by Yoshi like the other Fuzzys that move around blocks.
-- The reward chain when enemies are on the screen while touching the goal now starts at 1000p and gets increased by 1 step at a tim instead of starting at 100p and getting increased by 2 steps at a time (inspred by SMA4/SMB3)
-- The reward chain when killing multiple enemies with a shell or a star or stomping on multiple enemies in a row now caps at 5ups instead of 1ups
-- The reward chain when collecting silver coins now caps at 5ups instead of 3ups
-- The reward for collecting more than 5 Yoshi coins in a level caps at 5ups instead of 1ups
-- Ups get added much faster to the counter
-- When Mario/Luigi touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory
-- The speed of an item that a sprite gets changed to when carrying it through the goal was reduced to prevent it from going offscreen and despwning
+- The reward chain when enemies are on the screen while touching the goal now starts at 1000p and gets increased by 1 step at a tim instead of starting at 100p and getting increased by 2 steps at a time (inspred by SMA4/SMB3).
+- The reward chain when killing multiple enemies with a shell or a star or stomping on multiple enemies in a row now caps at 5ups instead of 1ups.
+- The reward chain when collecting silver coins now caps at 5ups instead of 3ups.
+- The reward for collecting more than 5 Yoshi coins in a level caps at 5ups instead of 1ups.
+- Ups get added much faster to the counter.
+- When Mario/Luigi touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory.
+- The speed of an item that a sprite gets changed to when carrying it through the goal was reduced to prevent it from going offscreen and despwning.
 
 ## Bug Fixes
-- Fixed wendys castle has the wrong background color at the begin of the intro
-- Fixed a bug, that caused the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro
-- Fixed a tiling error in the intro level
-- Fixed a bug that caused the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level
-- Fixed Yoshis bongos play in bonus room music even when Yoshi is not present
-- Fixed an oversight that causes Iggy to use Larrys hair during his bossfight
-- Fixed a bug that causes Mario/Luigi to glitch into the moving walls during Roys boss fight
-- Fixed Wendys bow when she looks left/right during her bossfight
-- Added a missing . in the german message of Wendys Fortress getting destroyed cutscene
-- Fixed an exploit that meks several bosses and chucks much easier to defeat, because the counter for hitting them with fire balls and stomping on them is the same
+- Fixed wendys castle has the wrong background color at the begin of the intro.
+- Fixed a bug, that caused the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro.
+- Fixed a tiling error in the intro level.
+- Fixed a bug that caused the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
+- Fixed Yoshis bongos play in bonus room music even when Yoshi is not present.
+- Fixed an oversight that causes Iggy to use Larrys hair during his bossfight.
+- Fixed a bug that causes Mario/Luigi to glitch into the moving walls during Roys boss fight.
+- Fixed Wendys bow when she looks left/right during her bossfight.
+- Added a missing . in the german message of Wendys Fortress getting destroyed cutscene.
+- Fixed an exploit that meks several bosses and chucks much easier to defeat, because the counter for hitting them with fire balls and stomping on them is the same.
 - Fixed a part of diggin' Chucks shoulder was coverd by his head while digging.
-- Several enemies are now invulnerable to cape gliding or disapear with smoke to prevent them from showing glitched death animations
-- Fixed an oversight that caused whistlin' Chucks to spawn glitched super koopas in Forest of Illusion 2
-- Fixed silver coins and top of directional coin having ugly purple dots
-- Fixed the animation of the checkpoint post
-- Fixed inconsistencies in sprite of P-Switch and Trampolin
-- Fixed the pallette of disco Koopa shell making it look weird after the sprite change after obtaining all 96 exits
-- Fixed top of directional coin being mirrored when P-Switch is active
-- Made top of directional coin solid when P-Switch is active to prevent a bug when it touches Mario/Luigi
-- Fixed a bug that causes several sprites to not sink in underground lava
-- Fixed blue Yoshis overworld sprite has green dots
-- Fixed yellow Yoshis overworld sprites shoe color is overwritten by Mario/Luigi pallette
-- Fixed several bugs that occur if select and A, Start or a directional button was pressed at the same frame in the overworld
-- Fixed an oversight that causes the life counter to go over 999 on the overworld
-- Fixed an oversight that causes only Marios name being highlighted on the level map if he an Luigi got the same number of exits after all 96 exits were found
-- Blue Switchpalace no longer spawns on a path tile in Forest of Illusion
-- Fixed an oversight that caused star road teleporter to spwan despite being inaccesible
-- Fixed a bug that prevented Staor Road level from being shown at the level list despite being accesible
-- Fixed a bug that made W7 in the level lit blinking after defeating Bowser, no matter what else was done in world 7
-- Fixed an oversight that prevented the Player to exit Side Entrance and return to the overworld via start + back after Bowser was defeated (Vanilla game only activates this for Main Entrance no matter which entrance was used to defeat Bowser) 
-- Fixed a bug that caused Mario/Luigi to do weird things when pressing up right before the credits start
-- Fixed a bug that causes the game to load Peach coin graphics into ram during the credits and slightly garbling the cloud background after defeating Bowser with Peach coins unlocked
-- Fixed the color of the tongues of Yoshis in the credits cutscene at Yoshis House
-- Fixed an oversight that causes the SMA2 exclusive cutscene after collecting all Yoshi coins to overwrite the castle gets destroyed cutscene
-- Fixed an oversight that causes the game over message to overwrite the time up message
-- Fixed an oversight that causes the Bravo Mario/Luigi message when collection >10ups in a row from overwritng a normal reward pop up in some cases
-- Fixed a bug that causes a time up message being shown when the player dies in a level without time limit
-- Fixed a bug that causes the Player to be immune to unkillable sprites when riding a yoshi
+- Several enemies are now invulnerable to cape gliding or disapear with smoke to prevent them from showing glitched death animations.
+- Fixed an oversight that caused whistlin' Chucks to spawn glitched super koopas in Forest of Illusion 2.
+- Fixed silver coins and top of directional coin having ugly purple dots.
+- Fixed the animation of the checkpoint post.
+- Fixed inconsistencies in sprite of P-Switch and Trampolin.
+- Fixed the pallette of disco Koopa shell making it look weird after the sprite change after obtaining all 96 exits.
+- Fixed top of directional coin being mirrored when P-Switch is active.
+- Made top of directional coin solid when P-Switch is active to prevent a bug when it touches Mario/Luigi.
+- Fixed a bug that causes several sprites to not sink in underground lava.
+- Fixed blue Yoshis overworld sprite has green dots.
+- Fixed yellow Yoshis overworld sprites shoe color is overwritten by Mario/Luigi pallette.
+- Fixed several bugs that occur if select and A, Start or a directional button was pressed at the same frame in the overworld.
+- Fixed an oversight that causes the life counter to go over 999 on the overworld.
+- Fixed an oversight that causes only Marios name being highlighted on the level map if he an Luigi got the same number of exits after all 96 exits were found.
+- Blue Switchpalace no longer spawns on a path tile in Forest of Illusion.
+- Fixed an oversight that caused star road teleporter to spwan despite being inaccesible.
+- Fixed a bug that prevented Staor Road level from being shown at the level list despite being accesible.
+- Fixed a bug that made W7 in the level lit blinking after defeating Bowser, no matter what else was done in world 7.
+- Fixed an oversight that prevented the Player to exit Side Entrance and return to the overworld via start + back after Bowser was defeated (Vanilla game only activates this for Main Entrance no matter which entrance was used to defeat Bowser) .
+- Fixed a bug that caused Mario/Luigi to do weird things when pressing up right before the credits start.
+- Fixed a bug that causes the game to load Peach coin graphics into ram during the credits and slightly garbling the cloud background after defeating Bowser with Peach coins unlocked.
+- Fixed the color of the tongues of Yoshis in the credits cutscene at Yoshis House.
+- Fixed an oversight that causes the SMA2 exclusive cutscene after collecting all Yoshi coins to overwrite the castle gets destroyed cutscene.
+- Fixed an oversight that causes the game over message to overwrite the time up message.
+- Fixed an oversight that causes the Bravo Mario/Luigi message when collection >10ups in a row from overwritng a normal reward pop up in some cases.
+- Fixed a bug that causes a time up message being shown when the player dies in a level without time limit.
+- Fixed a bug that causes the Player to be immune to unkillable sprites when riding a yoshi.
 - Fixed a bug that causes Mario/Luigi to loose Yoshi when touching several sprites while having star immunity.
-- Fixed a bug that caused the key in Star Road 3 to change into a glitched sprite when it is in Yoshis mouth while activating to many !-Blocks at once
-- Fixed several bugs that can causes multiple Yoshi eggs spawning from the same ?-Block
+- Fixed a bug that caused the key in Star Road 3 to change into a glitched sprite when it is in Yoshis mouth while activating to many !-Blocks at once.
+- Fixed several bugs that can causes multiple Yoshi eggs spawning from the same ?-Block.
 - Fixed a bug that causes a glitched Yoshi to spawn because another sprite occupied Yoshis sprite slot before Yoshi is fully despawned.
-- Fixed a bug that causes the Player to get the wrong amount of points when eating a coin with Yoshi that was dropped from a chuck after defeating him with a fire balls
-- Fixed a bug that causes Mario/Luigi to swim below the ground
-- Fixed a bug that causes weird behaviour when riding on floating skulls and touching more than on skull at once
-- Fixed an oversight that made several sprites ignoring if Mario/Luigi is ducking
-- Fixed several bugs when carrying an item through a pipe
-- Fixed several bugs that cause Mario/Luigi to glide without a cape, while riding a Yoshi, while climbing and while holding an item
-- Fixed a bug that allowed Mario/Luigi to hold an item while climbing
-- Fixed a bug that causes the Player to survive a time up when Yoshi is eating a power-up while the time reaches 0
+- Fixed a bug that causes the Player to get the wrong amount of points when eating a coin with Yoshi that was dropped from a chuck after defeating him with fire balls.
+- Fixed a bug that causes Mario/Luigi to swim below the ground.
+- Fixed a bug that causes weird behaviour when riding on floating skulls and touching more than on skull at once.
+- Fixed an oversight that made several sprites ignoring if Mario/Luigi is ducking.
+- Fixed several bugs when carrying an item through a pipe.
+- Fixed several bugs that cause Mario/Luigi to glide without a cape, while riding a Yoshi, while climbing and while holding an item.
+- Fixed a bug that allowed Mario/Luigi to hold an item while climbing.
+- Fixed a bug that causes the Player to survive a time up when Yoshi is eating a power-up while the time reaches 0.
 - Fixed a bug that makes the splitters of a turn block using the wrong pallette when being destroyed by a chuck.
-- Fixed a bug that causes th Player to activate a secret exit with a key after dying through time up while yoshi has the key in his mouth
-- Fixed a bug that causes Yoshi to uses his go through a pipe animation even if he doesn't go through a pipe
-- Fixed a bug that prevented the music from playing faster with <100 secs remaining, when star music is running while the imer hits 100
+- Fixed a bug that causes th Player to activate a secret exit with a key after dying through time up while yoshi has the key in his mouth.
+- Fixed a bug that causes Yoshi to uses his go through a pipe animation even if he doesn't go through a pipe.
+- Fixed a bug that prevented the music from playing faster with <100 secs remaining, when star music is playing while the timer hits 100 sec.
