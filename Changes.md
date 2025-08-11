@@ -86,3 +86,4 @@
 - Fixed a bug that causes th Player to activate a secret exit with a key after dying through time up while yoshi has the key in his mouth.
 - Fixed a bug that causes Yoshi to uses his go through a pipe animation even if he doesn't go through a pipe.
 - Fixed a bug that prevented the music from playing faster with <100 time remaining, when star music is playing while the timer hits 100.
+- Fixed a pixel error in the ?-Block spin animation
