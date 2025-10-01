@@ -1535,10 +1535,10 @@ SetPlayerHeightGhosts:
 	ldr r0,=3007A48h
 	ldr r0,[r0]
 	ldrh r0,[r0]
-	sub r0,58h
-	cmp r0,3h
+	sub r0,59h
+	cmp r0,2h
 	bls ContinueDown
-	cmp r0,0A7h
+	cmp r0,0A6h
 	bne DownOne
 ContinueDown:
 	ldr r0,=3002340h
@@ -1829,6 +1829,23 @@ DownSilverCoins:
 .org 0x8035DBC
 	mov r1,1h
 ;;;;;;;
+
+;Fix fireballs sometimes don't sink in normal level lava
+.org 0x8036A1A
+	ldrh r1,[r0]
+	cmp r1,10h
+
+.org 0x8036A4A
+	sub r0,59h
+	cmp r0,2h
+	bls 80369A0h
+	cmp r1,6Dh
+	bls 8036AF6h	
+	cmp r1,0D7h
+	bls 8036A6Ch
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;Fix several glitches whith sprites carried through a pipe
 .org 0x8037696

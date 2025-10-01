@@ -41,17 +41,17 @@
 - Fixed a bug that causes Mario/Luigi to glitch into the moving walls during Roys boss fight.
 - Fixed Wendys bow when she looks left/right during her bossfight.
 - Added a missing . in the german message of Wendys Fortress getting destroyed cutscene.
-- Fixed an exploit that meks several bosses and chucks much easier to defeat, because the counter for hitting them with fire balls and stomping on them is the same.
+- Fixed an exploit that makes several bosses and chucks much easier to defeat, because the counter for hitting them with fire balls and stomping on them is the same.
 - Fixed a part of diggin' Chucks shoulder was coverd by his head while digging.
 - Several enemies are now invulnerable to cape gliding or disapear with smoke to prevent them from showing glitched death animations.
 - Fixed an oversight that caused whistlin' Chucks to spawn glitched super koopas in Forest of Illusion 2.
 - Fixed silver coins and top of directional coin having ugly purple dots.
 - Fixed the animation of the checkpoint post.
 - Fixed inconsistencies in sprite of P-Switch and Trampolin.
-- Fixed the pallette of disco Koopa shell making it look weird after the sprite change after obtaining all 96 exits.
+- Fixed the pallette of disco Koopa shell to prevent it from looking weird after the sprite change after obtaining all 96 exits.
 - Fixed top of directional coin being mirrored when P-Switch is active.
 - Made top of directional coin solid when P-Switch is active to prevent a bug when it touches Mario/Luigi.
-- Fixed a bug that causes several sprites to not sink in underground lava.
+- Fixed a bug that causes several sprites and Marios/Luigis fireballs to not sink in underground lava.
 - Fixed blue Yoshis overworld sprite has green dots.
 - Fixed yellow Yoshis overworld sprites shoe color is overwritten by Mario/Luigi pallette.
 - Fixed several bugs that occur if select and A, Start or a directional button was pressed at the same frame in the overworld.

@@ -746,6 +746,32 @@ DownUYE2:
 	bl FreeSpaceFGS2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix coins droped by chucks when killed with fireballs don't sink in normal level lava
+.org 0x80338D0
+	b DoCoinCheck
+
+.org 0x80338DC
+	sub r0,59h
+	cmp r0,2h
+	bls 8033912h
+	cmp r0,0A6h
+	beq 8033912h
+	ldrh r0,[r1]
+	cmp r0,6Dh
+	bhi 80338F4h
+DoCoinCheck:
+	mov r0,r4
+	bl 8033634h
+	b 8033912h
+	
+.org 0x8033932
+	ldr r0,[r5]
+	ldrh r1,[r0]
+	bl FreeSpaceSCL
+	cmp r0,0h
+	bne 8033958h
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Fix looping sound when hitting a solid sprite from below (BHS)
 .org 0x803546E
 	ldr r1,=3002340h
