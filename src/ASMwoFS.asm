@@ -1843,9 +1843,7 @@ DownSilverCoins:
 	bls 8036AF6h	
 	cmp r1,0D7h
 	bls 8036A6Ch
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 ;Fix several glitches whith sprites carried through a pipe
 .org 0x8037696
