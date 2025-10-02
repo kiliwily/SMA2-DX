@@ -410,35 +410,21 @@ Invincible:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceSCL:
-	mov r2,0h
-	lsl r1,r1,18h
 	lsr r0,r1,18h
 	sub r0,59h
 	cmp r0,2h
 	bls DownFCS1
 	cmp r0,0A6h
 	beq DownFCS1
-	lsr r0,r1,18h
-	sub r0,11h
-	cmp r0,5Ch
+	mov r0,0h
+	lsr r1,r1,18h
+	sub r1,11h
+	cmp r1,5Ch
 	bls DownFCS2
 DownFCS1:
-	mov r2,1h
+	mov r0,1h
 DownFCS2:
-	mov r0,r2
 	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceBHS:
-	ldr r3,=1C94h
-	add r1,r2,r3
-	ldrh r1,[r1]
-	ldr r3,=1C7Ch
-	add r0,r2,r3
-	ldrh r0,[r0]
-	bx r14
-	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

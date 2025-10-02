@@ -764,69 +764,18 @@ DoCoinCheck:
 	bl 8033634h
 	b 8033912h
 	
-.org 0x8033932
+.org 0x8033928
+	ldrh r0,[r0]
+	lsr r0,r0,8h
+	cmp r0,0h
+	beq 8033958h
 	ldr r0,[r5]
 	ldrh r1,[r0]
+	lsl r1,r1,18h
 	bl FreeSpaceSCL
 	cmp r0,0h
 	bne 8033958h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;Fix looping sound when hitting a solid sprite from below (BHS)
-.org 0x803546E
-	ldr r1,=3002340h
-	ldr r3,=1C62h
-
-.org 0x8035486
-	ldr r0,=3002340h
-	ldr r4,=1C58h
-	
-.org 0x803548E
-	ldr r1,=10FAh
-
-.org 0x80354A0
-	ldr r2,=3002340h
-	ldr r3,=1C74h
-
-.org 0x80354AC
-	ldr r0,=3007A48h
-	
-.org 0x80354B0
-	ldr r3,=0EB4h
-	
-.org 0x80354BC
-	ldr r1,=1C6Ch
-	add r0,r2,r1
-	mov r3,0h
-	ldsh r0,[r0,r3]
-
-.org 0x80354CA
-	ldr r3,=1C6Dh
-	add r0,r2,r3
-	mov r1,0h
-	strb r1,[r0]
-	bl FreeSpaceBHS
-	cmp r1,r0
-	bcc CheckSpriteId
-	cmp r1,r0
-	beq ContinueCheck
-	b 80356F6h
-ContinueCheck:
-	ldr r3,=1C66h
-	add r2,r2,r3
-	ldrb r0,[r2]
-	mov r1,4h
-	and r0,r1
-	cmp r0,0h
-	bne CheckSpriteId
-	b 80356F6h
-CheckSpriteId:
-	ldrb r0,[r5,1Ah]
-	cmp r0,82h
-	bhi 8035520h
-	b 803553Ah
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Mario\Luigi says "Just what i needed" when he collects a flower while not beeing fire mario/luigi or
 ;a feather while not having a cape or a mushroom when beeing small, otherwise he says "gotcha" (JWN);

@@ -1760,8 +1760,67 @@ DownStar5up:
 	bls 80352E0h
 	mov r0,0Bh
 	
+;Fix looping sound when hitting a solid sprite from below (BHS)
 .org 0x803539A	;Fix momentum when standing or jumping/falling on a solid block
 	mov r0,0h
+
+.org 0x803546E
+	ldr r1,=3002340h
+	ldr r4,=1C62h
+	add r0,r1,r4
+
+.org 0x8035486
+	ldr r0,=3002340h
+	sub r4,4h
+	
+.org 0x803548E
+	ldr r1,=10FAh
+
+.org 0x80354A0
+	ldr r2,=3002340h
+	ldr r3,=1C74h
+
+.org 0x80354AC
+	ldr r0,=3007A48h
+	
+.org 0x80354B0
+	ldr r3,=0EB4h
+	
+.org 0x80354BC
+	ldr r1,=1C6Ch
+	add r0,r2,r1
+	mov r3,0h
+	ldsh r0,[r0,r3]
+
+.org 0x80354CA
+	add r1,1h
+	add r0,r2,r1
+	mov r3,0h
+	strb r3,[r0]
+	ldr r3,=1C94h
+	add r1,r2,r3
+	ldrh r1,[r1]
+	sub r3,18h
+	add r0,r2,r3
+	ldrh r0,[r0]
+	cmp r1,r0
+	bcc CheckSpriteId
+	ldr r3,=1C66h
+	add r2,r2,r3
+	ldrb r0,[r2]
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
+	bne CheckSpriteId
+	b 80356F6h
+	.pool
+	.halfword 0x0000
+	
+CheckSpriteId:
+	ldrb r0,[r5,1Ah]
+	cmp r0,82h
+	bls 803553Ah
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
 .org 0x8035A60	;Give the player the same timer when they can obtain an item as grab it with yoshi
 	ldrb r1,[r6,1Fh]
@@ -1835,14 +1894,28 @@ DownSilverCoins:
 	ldrh r1,[r0]
 	cmp r1,10h
 
-.org 0x8036A4A
+.org 0x8036A44
+	mov r0,r1
 	sub r0,59h
 	cmp r0,2h
 	bls 80369A0h
+	cmp r0,0A6h
+	beq 80369A0h
 	cmp r1,6Dh
 	bls 8036AF6h	
 	cmp r1,0D7h
-	bls 8036A6Ch
+	bls DownFBL
+	mov r0,0Fh
+	and r0,r4
+	cmp r0,5h
+	bgt 80369A0h
+	ldrh r0,[r5,12h]
+	sub r0,2h
+	strh r0,[r5,12h]
+	b 8036960h
+DownFBL:
+	cmp r1,0D1h
+	bhi 80369A0h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix several glitches whith sprites carried through a pipe
