@@ -178,7 +178,7 @@ Format: n--sifhb
 4043 Blue P-Switch active
 
 4100 Intro state
-4140 if != 0 the A or Start was pressed during the Intro
+4140 if != 0 then A or Start was pressed during the Intro
 
 422A+LevelId Levelbyte
 428C Player Points
