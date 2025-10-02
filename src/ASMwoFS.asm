@@ -1760,7 +1760,7 @@ DownStar5up:
 	bls 80352E0h
 	mov r0,0Bh
 	
-;Fix looping sound when hitting a solid sprite from below (BHS)
+;Fix looping sound when hitting a solid sprite from below
 .org 0x803539A	;Fix momentum when standing or jumping/falling on a solid block
 	mov r0,0h
 
@@ -1820,7 +1820,7 @@ CheckSpriteId:
 	ldrb r0,[r5,1Ah]
 	cmp r0,82h
 	bls 803553Ah
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
 .org 0x8035A60	;Give the player the same timer when they can obtain an item as grab it with yoshi
 	ldrb r1,[r6,1Fh]
