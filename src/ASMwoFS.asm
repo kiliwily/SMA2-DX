@@ -3665,7 +3665,7 @@ SpriteTableStatus:
 	.byte 0x09
 
 .org 0x8109F48 +09Ch	;Prevent amazing flying hammer bro plattform from changing direction if touched
-	.byte 0x11
+	.byte 0x99
 
 .org 0x8109F48 +0A6h	;Make iggy's ball projectile inedible
 	.byte 0x15, 0x11
