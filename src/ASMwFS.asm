@@ -746,7 +746,7 @@ DownUYE2:
 	bl FreeSpaceFGS2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fix coins droped by chucks when killed with fireballs don't sink in normal level lava
+;Fix coins dropped by chucks when killed with fireballs don't sink in normal level lava
 .org 0x80338D0
 	b DoCoinCheck
 
