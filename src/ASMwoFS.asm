@@ -2893,11 +2893,51 @@ SpriteDoesNotHurt:
 	bl FreeSpaceFIN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Part 2 of Highscore Tweaks (HST);;;;;;;;;;;;;
-;Also contains parts of Fix Button Input (FBI)
-.org 0x8073578	;(FBI)
-	mov r1,0C0h
+;Remove delay before beeing able to press A or Start in the mode select screen (only present in non-japanese versions)
+.org 0x8073408
+	mov r0,0h
 
+.org 0x8073546
+	ldr r0,=3002340h
+	ldr r1,=0856h
+	
+.org 0x8073552
+	ldr r0,=3007A38h
+
+.org 0x807355C
+	ldr r0,=3007A38h
+
+.org 0x8073568
+	beq DownSetNotZero
+	mov r0,0h
+	strh r0,[r1]
+DownSetNotZero:
+	ldr r4,=03002340h
+	ldr r2,=0856h
+	add r0,r4,r2
+	ldrh r0,[r0]
+	mov r1,0C0h
+	and r0,r1
+	cmp r0,0h
+	beq 80735ACh
+	ldr r0,=0828h
+	add r1,r4,r0
+	mov r0,0h
+	bl 809C1C4h
+	ldr r1,=0888h
+	add r2,r4,r1
+	ldrb r1,[r2]
+	mov r0,1h
+	bic r0,r1
+	strb r0,[r2]
+	b 8073684h
+	.pool
+
+.org 0x80740EA
+	mov r0,0h
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Part 2 of Highscore Tweaks (HST);;;;;;;;;;;;;
 .org 0x807A050
 	blt DownHST1
 	

@@ -30,6 +30,7 @@
 - Ups get added much faster to the counter.
 - When Mario/Luigi touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory.
 - The speed of an item that a sprite gets changed to when carrying it through the goal was reduced to prevent it from going offscreen and despwning.
+- Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions
 
 ## Bug Fixes
 - Fixed wendys castle has the wrong background color at the begin of the intro.
