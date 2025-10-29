@@ -2878,6 +2878,49 @@ SpriteDoesNotHurt:
 .org 0x806E994
 	.pool
 
+.org 0x8070A30	;Prevent setting the cape spin interaction flag when riding a yoshi
+	push r4-r5,r14
+	lsl r0,r0,18h
+	lsr r5,r0,17h
+	ldr r3,=3002340h
+	ldr r1,[r3,20h]
+	add r1,0E2h
+	ldrb r0,[r1]
+	cmp r0,0h
+	bne DontSetCapeFlag
+	ldr r1,=3007A48h
+	ldr r1,[r1]
+	ldr r2,=0EE1h
+	add r1,r1,r2
+	mov r0,1h
+	strb r0,[r1]
+
+DontSetCapeFlag:
+	ldr r4,=1C90h
+	add r2,r3,r4
+	ldr r0,=81189A0h	
+	add r1,r0,r5
+	ldrh r1,[r1]
+	ldrh r2,[r2]
+	add r1,r1,r2
+	add r4,1Ch
+	add r2,r3,r4
+	strh r1,[r2]
+	sub r4,18h
+	add r2,r3,r4
+	add r0,8h
+	add r0,r0,r5
+	ldrh r0,[r0]
+	ldrh r2,[r2]
+	add r0,r0,r2
+	add r4,1Ch
+	add r3,r3,r4
+	strh r0,[r3]
+	pop r4-r5
+	pop r0
+	bx  r0
+	.pool
+
 .org 0x807135C	;Reserve item drops only if select was pressed
 	bhi 80713B0h
 	

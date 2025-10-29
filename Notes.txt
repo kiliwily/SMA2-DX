@@ -121,6 +121,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 3EE2/A Related to Player ypos??
 3F01 Spriteslot related
 3F06/7 Player is carrying a sprite flag
+3F0D Cape spin interacts with sprites flag (0 = don't interact, 1 = do interact)
 3F50 Number of coins to give the player (Adress in 7A48h + 0F24h)
 3F52 Yoshi has a key in his mouth flag
 3F53 Sprite slot of the sprite in yoshis mouth
@@ -168,7 +169,10 @@ Format: n--sifhb
 3FE0 Player is looking up flag (if = 03h then Player looks up) 
 3FE1 Flag that controls which image of the cape must be shown
 3FE2 Players current pose
+3FEC Cape interaction X position within the level
+3FF0 Cape interaction Y position within the level
 3FF4 Player sliding flag (0=no sliing, 1C=normal sliding, 80=cape sliding)
+3FF6 Player is on the ground flag
 400D if = 80h, the player bounces off of a pink triangle
 400E current cape flying phase
 400F Next step in cape flight

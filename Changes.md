@@ -80,11 +80,12 @@
 - Fixed a bug that causes weird behaviour when riding on floating skulls and touching more than on skull at once.
 - Fixed an oversight that made several sprites ignoring if Mario/Luigi is ducking.
 - Fixed several bugs when carrying an item through a pipe.
-- Fixed several bugs that cause Mario/Luigi to glide without a cape, while riding a Yoshi, while climbing and while holding an item.
+- Fixed several bugs that allowed Mario/Luigi to glide without a cape, while riding a Yoshi, while climbing and while holding an item.
 - Fixed a bug that allowed Mario/Luigi to hold an item while climbing.
 - Fixed a bug that causes the Player to survive a time up when Yoshi is eating a power-up while the time reaches 0.
 - Fixed a bug that makes the splitters of a turn block using the wrong pallette when being destroyed by a chuck.
 - Fixed a bug that causes th Player to activate a secret exit with a key after dying through time up while yoshi has the key in his mouth.
 - Fixed a bug that causes Yoshi to uses his go through a pipe animation even if he doesn't go through a pipe.
 - Fixed a bug that prevented the music from playing faster with <100 time remaining, when star music is playing while the timer hits 100.
-- Fixed a pixel error in the ?-Block spin animation
+- Fixed a pixel error in the ?-Block spin animation.
+- Fixed a bug that allowed Mario/Luigi to use the cape spin attack while riding a yoshi.
