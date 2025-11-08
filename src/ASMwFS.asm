@@ -1566,6 +1566,50 @@ DownBlockHit:
 	bl FreeSpaceF0T3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Prevent setting the cape spin interaction flag when riding a yoshi (CYR)
+.org 0x8070A30
+	push r4-r5,r14
+	lsl r0,r0,18h
+	lsr r5,r0,17h
+	ldr r0,=3002340h
+	mov r3,r0
+	bl FreeSpaceCYR
+	cmp r0,0h
+	bne DontSetCapeFlag
+	ldr r1,=3007A48h
+	ldr r1,[r1]
+	ldr r2,=0EE1h
+	add r1,r1,r2
+	mov r0,1h
+	strb r0,[r1]
+
+DontSetCapeFlag:
+	ldr r4,=1C90h
+	add r2,r3,r4
+	ldr r0,=81189A0h	
+	add r1,r0,r5
+	ldrh r1,[r1]
+	ldrh r2,[r2]
+	add r1,r1,r2
+	add r4,1Ch
+	add r2,r3,r4
+	strh r1,[r2]
+	ldr r4,=1C94h
+	add r2,r3,r4
+	add r0,8h
+	add r0,r0,r5
+	ldrh r0,[r0]
+	ldrh r2,[r2]
+	add r0,r0,r2
+	add r4,1Ch
+	add r3,r3,r4
+	strh r0,[r3]
+	pop r4-r5
+	pop r0
+	bx  r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Part 2 of Yoshi Coins Cutscene (YCC)
 .org 0x8070B08
 	push r14

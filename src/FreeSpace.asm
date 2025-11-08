@@ -1149,6 +1149,18 @@ PlayerNotDied2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceCYR:
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r0,[r0]
+	ldr r2,=10FAh
+	add r0,r0,r2
+	ldrb r0,[r0]
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceYCC2:
 	ldr r0,[r3,20h]
 	add r1,r0,0
