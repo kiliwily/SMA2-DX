@@ -69,7 +69,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 36B4 Generator related (if 9 then super koopas spawn)
 36B5 Yoshis Spriteslot - 1
 36D1 Yoshi growing animation timer
-36D5 if 9 the rip van fish wakes up (set by whistlin chuck)
+36D5 if 9 then rip van fish wakes up (set by whistlin chuck)
 36F2 Yoshi related
 36F4 solid sprite related
 36F8 Start of Enemy Ram (Adress in 3007A48 + 6CC), 64h bytes per enemy 
