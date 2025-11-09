@@ -383,7 +383,7 @@ DD1C
 10993D Related to sprite clipping
 10A0EC Related to sprite that is spit out by yoshi
 110138 SpriteId of sprite that is spit out by yoshi
-110338 Palette to sprite thatbis spit out by yoshi
+110338 Palette of sprite that is spit out by yoshi
 10A0EC Needed for cape tricks (used with byte 1Ah of sprite ram)
 Format: uuucuuuu
 	u=Unknown
