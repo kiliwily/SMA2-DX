@@ -629,7 +629,49 @@ NoYoshi:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
-.org 0x8020BFE	;Part of fix bug when pressing select + A, Start or directional button at the same frame on the overworld
+.org 0x801EA30	;Prevent the midpoint from getting set when it was not activated in the level before
+	ldr r1,=3002340h
+	ldr r2,=1C5Ch
+	
+.org 0x801EA40
+	cmp r0,0h
+	blt ContinueCheckPointCheck
+	cmp r0,0h
+	bgt 801EA94h
+	ldr r3,=0887h
+	add r2,r1,r3
+	mov r0,7h
+	strb r0,[r2]
+	b 801EACAh
+	.pool
+	
+ContinueCheckPointCheck:
+	ldr r3,=3002340h
+	ldr r1,[r3,20h]
+	mov r2,8Ah
+	lsl r2,r2,1h
+	add r0,r1,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq CheckpointSetStatus
+	add r0,r7,r5
+	ldrb r0,[r0]
+	ldr r1,[r3,20h]
+	add r1,6h
+	add r1,r1,r0
+	ldrb r0,[r1]
+	mov r2,40h
+	orr r0,r2
+	strb r0,[r1]
+CheckpointSetStatus:
+	ldr r2,=0887h
+	add r1,r3,r2
+	mov r0,7h
+	strb r0,[r1]
+	b 801EACAh
+	.pool
+
+.org 0x8020BFE	;Part of fix bug when pressing select + A, Start or a directional button at the same frame on the overworld
 	mov r1,0h
 
 .org 0x8020E04	;makes sure, that the player id is valid when changing the player
@@ -664,7 +706,7 @@ ContinueOther:
 	.pool
 ;;;;;;;
 
-;Fix bug when pressing select + A, Start or directional button at the same frame on the overworld
+;Fix bug when pressing select + A, Start or a directional button at the same frame on the overworld
 .org 0x8021508
 	ldr r2,=3002340h
 	ldr r3,=0856h
@@ -1228,6 +1270,20 @@ DownOthers:
 	pop r0
 	bx r0
 	.pool
+	
+.org 0x802FBA0	;Prevents sprites that chase/aim at Mario/Luigi from chasing/aiming at a point above Mario/Luigi
+	mov r0,0h
+	ldsh r1,[r2,r0]
+	add r1,10h
+	cmp r1,0h
+	blt 802FBB8h
+	
+.org 0x802FBD4
+	mov r0,0h
+	ldsh r1,[r2,r0]
+	add r1,10h
+	cmp r1,0h
+	blt 802FBECh
 	
 .org 0x80307C4	;Make every enemy give up to a 5up when killed by stomping
 	push r4-r6,r14
@@ -2867,6 +2923,9 @@ SpriteDoesNotHurt:
 	mov r0,1Eh
 	strb r0,[r1]
 	b 806E114h
+
+.org 0x806E420	;Prevent Mario/Luigi from getting a mushroom from a midpoint that doesn't work
+	beq 806E43Ch
 	
 .org 0x806E4F6
 	ldrb r0,[r1]
@@ -2887,6 +2946,106 @@ SpriteDoesNotHurt:
 
 .org 0x806E994
 	.pool
+	
+.org 0x8071164	;Prevent the midpoint from geting activated when dying after the level ended
+	push r4-r6,r14
+	lsl r1,r1,18h
+	lsr r5,r1,18h
+	ldr r6,=3002340h
+	ldr r1,=1C5Ch
+	add r4,r6,r1
+	ldr r1,[r4]
+	add r1,2Bh
+	strb r0,[r1]
+	ldr r2,=89Eh
+	add r0,r6,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq Checkpoint4
+	mov r2,7h
+	ldr r0,[r6,20h]
+	add r0,0A0h
+	ldrh r0,[r0]
+	cmp r0,13h
+	bne Checkpoint1
+	ldr r1,[r4]
+	add r1,2Bh
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+
+Checkpoint1:
+	ldr r0,[r6,20h]
+	add r0,0A0h
+	ldrh r0,[r0]
+	cmp r0,31h
+	beq Checkpoint2
+	cmp r2,0h
+	blt Checkpoint4
+	ldr r0,[r6,20h]
+	add r0,0A0h
+	ldrh r1,[r0]
+	ldr r3,=811A2A8h
+
+Checkpoint_Loop:
+	add r0,r3,r2
+	ldrb r0,[r0]
+	cmp r1,r0
+	beq Checkpoint2
+	sub r2,1h
+	cmp r2,0h
+	bge Checkpoint_Loop
+	b Checkpoint4
+.pool
+
+Checkpoint2:
+	cmp r2,7h
+	beq Checkpoint3
+	lsl r0,r2,1h
+	ldr r1,[r6,20h]
+	add r1,0A2h
+	add r1,r1,r0
+	ldrh r0,[r1]
+	add r0,1h
+	strh r0,[r1]
+
+Checkpoint3:
+	add r1,r2,1
+	ldr r2,=089Eh
+	add r0,r6,r2
+	strb r1,[r0]
+	mov r5,28h
+
+Checkpoint4:
+	ldr r2,=886h
+	add r0,r6,r2
+	strb r5,[r0]
+	ldr r2,=1C5Ch
+	add r0,r6,r2
+	ldr r2,[r0]
+	ldrb r0,[r2,1Eh]
+	add r0,1h
+	strb r0,[r2,1Eh]
+	ldr r0,[r6,20h]
+	ldr r2,=115h
+	add r1,r0,r2
+	ldrb r3,[r1]
+	cmp r3,0h
+	bne Checkpoint5
+	mov r0,1h
+	strb r0,[r1]
+	ldr r0,[r6,20h]
+	sub r2,1h
+	add r1,r0,r2
+	strb r3,[r1]
+	
+Checkpoint5:
+	bl 800CC64h
+	bl 8070B08h
+	pop r4-r6
+	pop r0
+	bx  r0
+.pool
 
 .org 0x807135C	;Reserve item drops only if select was pressed
 	bhi 80713B0h

@@ -306,10 +306,9 @@ FreeSpaceDSL:
 	ldrb r0,[r0]
 	cmp r0,0FFh
 	bne SpriteIsInYoshisMouth
-	mov r0,0h
-	strb r0,[r3,1Ch]
+	mov r1,0h
+	strb r1,[r3,1Ch]
 	add r3,39h
-	mov r0,0FFh
 	strb r0,[r3]
 SpriteIsInYoshisMouth:	
 	bx r14

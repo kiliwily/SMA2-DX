@@ -90,3 +90,5 @@
 - Fixed a pixel error in the ?-Block spin animation.
 - Fixed a bug that allowed Mario/Luigi to use the cape spin attack while riding a yoshi.
 - Fixed a bug that caused kamek's magic to change parts of the ceiling into sprites.
+- Fixed an oversight that caused sprites that chase/aim at Mario/Luigi chase/aim at a point above Mario/Luigi.
+- Fixed a bug that caused the midpoint to get always activated when dying after the level ended.

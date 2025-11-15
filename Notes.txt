@@ -198,7 +198,7 @@ Format: n--sifhb
 4303 Player Coins
 4304 Player Power-Up (0 = small, 1 = big, 2 = cape, 3 = fire)
 4305 Reserve Item (0 = none, 1 = mushroom, 2 = flower, 3 = star, 4 = feather, 5 = 1up mushroom)
-4306 !=0: Yoshi exists
+4306 if !=0: Yoshi exists
 4307 Yoshicolor (04h = yellow, 06h = blue, 08h = red, 0Ah = green)
 430A Mario Exits
 430B Luigi Exits
@@ -208,6 +208,7 @@ Format: n--sifhb
 4332 Number of moons collected
 4334 Game Over Flag
 4335 if 2 then save prompt?
+4338 if = 0h then checkpoint is disabled
 4339 Checkpoint\Level End reached Flag
 4340 Star block coin counter
 4342 Yoshicolor Overworld
