@@ -2457,6 +2457,7 @@ No1upSound:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix chucks and koopalings use the same counter for fireballs and stomp hits
+;Makes boos, boo blocks and big boos track the Players yPos accurately;;;;;;
 ;Also contains a fix for whistelin' chuck summons super koopas underwater;;;
 ;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;
 ;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;
@@ -2470,6 +2471,15 @@ No1upSound:
 	
 .org 0x803E804	;Make chucks give the player 2000p (+3 coins) when killing him with fire balls
 	mov r1,5h
+
+.org 0x804024C	;big boos
+	mov r1,30h
+
+.org 0x80408C8	;boos
+	mov r1,0h
+	
+.org 0x8040A5C	;boo blocks
+	mov r1,0h
 	
 .org 0x804282A	;chucks stomp
 	add r1,5h
