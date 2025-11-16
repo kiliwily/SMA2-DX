@@ -2457,7 +2457,7 @@ No1upSound:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix chucks and koopalings use the same counter for fireballs and stomp hits
-;Makes boos, boo blocks and big boos track the Players yPos accurately;;;;;;
+;Makes boos, boo blocks and big boos track the Players y-position accurately
 ;Also contains a fix for whistelin' chuck summons super koopas underwater;;;
 ;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;
 ;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;
