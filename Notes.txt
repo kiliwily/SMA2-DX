@@ -91,6 +91,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	35h Palette
 	36h Animation frame
 	37h if yoshi then slot of enemy in mouth)
+	39h if = FFh then sprite won't respawn
 	Slot 0: 36F8
 	Slot 1: 375C
 	Slot 2: 37C0
