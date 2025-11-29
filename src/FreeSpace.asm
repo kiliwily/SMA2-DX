@@ -299,17 +299,18 @@ FreeSpaceEUT:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceDSL:
 	add r3,r0,0h
-	ldr r1,=3007A48h
-	ldr r2,[r1]
+	ldr r2,=3007A48h
+	ldr r2,[r2]
 	ldr r1,=0F27h
 	add r0,r2,r1
+	sub r1,52h
+	add r2,r2,r1
 	ldrb r0,[r0]
-	cmp r0,0FFh
-	bne SpriteIsInYoshisMouth
+	ldrb r2,[r2]
+	cmp r0,r2
+	beq SpriteIsInYoshisMouth
 	mov r1,0h
 	strb r1,[r3,1Ch]
-	add r3,39h
-	strb r0,[r3]
 SpriteIsInYoshisMouth:	
 	bx r14
 	.pool
@@ -625,6 +626,7 @@ YoshiEggHatch:
 	strb r0,[r1]
 	b NoYoshiEgg
 	.pool
+	
 YoshiInTheLevel:
 	mov r0,78h
 	strb r0,[r4,1Fh]
@@ -678,6 +680,28 @@ FreeSpaceFSB:
 	strh r1,[r0]
 	bx r14
 	
+FreeSpaceUYD:
+	add r0,1h
+	ldr r1,=0686h
+	add r2,r2,r1
+	strb r0,[r2]
+	mov r0,0h
+	strb r0,[r5,1Bh]
+	ldrb r0,[r5,1Ch]
+	cmp r0,5h
+	bne NotDiedInLava
+	mov r1,r5
+	add r1,24h
+	ldrb r0,[r1]
+	cmp r0,1h
+	bhi NotDiedInLava
+	add r1,13h
+	mov r0,0FFh
+	strb r0,[r1]
+NotDiedInLava:
+	bx r14
+	.pool
+	
 FreeSpaceGHP1:
 	push r14
 	bl 803BBA0h
@@ -726,9 +750,23 @@ FreeSpaceSNS:
 	add r2,37h
 	ldrb r0,[r2]
 	cmp r0,0FFh
-	beq ResetSprite
+	bne ReturnNoSwallow2
+	mov r0,0h
+	strb r0,[r1]
+	mov r2,r12
+	ldrb r0,[r2,1Ch]
+	cmp r0,8h
+	bne ReturnNoSwallow1
+	mov r0,r12
+	bl 805DA7Ch
+	mov r0,r12
+	bl 805CEA4h
+	mov r0,r12
+	bl 805D518h
+ReturnNoSwallow1:
 	pop r0
-	b ReturnSNS
+	add r0,0E4h
+	bx r0
 	.pool
 	
 NoSpriteInMouth:
@@ -736,23 +774,10 @@ NoSpriteInMouth:
 	add r2,37h
 	mov r0,0FFh
 	strb r0,[r2]
+ReturnNoSwallow2:
 	pop r0
-	b ReturnSNS
-	
-ResetSprite:
-	mov r0,0h
-	strb r0,[r1]
-	mov r0,r12
-	bl 805DA7Ch
-	mov r0,r12
-	bl 805CEA4h
-	mov r0,r12
-	bl 805D518h
-	pop r0
-	add r0,0E4h
-ReturnSNS:
 	bx r0
-
+	
 FreeSpaceF0T1:
 	mov r2,0E3h
 	lsl r2,r2,5h
@@ -1091,6 +1116,28 @@ FreeSpaceCSI:
 	mov r0,80h
 	strb r0,[r1]
 NotSliding:
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFBB:
+	mov r3,0h
+	ldsh r1,[r0,r3]
+	mov r3,0A8h
+	ldr r0,[r4,20h]
+	add r0,0E0h
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq PlayerIsSmall
+	ldr r0,=1C62h
+	add r0,r4,r0
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq PlayerIsBig
+PlayerIsSmall:
+	mov r3,98h
+PlayerIsBig:
 	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

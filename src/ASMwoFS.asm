@@ -10,7 +10,7 @@
 .org 0x80031DC
 	push r4-r6,r14
 	ldr r0,=3002340h
-	ldr r2,=89Ah
+	ldr r2,=089Ah
 	add r1,r0,r2
 	ldrb r0,[r1]
 	sub r0,1h
@@ -95,7 +95,7 @@ BranchPSS5:
 	add r0,r2,r1
 	mov r1,1h
 	strb r1,[r0]
-	ldr r3,=886h
+	ldr r3,=0886h
 	add r0,r2,r3
 	ldrb r0,[r0]
 	cmp r0,25h
@@ -108,7 +108,7 @@ BranchPSS5:
 	beq BranchPSS6
 	cmp r0,36h
 	beq BranchPSS6
-	ldr r1,=89Dh
+	ldr r1,=089Dh
 	add r0,r2,r1
 	ldrb r0,[r0]
 	lsl r0,r0,18h
@@ -119,7 +119,7 @@ BranchPSS5:
 	bl 809BFACh
 BranchPSS6:
 	ldr r4,=3002340h
-	ldr r2,=89Dh
+	ldr r2,=089Dh
 	add r0,r4,r2
 	ldrb r1,[r0]
 	add r1,1h
@@ -130,12 +130,12 @@ BranchPSS6:
 	cmp r0,8h
 	bne ReturnPSS1
 	bl 80014F4h
-	ldr r3,=89Ah
+	ldr r3,=089Ah
 	add r1,r4,r3
 	mov r0,0h
 	strb r0,[r1]
 	ldr r0,=3002340h
-	ldr r1,=886h
+	ldr r1,=0886h
 	add r0,r0,r1
 	ldrb r1,[r0]
 	add r1,1h
@@ -145,7 +145,7 @@ BranchPSS6:
 	bls BranchPSS7
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r2,=654h
+	ldr r2,=0654h
 	add r0,r0,r2
 	mov r1,0h
 	strb r1,[r0]
@@ -181,7 +181,7 @@ FreeSpacePSS2:
 .org 0x800377E
 	bl FreeSpacePSS3
 	
-.org 0x8003D0E	;Makes Mario/ Luigi Start! not appear on Top Secret Area (like Yoshis House)
+.org 0x8003D0E	;Makes Mario/Luigi Start! not appear on Top Secret Area (like Yoshis House)
 	beq 8003D50h
 	cmp r0,65h
 	beq 8003D50h
@@ -259,7 +259,7 @@ StartLoopGameOver:
 	push r4,r5,r14
 	bl 800735Ch
 	ldr r4,=3002340h
-	ldr r1,=888h
+	ldr r1,=0888h
 	add r0,r4,r1
 	ldrb r1,[r0,7h]
 	cmp r1,0h
@@ -275,12 +275,12 @@ StartLoopGameOver:
 	ldr r1,=2000004h
 	strh r0,[r1]
 	bl 8007C18h
-	ldr r0,=888h
+	ldr r0,=0888h
 	add r5,r4,r0
 	mov r0,0h
 	ldsb r0,[r5,r0]
 	add r0,1h
-	ldr r1,=8A1h
+	ldr r1,=08A1h
 	add r4,r4,r1
 	add r0,r0,r4
 	ldrb r0,[r0]
@@ -433,7 +433,7 @@ FreeSpaceFIN:
 	bl FreeSpacePSS1
 	
 .org 0x800E3E4
-	.halfword 0x888
+	.halfword 0x0888
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1217,6 +1217,9 @@ DownLLT11:
 	mov r0,4h
 DownDiscoShell:
 
+.org 0x802DD0C	;Fixes a bug that caused several sprites not sinking before despawn in lava
+	ldrb r0,[r5]
+
 .org 0x802F2FA	;Makes sure that Mario is not riding a Yoshi and no sprite is in yoshis mouth, when Yoshi despawns
 	ldr r2,=3007A48h
 	ldr r0,[r2]
@@ -1585,6 +1588,9 @@ SetPlayerHeightGhosts:
 	
 .org 0x803176C
 	.pool
+
+.org 0x803233E	;Despawn sprites faster after they sank in lava
+	mov r1,2h
 
 ;Fix certain sprites don't sink in normal level lava
 .org 0x80328A8
@@ -2918,9 +2924,6 @@ SpriteDoesNotHurt:
 
 .org 0x8067E92
 	strh r4,[r1]
-	
-.org 0x806DE34	;Reduces the death boundary below ground to prevent swimming below blocks
-	sub r0,0B0h
 ;;;;;;;
 
 ;Part of StarBlockRespawn (SBR)

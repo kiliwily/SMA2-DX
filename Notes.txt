@@ -70,10 +70,10 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 36B5 Yoshis Spriteslot - 1
 36D1 Yoshi growing animation timer
 36D5 if 9 then rip van fish wakes up (set by whistlin chuck)
-36F2 Yoshi related
+36F2 Yoshis Spriteslot
 36F4 solid sprite related
 36F8 Start of Enemy Ram (Adress in 3007A48 + 6CC), 64h bytes per enemy 
-	(Byte 
+	Bytes:
 	0h xPos with more Precision (for some sprites)
 	4h yPos with more Precision (for some sprites)
 	8h xMomentum (?)
@@ -85,12 +85,13 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	1Ch (=8) != 0 then sprite is alive
 	1Fh if yoshi then length of tongue else if yoshi egg then sprite id of sprite inside
 	21h if powerup then itembox drop flag
+	2Ah Horizontal direction of sprite
 	2Bh blocked status. Sprite is blocked in direction:
      (x8h=up, x4h=down, x2h=left, x1h = right, 1x=Sprite is inside block, 8x=Sprite touches side of screen)
 	2Dh if yoshi then tongue animation
 	35h Palette
 	36h Animation frame
-	37h if yoshi then slot of enemy in mouth)
+	37h if yoshi then slot of enemy in mouth
 	39h if = FFh then sprite won't respawn
 	Slot 0: 36F8
 	Slot 1: 375C
@@ -120,7 +121,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 		0C	Turned into a powerup by the goal tape.
 3EE0/8 Related to Player xpos??
 3EE2/A Related to Player ypos??
-3F01 Spriteslot related
+3F01 Spriteslot currently processed
 3F06/7 Player is carrying a sprite flag
 3F0D Cape spin interacts with sprites flag (0 = don't interact, 1 = do interact)
 3F50 Number of coins to give the player (Adress in 7A48h + 0F24h)
@@ -159,7 +160,7 @@ Format: n--sifhb
 3FA8 Player x Momentum?
 3FAC Player y Momentum?
 3FB0 Player xpos equivalent to 3FB4
-3FB4 Player ypos used to determine death (1 block is 10h high, Player is fully underground if A0h, 80h is Ground)
+3FB4 Player ypos used to determine death (1 block is 10h high, big Player is fully underground if A0h, small Player is underground if 90h, 80h is Ground)
 3FB8 Player previous xpos
 3FBC Player previous ypos
 3FD0 Player xpos
@@ -225,6 +226,7 @@ Format: n--sifhb
 546C No. of 1ups you get from a life chain (via Star, Stomping or Cape 1up trick)
 546E Timer between the 1ups when geting >1up (2up, 3up, 5up etc.)
 5476 Riding Yoshi flag
+54BB Flag that determines if Mario/Luigi dies or the level ends when they fall below the ground
 54D4 Star Timer
 54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
 54E5 Timer between in game time updates

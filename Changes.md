@@ -30,13 +30,15 @@
 - Ups get added much faster to the counter.
 - When Mario/Luigi touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory.
 - The speed of an item that a sprite gets changed to when carrying it through the goal was reduced to prevent it from going offscreen and despwning.
-- Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions
+- Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
+- Despawn the sprite in yoshis mouth when yoshi despawns.
+- Despawn sprites immediately after they sank in lava.
 
 ## Bug Fixes
 - Fixed wendys castle has the wrong background color at the begin of the intro.
-- Fixed a bug, that caused the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro.
+- Fixed a bug, that causes the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro.
 - Fixed a tiling error in the intro level.
-- Fixed a bug that caused the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
+- Fixed a bug that causes the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
 - Fixed Yoshis bongos play in bonus room music even when Yoshi is not present.
 - Fixed an oversight that causes Iggy to use Larrys hair during his bossfight.
 - Fixed a bug that causes Mario/Luigi to glitch into the moving walls during Roys boss fight.
@@ -59,11 +61,11 @@
 - Fixed an oversight that causes the life counter to go over 999 on the overworld.
 - Fixed an oversight that causes only Marios name being highlighted on the level map if he an Luigi got the same number of exits after all 96 exits were found.
 - Blue Switchpalace no longer spawns on a path tile in Forest of Illusion.
-- Fixed an oversight that caused star road teleporter to spwan despite being inaccesible.
-- Fixed a bug that prevented Staor Road level from being shown at the level list despite being accesible.
-- Fixed a bug that made W7 in the level lit blinking after defeating Bowser, no matter what else was done in world 7.
-- Fixed an oversight that prevented the Player to exit Side Entrance and return to the overworld via start + back after Bowser was defeated (Vanilla game only activates this for Main Entrance no matter which entrance was used to defeat Bowser) .
-- Fixed a bug that caused Mario/Luigi to do weird things when pressing up right before the credits start.
+- Fixed an oversight that causes star road teleporter to spawn despite being inaccesible.
+- Fixed a bug that prevents Star Road level from being shown at the level list despite being accesible.
+- Fixed a bug that makes W7 in the level lit blinking after defeating Bowser, no matter what else was done in world 7.
+- Fixed an oversight that prevents the Player to exit Side Entrance and return to the overworld via start + back after Bowser was defeated (Vanilla game only activates this for Main Entrance no matter which entrance was used to defeat Bowser) .
+- Fixed a bug that causes Mario/Luigi to do weird things when pressing up right before the credits start.
 - Fixed a bug that causes the game to load Peach coin graphics into ram during the credits and slightly garbling the cloud background after defeating Bowser with Peach coins unlocked.
 - Fixed the color of the tongues of Yoshis in the credits cutscene at Yoshis House.
 - Fixed an oversight that causes the SMA2 exclusive cutscene after collecting all Yoshi coins to overwrite the castle gets destroyed cutscene.
@@ -72,16 +74,16 @@
 - Fixed a bug that causes a time up message being shown when the player dies in a level without time limit.
 - Fixed a bug that causes the Player to be immune to unkillable sprites when riding a yoshi.
 - Fixed a bug that causes Mario/Luigi to loose Yoshi when touching several sprites while having star immunity.
-- Fixed a bug that caused the key in Star Road 3 to change into a glitched sprite when it is in Yoshis mouth while activating to many !-Blocks at once.
+- Fixed a bug that causes the key in Star Road 3 to change into a glitched sprite when it is in Yoshis mouth while activating to many !-Blocks at once.
 - Fixed several bugs that can causes multiple Yoshi eggs spawning from the same ?-Block.
 - Fixed a bug that causes a glitched Yoshi to spawn because another sprite occupied Yoshis sprite slot before Yoshi is fully despawned.
 - Fixed a bug that causes the Player to get the wrong amount of points when eating a coin with Yoshi that was dropped from a chuck after defeating him with fire balls.
-- Fixed a bug that causes Mario/Luigi to swim below the ground.
+- Fixed a bug that allows Mario/Luigi to swim or fly under the ground below solid blocks.
 - Fixed a bug that causes weird behaviour when riding on floating skulls and touching more than on skull at once.
 - Fixed an oversight that made several sprites ignoring if Mario/Luigi is ducking.
 - Fixed several bugs when carrying an item through a pipe.
 - Fixed several bugs that allowed Mario/Luigi to glide without a cape, while riding a Yoshi, while climbing and while holding an item.
-- Fixed a bug that allowed Mario/Luigi to hold an item while climbing.
+- Fixed a bug that allows Mario/Luigi to hold an item while climbing.
 - Fixed a bug that causes the Player to survive a time up when Yoshi is eating a power-up while the time reaches 0.
 - Fixed a bug that makes the splitters of a turn block using the wrong pallette when being destroyed by a chuck.
 - Fixed a bug that causes the Player to activate a secret exit with a key after dying through time up while yoshi has the key in his mouth.
@@ -89,6 +91,8 @@
 - Fixed a bug that prevented the music from playing faster with <100 time remaining, when star music is playing while the timer hits 100.
 - Fixed a pixel error in the ?-Block spin animation.
 - Fixed a bug that allowed Mario/Luigi to use the cape spin attack while riding a yoshi.
-- Fixed a bug that caused kamek's magic to change parts of the ceiling into sprites.
-- Fixed an oversight that caused sprites that chase/aim at Mario/Luigi chase/aim at a point above Mario/Luigi.
-- Fixed a bug that caused the midpoint to get always activated when dying after the level ended.
+- Fixed a bug that causes kamek's magic to change parts of the ceiling into sprites.
+- Fixed an oversight that causes sprites that chase/aim at Mario/Luigi chase/aim at a point above Mario/Luigi.
+- Fixed a bug that causes the midpoint to get always activated when dying after the level ended.
+- Fixed a bug that causes yoshi to move his head like he is running when he sinks in lava after running away.
+- Fixed a bug that causes buzzy beetle to immediately despawn when touching lava instead of sinking.

@@ -783,6 +783,7 @@ DoCoinCheck:
 ;Also contains code to prevent loosing yoshi when touching several sprites while beeing invincible;;;
 ;Also contains code to give the player 100p when yoshi eats an enemy and gives a coin (GHP);;;;;;;;;;
 ;Also contains code to make yoshi swallow a null sprite immediately;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains code to update yoshi properly after he died in lava;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains fixes for 0-time glitch;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent itembox item drops from turning into a coin at the goal (DIC);;;;;;;;;
 ;Also contains a fix for the palette of the reminders of a block destroyed by a chuck (FRB);;;;;;;;;;
@@ -1162,6 +1163,21 @@ DownSkull:
 .org 0x805CA4A	;Reset Yoshicolor when reseting yoshi
 	strh r1,[r0]
 	
+.org 0x805CC80	;Update yoshi correctly after dying in lava
+	ldr r2,[r0]
+
+.org 0x805CC84
+	add r0,r2,r1
+	
+.org 0x805CCBC
+	ldr r1,=0ED5h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	bl FreeSpaceUYD
+
+.org 0x805CCD2
+	.pool
+	
 .org 0x805CED8	;Gives 100p when yoshi eats a red/pink berry and 200p when yoshi eats an enemy and gives a coin
 	bl FreeSpaceGHP1
 	
@@ -1467,6 +1483,23 @@ DownOthers1:
 .org 0x806D6EA
 	bl FreeSpaceCSI
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Reduces the death boundary below ground to prevent swimming or flying below blocks (FBB)
+.org 0x806DE2A
+	ldr r4,=3002340h
+
+.org 0x806DE2E
+	add r0,r4,r2
+	bl FreeSpaceFBB
+	sub r1,r1,r3
+	cmp r1,0h
+	blt 806DE78h
+	ldr r1,=1C58h
+	add r0,r4,r1
+	
+.org 0x806DE54
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent the player from activating blocks while the game is frozen to prevent activating the same block multiple times (FMB)
 .org 0x806E026
