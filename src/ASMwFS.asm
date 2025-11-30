@@ -1008,7 +1008,7 @@ DownChuckDestroyYes:
 	pop r4-r7
 	pop r1
 	bx r1
-	
+	.halfword 0x0000
 	
 .org 0x804923C	;Prevent yoshi from eating sparks (FYS)
 	push r14
@@ -1023,7 +1023,6 @@ DownChuckDestroyYes:
 	strb r0,[r2,1Bh]
 	pop r0
 	bx r0
-	.halfword 0x0000
 	
 .org 0x804C5B8	;Prevent loosing yoshi when touching a mega mole while beeing invincible
 	ldr r2,[r0]
