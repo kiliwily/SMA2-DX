@@ -570,14 +570,39 @@ DownPSPO2:
 	bx r14
 	.pool
 	
-FreeSpaceFRB:
+FreeSpaceFRB1:
+	mov r2,0h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0674h
+	add r0,r0,r1
 	ldrh r0,[r0]
-	mov r1,0h
 	cmp r0,1Eh
 	beq TurnBlockDestroyed
-	mov r1,0FFh
+	mov r2,0FFh
 TurnBlockDestroyed:
 	bx r14
+	.pool
+	
+FreeSpaceFRB2:
+	push r14
+	mov r0,r8
+	lsl r0,r0,8h
+	add r0,r9
+	mov r1,r7
+	lsl r1,r1,8h
+	add r1,r1,r4
+	bl 8032478h
+	ldr r1,=3007A48h
+	ldr r2,[r1]
+	ldrb r0,[r2]
+	ldr r1,=0674h
+	add r2,r2,r1
+	strh r0,[r2]
+	ldrh r0,[r2]
+	pop r1
+	bx r1
+	.pool
 	
 FreeSpaceFYS:
 	ldrb r0,[r2,1Ah]

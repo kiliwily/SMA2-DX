@@ -787,6 +787,7 @@ DoCoinCheck:
 ;Also contains fixes for 0-time glitch;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent itembox item drops from turning into a coin at the goal (DIC);;;;;;;;;
 ;Also contains a fix for the palette of the reminders of a block destroyed by a chuck (FRB);;;;;;;;;;
+;Also contains a fix for a bug that caused chucks to destroy the ceiling in certain cases;;;;;;;;;;;;
 ;Also contains part 2 of fix item carry (FIC);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent the Player from activating a secret exit with a key after dying (FSD);
 ;Also contains part 2 of fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -933,7 +934,16 @@ GoToJWN1:
 .org 0x803E298
 	.pool
 
-.org 0x80428E8	;Fixes the palette of the reminders of a block destroyed by a chuck
+.org 0x80428D4	;Fixes the palette of the reminders of a block destroyed by a chuck and prevents chucks from destroying the ceiling in certain cases
+	push r4-r7,r14
+	mov r7,r9
+	mov r6,r8
+	push r6,r7
+	add r0,2Bh
+	ldrb r0,[r0]
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
 	beq DownChuckDestroyNo
 	ldr r6,=3002340h
 	ldr r0,=1C58h
@@ -941,44 +951,49 @@ GoToJWN1:
 	ldr r1,[r5]
 	add r1,31h
 	ldrb r0,[r1]
-	mov r9,r0
+	mov r8,r0
 	sub r1,1h
 	ldrb r0,[r1]
-	mov r10,r0
+	mov r9,r0
 	sub r1,3h
 	ldrb r7,[r1]
 	sub r1,1h
 	ldrb r4,[r1]
-	ldr r0,=3007A48h
-	ldr r0,[r0]
-	ldr r1,=0674h
-	add r0,r0,r1
-	bl FreeSpaceFRB
-	mov r8,r1
-	mov r0,r8
+	bl FreeSpaceFRB1
+	mov r0,r2
 	bl 802F044h
 	ldr r1,=1D4Ah
 	add r6,r6,r1
 	mov r0,2h
 	strb r0,[r6]
 	bl 800EEC8h
+	sub r4,10h
+	lsl r4,r4,18h
+	lsr r4,r4,18h
+	bl FreeSpaceFRB2
+	cmp r0,2Eh
+	beq ChuckDestroyMoreBlocks
+	cmp r0,1Eh
+	bne ChuckDestroyedBlocks
+ChuckDestroyMoreBlocks:
 	ldr r1,[r5]
 	add r1,31h
-	mov r0,r9
+	mov r0,r8
 	strb r0,[r1]
 	sub r1,1h
-	mov r0,r10
+	mov r0,r9
 	strb r0,[r1]
 	sub r1,3h
 	strb r7,[r1]
-	sub r4,10h
 	sub r1,1h
 	strb r4,[r1]
-	mov r0,r8
+	bl FreeSpaceFRB1
+	mov r0,r2
 	bl 802F044h
 	mov r0,2h
 	strb r0,[r6]
 	bl 800EEC8h
+ChuckDestroyedBlocks:
 	mov r0,1h
 	b DownChuckDestroyYes
 	.pool
@@ -987,13 +1002,13 @@ DownChuckDestroyNo:
 	mov r0,0h
 
 DownChuckDestroyYes:
-	pop r3-r5
+	pop r3,r4
 	mov r8,r3
 	mov r9,r4
-	mov r10,r5
 	pop r4-r7
 	pop r1
 	bx r1
+	
 	
 .org 0x804923C	;Prevent yoshi from eating sparks (FYS)
 	push r14
@@ -1008,6 +1023,7 @@ DownChuckDestroyYes:
 	strb r0,[r2,1Bh]
 	pop r0
 	bx r0
+	.halfword 0x0000
 	
 .org 0x804C5B8	;Prevent loosing yoshi when touching a mega mole while beeing invincible
 	ldr r2,[r0]

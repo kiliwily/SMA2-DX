@@ -96,3 +96,4 @@
 - Fixed a bug that causes the midpoint to get always activated when dying after the level ended.
 - Fixed a bug that causes yoshi to move his head like he is running when he sinks in lava after running away.
 - Fixed a bug that causes buzzy beetle to immediately despawn when touching lava instead of sinking.
+- Fixed a bug that causes chucks to destroy blocks which they are not supposed to destroy and spawn block splitters even if they didn't destroy a block.
