@@ -784,10 +784,10 @@ DoCoinCheck:
 ;Also contains code to give the player 100p when yoshi eats an enemy and gives a coin (GHP);;;;;;;;;;
 ;Also contains code to make yoshi swallow a null sprite immediately;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to update yoshi properly after he died in lava;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains fixes for 0-time glitch;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for 0-time glitch;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent itembox item drops from turning into a coin at the goal (DIC);;;;;;;;;
 ;Also contains a fix for the palette of the reminders of a block destroyed by a chuck (FRB);;;;;;;;;;
-;Also contains a fix for a bug that caused chucks to destroy the ceiling in certain cases;;;;;;;;;;;;
+;Also contains a fix for a bug that causes chucks to destroy the ceiling in certain cases;;;;;;;;;;;;
 ;Also contains part 2 of fix item carry (FIC);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent the Player from activating a secret exit with a key after dying (FSD);
 ;Also contains part 2 of fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
