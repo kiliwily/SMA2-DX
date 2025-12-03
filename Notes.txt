@@ -85,6 +85,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	1Ch (=8) != 0 then sprite is alive
 	1Fh if yoshi then length of tongue else if yoshi egg then sprite id of sprite inside
 	21h if powerup then itembox drop flag
+	22h if bob-omb then exploding flag
 	2Ah Horizontal direction of sprite
 	2Bh blocked status. Sprite is blocked in direction:
      (x8h=up, x4h=down, x2h=left, x1h = right, 1x=Sprite is inside block, 8x=Sprite touches side of screen)

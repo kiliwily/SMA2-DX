@@ -661,7 +661,7 @@ DownUYE2:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Prevent the player carrying an item while gliding, climbing riding a yoshi or sliding (FIC)
+;Prevent the player carrying an item while gliding, climbing, riding a yoshi or sliding (FIC)
 .org 0x802C750
 	ldr r3,=3002340h
 	ldr r5,=0854h
