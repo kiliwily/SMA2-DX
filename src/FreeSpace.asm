@@ -705,6 +705,18 @@ FreeSpaceFSB:
 	strh r1,[r0]
 	bx r14
 	
+FreeSpaceSLS:
+	push r4,r14
+	mov r4,r0
+	bl 802F9F0h
+	mov r0,r4
+	add r0,24h
+	ldrb r0,[r0]
+SwitchNotHit:	
+	pop r4
+	pop r1
+	bx r1
+	
 FreeSpaceUYD:
 	add r0,1h
 	ldr r1,=0686h

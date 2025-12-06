@@ -791,6 +791,7 @@ DoCoinCheck:
 ;Also contains part 2 of fix item carry (FIC);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent the Player from activating a secret exit with a key after dying (FSD);
 ;Also contains part 2 of fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains code to enable sprite interaction with the lightswitch (SLS);;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent yoshi from eating sparks;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent a yoshi from hatching from a egg when another yoshi is in the level;;;
 ;Also contains a fix for buggy behavior of directional coin when blue p-switch is active (DCF);;;;;;;
@@ -1174,6 +1175,13 @@ DownSkull:
 	pop r0
 	bx r0
 	.pool
+	
+.org 0x8057A64	;Make lightswitch solid for sprites
+	bl 8034964h
+	mov r0,r7
+	bl 8035324h
+	mov r0,r7
+	bl FreeSpaceSLS
 	
 .org 0x805CA4A	;Reset Yoshicolor when reseting yoshi
 	strh r1,[r0]

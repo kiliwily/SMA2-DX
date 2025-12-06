@@ -1770,6 +1770,84 @@ DownThrownB4:
 	.word 0x00000000
 	.word 0x00000000
 	
+.org 0x803426A	;Make sprites interact with lightswitch like they interact with flying ?-Block
+	ldrb r0,[r5,1Ah]
+	cmp r0,0C8h
+	beq DownLightSwitch
+	sub r0,83h
+	cmp r0,1h
+	bhi 803429Ch
+DownLightSwitch:
+	mov r0,r4
+	bl 802FCECh
+	mov r0,0h
+	str r0,[r4,0Ch]
+	mov r0,r5
+	bl 8033DA4h
+	b 803441Ah
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x8034468
+	cmp r0,0C8h
+	beq 80344A0h
+	mov r2,r0
+	sub r2,83h
+	cmp r2,1h
+	bhi 80344B2h
+	
+.org 0x8034506
+	cmp r0,0C8h
+	beq 8034510h
+	sub r0,83h
+	cmp r0,1h
+	bhi 8034518h
+
+.org 0x8034524
+	cmp r6,0C8h
+	beq 8034530h
+	mov r0,r6
+	sub r0,83h
+	cmp r0,1h
+	bhi 803453Ch
+	
+.org 0x803516A	;Fixes a bug that causes big sprites to lose their interaction with the Player if too big parts of their sprite is horizonztally offscreen
+	bne DoPlayerInteraction
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0ED5h
+	add r0,r0,r1
+	ldr r1,=3002340h
+	ldr r3,=893h
+	
+.org 0x8035184
+	cmp r0,0h
+	bne ReturnNoInteraction
+DoPlayerInteraction:
+	ldr r0,=3002340h
+	ldr r1,=0CE8h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,99h
+	beq ReturnNoInteraction
+	mov r0,r2
+	bl 8035104h
+	lsl r0,r0,18h
+	lsr r0,r0,18h
+	b ReturnYesInteraction
+	.pool
+
+ReturnNoInteraction:
+	mov r0,0h
+ReturnYesInteraction:
+	pop r1
+	bx r1
+	.word 0x00000000
+	.word 0x00000000
+	
 .org 0x80351CC	;Make every enemy give up to a 5up when killed with a star
 	ldr r2,=3007A48h
 	ldr r1,[r2]
@@ -1883,6 +1961,30 @@ CheckSpriteId:
 	cmp r0,82h
 	bls 803553Ah
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.org 0x80357F4	;Fix a bug that causes the game to softlock if obtaining a feather offscreen during autoscroll
+	ldr r2,=3002340h
+	mov r0,0E3h 
+	lsl r0,r0,5h
+	add r1,r2,r0
+	mov r0,3h
+	strb r0,[r1]
+	ldr r3,=1CECh
+	add r1,r2,r3
+	mov r0,18h
+	strb r0,[r1]
+	ldr r1,=1C75h
+	add r0,r2,r1
+	sub r3,r1,4h
+	add r1,r2,r3
+	ldrb r0,[r0]
+	ldrb r1,[r1]
+	orr r0,r1
+	cmp r0,0h
+	bne 80358A4h
+	
+.org 0x80358A8
+	.pool
 	
 .org 0x8035A60	;Give the player the same timer when they can obtain an item as grab it with yoshi
 	ldrb r1,[r6,1Fh]
@@ -2464,8 +2566,10 @@ No1upSound:
 
 ;Fix chucks and koopalings use the same counter for fireballs and stomp hits
 ;Makes boos, boo blocks and big boos track the Players y-position accurately
+;Prevents ninjis from clipping into the ceiling;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains a fix for whistelin' chuck summons super koopas underwater;;;
 ;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for thwomps always falling when vertically offscreen;;; 
 ;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;
 ;Also makes it so you can get up to a 5up when defeating wiggler with a star
 ;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2486,6 +2590,9 @@ No1upSound:
 	
 .org 0x8040A5C	;boo blocks
 	mov r1,0h
+	
+.org 0x8041DC8	;Prevent ninjis from clipping through the ceiling
+	mov r1,0Ch
 	
 .org 0x804282A	;chucks stomp
 	add r1,5h
@@ -2596,6 +2703,12 @@ NotAt5ups2:
 	cmp r0,0Ah
 	bls 804590Ch
 	mov r0,0Bh
+	
+.org 0x804A1AE	;Prevent thwomps from always falling when vertially offscreen
+	ble 804A210h
+
+.org 0x804A1F4
+	add r0,28h
 
 .org 0x80506B6	;Fix kamek's magic turns stone into sprites
 	bhi 805074Ah
@@ -2771,6 +2884,7 @@ StartLoopCoinsEaten:
 ;Prevents updating some Yoshi stuff when the sprite	in Yoshis sprite slot is no longer a Yoshi
 ;Also contains code that resets the Yoshicolor when reseting the riding a Yoshi flag;;;;;;;;;;
 ;Also contains a fix for the collision with certain invincible sprites while riding Yoshi;;;;;
+;Also prevents Yoshi from standing on sprites that have not a normal status;;;;;;;;;;;;;;;;;;;
 .org 0x805E8B0	;Prevent using the riding Yoshi flag before it was updated
 	ldr r3,=3002340h
 	ldr r1,=1CD6h
@@ -2904,6 +3018,10 @@ SpriteDoesNotHurt:
 	add r1,0Ah
 	ldrb r1,[r1]
 	orr r0,r1
+	
+.org 0x805FBA6	;Prevents Yoshi from standing on sprites that have not a normal status
+	cmp r0,8h
+	bne 805FC40h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
 .org 0x8064FF8	;koopaling stomp
@@ -3793,9 +3911,15 @@ SpriteTableStatus:
 
 .org 0x8109C00 +0B3h	;Fix bowser statue flame death animation
 	.byte 0x80
+
+.org 0x8109C00 +0C6h	;Fix spotlight properties
+	.byte 0x00
 ;----------------------------------------------------------
 .org 0x8109CD2 +45h	;Fix top of directional coin
 	.byte 0x0C
+
+.org 0x8109CD2 +0C6h	;Fix spotlight properties
+	.byte 0x00
 ;----------------------------------------------------------
 .org 0x8109DA4 +55h	;Fix several sprites fireball immunity
 	.byte 0xF3, 0xF3, 0xF3, 0xF3, 0xF3, 0xF3, 0xF1, 0xF1 
@@ -3908,7 +4032,7 @@ SpriteTableStatus:
 	.byte 0xB9
 
 .org 0x8109F48 +0C6h	;Prevent spotlight from staying in yoshis mouth and spawning a new sprite
-	.byte 0xB9, 0x39, 0x39
+	.byte 0xB9, 0x39, 0x31
 ;----------------------------------------------------------
 .org 0x810A01A +0Ch	;Fix yellow para koopa properties
 	.byte 0xB0

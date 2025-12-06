@@ -33,6 +33,7 @@
 - Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
 - Despawn the sprite in yoshis mouth when yoshi despawns.
 - Despawn sprites immediately after they sank in lava.
+- Make the lightswitch solid for and hitable with sprites.
 
 ## Bug Fixes
 - Fixed wendys castle has the wrong background color at the begin of the intro.
@@ -97,3 +98,6 @@
 - Fixed a bug that causes yoshi to move his head like he is running when he sinks in lava after running away.
 - Fixed a bug that causes buzzy beetle to immediately despawn when touching lava instead of sinking.
 - Fixed a bug that causes chucks to destroy blocks which they are not supposed to destroy and spawn block splitters even if they didn't destroy a block.
+- Fixed a bug that causes the game to softlock if collecting a feather offscreen during autoscroll.
+- Fixed a bug that causes thwomps to always fall if they are vertically offscreen.
+- Fixed a bug that causes sprites to loose their interacion with the Player if to big parts of their sprites are horizontally offscreen.
