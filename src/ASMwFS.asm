@@ -1118,7 +1118,7 @@ ItemNotCarried:
 .org 0x8056C8A
 	pop r4-r6
 	
-.org 0x80573E4	;Prevent the Player from activating a secret with a key after dying (FSD)
+.org 0x80573E4	;Prevent the Player from activating a secret exit with a key after dying (FSD)
 	ldr r2,=3002340h
 	mov r1,0E6h
 	lsl r1,r1,5h

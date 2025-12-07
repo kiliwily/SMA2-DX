@@ -29,11 +29,11 @@
 - The reward for collecting more than 5 Yoshi coins in a level caps at 5ups instead of 1ups.
 - Ups get added much faster to the counter.
 - When Mario/Luigi touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory.
-- The speed of an item that a sprite gets changed to when carrying it through the goal was reduced to prevent it from going offscreen and despwning.
+- The speed of an item that a sprite gets changed into when being carried through the goal was reduced to prevent it from going offscreen and despawning.
 - Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
 - Despawn the sprite in yoshis mouth when yoshi despawns.
 - Despawn sprites immediately after they sank in lava.
-- Make the lightswitch solid for and hitable with sprites.
+- Made the lightswitch solid for and hitable with sprites.
 
 ## Bug Fixes
 - Fixed wendys castle has the wrong background color at the begin of the intro.
