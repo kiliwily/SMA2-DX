@@ -73,6 +73,7 @@
 - Fixed an oversight that causes the game over message to overwrite the time up message.
 - Fixed an oversight that causes the Bravo Mario/Luigi message when collection >10ups in a row from overwritng a normal reward pop up in some cases.
 - Fixed a bug that causes a time up message being shown when the player dies in a level without time limit.
+- Fixed a bug that causes Mario to use Luigis voice or vice versa when saying Bravo after collecting 5 Yoshi coins in a level.
 - Fixed a bug that causes the Player to be immune to unkillable sprites when riding a yoshi.
 - Fixed a bug that causes Mario/Luigi to loose Yoshi when touching several sprites while having star immunity.
 - Fixed a bug that causes the key in Star Road 3 to change into a glitched sprite when it is in Yoshis mouth while activating to many !-Blocks at once.

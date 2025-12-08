@@ -856,7 +856,7 @@ GoodItem:
 	add r4,r5,r0
 	bl FreeSpacePMO
 	cmp r0,0h
-	beq GoToJWN1
+	beq 8035B6Eh
 
 .org 0x8035B70
 	add r0,r5,r1
@@ -868,7 +868,6 @@ GoodItem:
 	add r0,r5,r2
 	
 .org 0x8035B82
-GoToJWN1:
 	bl FreeSpaceJWN
 	
 .org 0x8035B8E
@@ -1216,10 +1215,9 @@ DownSkull:
 	add r4,r6,r0
 	bl FreeSpacePMO
 	cmp r0,0h
-	beq GoToJWN2
+	beq 805D22Eh
 
 .org 0x805D242
-GoToJWN2:	
 	bl FreeSpaceJWN
 	
 .org 0x805D26C
@@ -1587,7 +1585,7 @@ DownBlockHit:
 .org 0x806E430	;Put a mushroom in item stock if touching a checkpoint flag while big and item stock empty
 	bl FreeSpaceDMI
 	
-.org 0x806E5AA	;Fix a glitch that causes Luigi to use Marios Voice when saying Bravo after collecting 5 Yoshi coins
+.org 0x806E5AA	;Fix a glitch that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins
 	add r4,r1,r2
 	ldrb r0,[r4]
 	

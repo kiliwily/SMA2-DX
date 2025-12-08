@@ -936,19 +936,6 @@ ReturnToGoalFct:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceFLB:
-	mov r2,r9
-	ldr r0,[r2,20h]
-	add r0,0DCh
-	ldrb r0,[r0]
-	ldr r2,=082Ch
-	add r2,r9
-	strh r0,[r2]
-	bx r14
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFWC:
 	push r14
 	ldr r2,=3002340h
@@ -1053,6 +1040,19 @@ GoodItemInStock:
 	mov r0,0h
 ReturnDMI:
 	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFLB:
+	mov r2,r9
+	ldr r0,[r2,20h]
+	add r0,0DCh
+	ldrb r0,[r0]
+	ldr r2,=082Ch
+	add r2,r9
+	strh r0,[r2]
+	bx r14
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
