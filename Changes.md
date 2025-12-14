@@ -8,7 +8,7 @@
 - The status of the two intro cutscenes (color palette, sprite set, Yoshi coin) now change depending on what is unlocked in the last used save data.
 - Checkpoints get reset when you save & quit the game to make collecting Yoshi coins easier.
 - Save and choosing back to return to the overworld can be used in Yoshi's House and Top Secert Area at any time.
-- The save promt no longer appears after beating a ghost house, the ghost ship or a level in the special world because you can save at any time by pressing start.
+- The save prompt no longer appears after beating a ghost house, the ghost ship or a level in the special world because you can save at any time by pressing start.
 - Wrap around (pressing up while on the top entry in a menu puts the cursor to the bottom entry and vice versa) has been added on several menus that didn't have it before.
 - Mushrooms no longer overwrite flowers and feathers in the item inventory.
 - Items in the inventory no longer auto drop when the Player becomes small (to prevent the Player being unable to get the item).
