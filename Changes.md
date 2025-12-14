@@ -5,7 +5,7 @@
 - Removed a button combo showing a build date at the begin of the intro.
 - The game saves which save data was saved last.
 - The Yoshi coin in the second intro level changes in to a Peach coin once they are unlocked.
-- The status of the two intro cutscenes (color palette, sprite set, yoshi coin) now change depending on what is unlocked inthe last used save data.
+- The status of the two intro cutscenes (color palette, sprite set, Yoshi coin) now change depending on what is unlocked in the last used save data.
 - Checkpoints get reset when you save & quit the game to make collecting Yoshi coins easier.
 - Save and choosing back to return to the overworld can be used in Yoshi's House and Top Secert Area at any time.
 - The save promt no longer appears after beating a ghost house, the ghost ship or a level in the special world because you can save at any time by pressing start.
