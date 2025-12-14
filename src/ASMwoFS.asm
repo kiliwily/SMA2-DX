@@ -1,5 +1,5 @@
 ;others
-.org 0x8000528	;Make the game wait for a VBlank with a BIOS function to reduce battery consumption on real GBA (Credits: MisterMan)
+.org 0x8000528	;Make the game wait for a VBlank with a BIOS function to reduce battery consumption on real GBA (Credits: Mister Man)
 	bne WaitEnd
 	ldr r2,=3002B64h
 	ldrh r0,[r2]
@@ -246,7 +246,7 @@ StartLoopGameOver:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fix all bgs in the enemy roll credits use the same sky color (Credits: MisterMan)
+;Fix all bgs in the enemy roll credits use the same sky color (Credits: Mister Man)
 .org 0x8005098
 	ldr r2,=3002340h
 	ldr r5,=08C4h
@@ -405,7 +405,7 @@ ReturnPSS2:
 .org 0x8008930
 	mov r1,30h
 
-.org 0x80093D2	;Fix pallete used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: MisterMan)
+.org 0x80093D2	;Fix pallete used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: Mister Man)
 	mov	r3,0h
 
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
@@ -3142,7 +3142,7 @@ NotAt5ups2:
 .org 0x804A1F4
 	add r0,28h
 
-.org 0x80501C4	;Fixed kamek's wand having a higher sprite priority than its body (Credits: MisterMan)
+.org 0x80501C4	;Fixed kamek's wand having a higher sprite priority than its body (Credits: Mister Man)
 	.halfword 0x0939
 
 .org 0x80506B6	;Fix kamek's magic turns stone into sprites
@@ -3154,7 +3154,7 @@ NotAt5ups2:
 .org 0x80506F2
 	bhi 80506F6h
 	
-.org 0x8052F3E	;Fix lakitu's/fishin' lakitu's incorrect head positioning (Credits: MisterMan)
+.org 0x8052F3E	;Fix lakitu's/fishin' lakitu's incorrect head positioning (Credits: Mister Man)
 	bne 8052F54h
 	
 .org 0x8052F44
@@ -3463,7 +3463,7 @@ SpriteDoesNotHurt:
 	bne 805FC40h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.org 0x8062BF4	;Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: MisterMan)
+.org 0x8062BF4	;Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: Mister Man)
 	sub	r0,0Eh
 	
 .org 0x8064FF8	;koopaling stomp
@@ -3495,7 +3495,7 @@ StompedKoopalingOrPuppet:
 .org 0x8067E92
 	strh r4,[r1]
 	
-.org 0x806D3D6	;Fix Player floating if they fell from Iggy's/Larry's tilting platform while sliding (Credits: MisterMan)
+.org 0x806D3D6	;Fix Player floating if they fell from Iggy's/Larry's tilting platform while sliding (Credits: Mister Man)
 	blt DownNotAirborne
 	
 .org 0x806D3E6
@@ -3935,7 +3935,7 @@ SpriteTableStatus:
 	.halfword 0x114D, 0x1144
 	.halfword 0x1152
 	
-.org 0x80E7AE6	;Restored Bill Blaster's unused right bottom tile (Credits: MisterMan)
+.org 0x80E7AE6	;Restored Bill Blaster's unused right bottom tile (Credits: Mister Man)
 	.byte	0x1B ,0x40	
 	
 .org 0x80EE1B2	;Fix tiling error in intro level
@@ -3947,10 +3947,10 @@ SpriteTableStatus:
 .org 0x80EF1E4	;Fix first room of Donut ghosthouse has wrong bg color	
 	.byte 0x60
 	
-.org 0x80F9999	;Fix a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: MisterMan)
+.org 0x80F9999	;Fix a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: Mister Man)
 	.byte	0x64
 
-.org 0x80FA330	;Swap the dark rooms in front and back door to make the font door one have the checkpoint (Credits: MisterMan)
+.org 0x80FA330	;Swap the dark rooms in front and back door to make the font door one have the checkpoint (Credits: Mister Man)
 	.word	0x080F6D1C
 	
 .org 0x80FA5EC
@@ -3962,16 +3962,16 @@ SpriteTableStatus:
 .org 0x80FD19A
 	.halfword	0x01BD
 
-.org 0x80FD8A0	;Fix Forest of Illusion 2's background being positioned incorrectly after a checkpoint (Credits: MisterMan)
+.org 0x80FD8A0	;Fix Forest of Illusion 2's background being positioned incorrectly after a checkpoint (Credits: Mister Man)
 	.byte	0x60
 	
-.org 0x80FD93D	;Swap the dark rooms in front and back door to make the font door one have the checkpoint (Credits: MisterMan)
+.org 0x80FD93D	;Swap the dark rooms in front and back door to make the font door one have the checkpoint (Credits: Mister Man)
 	.byte	0x62	
 	
-.org 0x80FE727	;Fix bottom part of one of Yoshi's left facing sprites always uses Red Yoshi's palette regardless of the Yoshi's palette (Credits: MisterMan)
+.org 0x80FE727	;Fix bottom part of one of Yoshi's left facing sprites always uses Red Yoshi's palette regardless of the Yoshi's palette (Credits: Mister Man)
 	.byte	0x22, 0x62, 0x22, 0x63, 0x22	
 	
-.org 0x80FE77F	;Fix one of Yoshi's idle inside water sprites is not mirrored (Credits: MisterMan)
+.org 0x80FE77F	;Fix one of Yoshi's idle inside water sprites is not mirrored (Credits: Mister Man)
 	.byte	0x64	
 	
 .org 0x8101B2B	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3
@@ -4650,7 +4650,7 @@ SpriteTableStatus:
 .org 0x811A456
 	.halfword 0x0008
 	
-.org 0x813A76C +1Fh	;Fix Kamek allocating an incorrect number of OAM slots (Credits: MisterMan)
+.org 0x813A76C +1Fh	;Fix Kamek allocating an incorrect number of OAM slots (Credits: Mister Man)
 	.byte 0x03
 ;;;;;;;
 
@@ -4669,9 +4669,9 @@ SpriteTableStatus:
 .org 0x822425C
 	.byte 0x71, 0x40
 	
-.org 0x823C317	;Fix the SMW orchesta hit sample being off-key (Credits: MisterMan)
+.org 0x823C317	;Fix the SMW orchesta hit sample being off-key (Credits: Mister Man)
 	.byte	0x34
 	
-.org 0x8330CEE	;Fix the lead channel in the "Bowser Battle Phase 1" music track starting too early (Credits: MisterMan)
+.org 0x8330CEE	;Fix the lead channel in the "Bowser Battle Phase 1" music track starting too early (Credits: Mister Man)
 	.byte	0x81, 0x50
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

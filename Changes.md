@@ -36,10 +36,10 @@
 - Made the lightswitch solid for and hitable with sprites.
 - Lemmy/Wendy no longer give points when stomping on them, because no other boss does that.
 - Made the amount of points the Player gets when crushing two sprites together depending on how many of the sprites die.
-- Animated the berries in the "Welcome to dinosaurland" and the Yoshi's house credits scene (Credits: MisterMan).
-- Gave the backgrounds in the enemy roll credits their own color instead of all using the same (Credits: MisterMan).
-- Swapped the dark rooms in Front and Back door in Bowser's castle (Credits: MisterMan).
-- Restored Bill Blaster's unused tile (Credits: MisterMan).
+- Animated the berries in the "Welcome to dinosaurland" and the Yoshi's house credits scene (Credits: Mister Man).
+- Gave the backgrounds in the enemy roll credits their own color instead of all using the same (Credits: Mister Man).
+- Swapped the dark rooms in Front and Back door in Bowser's castle (Credits: Mister Man).
+- Restored Bill Blaster's unused tile (Credits: Mister Man).
 
 ## Bug Fixes
 - Fixed wendys castle has the wrong background color at the begin of the intro.
@@ -109,16 +109,16 @@
 - Fixed a bug that causes thwomps to always fall if they are vertically offscreen.
 - Fixed a bug that causes sprites to loose their interacion with the Player if to big parts of their sprites are horizontally offscreen.
 - Fixed some block collision function didn't handle 16 bit coordinates properly.
-- Fixed the SMW orchesta hit sample being off-key (Credits: MisterMan).
-- Fixed the lead channel in the "Bowser Battle Phase 1" music track starting too early (Credits: MisterMan).
-- Fixed a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: MisterMan).
-- Fixed the bottom part of one of Yoshi's sprites facing left in the world map always using red Yoshi's palette (Credits: MisterMan).
-- Fixed one of Yoshi's idle inside water sprites is not mirrored (Credits: MisterMan).
-- Fixed Forest of Illusion 2's background being positioned incorrectly after a checkpoint (Credits: MisterMan).
-- Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: MisterMan).
-- Fixed kamek allocating an incorrect number of OAM slots (Credits: MisterMan).
-- Fixed kamek's wand having the wrong priority (Credits: MisterMan).
-- Fixed a bug that causes the player floating when sliding off of Larry's/Iggy's tilting platform (Credits: MisterMan).
-- Fixed the palette of spat out Volcano Lotus/Lakitu in a pipe getting partially overwritten (Credits: MisterMan).
-- Fixed Lakitu / Fishin' Lakitu's head being incorrect positioned (Credits: MisterMan).
+- Fixed the SMW orchesta hit sample being off-key (Credits: Mister Man).
+- Fixed the lead channel in the "Bowser Battle Phase 1" music track starting too early (Credits: Mister Man).
+- Fixed a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: Mister Man).
+- Fixed the bottom part of one of Yoshi's sprites facing left in the world map always using red Yoshi's palette (Credits: Mister Man).
+- Fixed one of Yoshi's idle inside water sprites is not mirrored (Credits: Mister Man).
+- Fixed Forest of Illusion 2's background being positioned incorrectly after a checkpoint (Credits: Mister Man).
+- Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: Mister Man).
+- Fixed kamek allocating an incorrect number of OAM slots (Credits: Mister Man).
+- Fixed kamek's wand having the wrong priority (Credits: Mister Man).
+- Fixed a bug that causes the player floating when sliding off of Larry's/Iggy's tilting platform (Credits: Mister Man).
+- Fixed the palette of spat out Volcano Lotus/Lakitu in a pipe getting partially overwritten (Credits: Mister Man).
+- Fixed Lakitu / Fishin' Lakitu's head being incorrect positioned (Credits: Mister Man).
 - Fixed first room in Donut ghosthouse uses a wrong background color.

@@ -1,4 +1,4 @@
-;Update VRAM tiles in yoshis house credits cutscene (UVR, Credits: MisterMan)
+;Update VRAM tiles in yoshis house credits cutscene (UVR, Credits: Mister Man)
 .org 0x800076E
 	bne DownVRAMUpdate
 
@@ -50,7 +50,7 @@ DownVRAMUpdate:
 	bl CheckTriggerCutscene
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Update the Framecounter during the "Welcome to dinosaurland" and yoshis house credit cutscene to animate the berries (UFC, Credits: MisterMan)
+;Update the Framecounter during the "Welcome to dinosaurland" and yoshis house credit cutscene to animate the berries (UFC, Credits: Mister Man)
 .org 0x80044A6	;Welcome to dinosaurland cutscene
 	bl FreeSpaceUFC
 	
