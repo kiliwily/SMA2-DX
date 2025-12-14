@@ -1,5 +1,32 @@
-;Makes Mario/Luigi use palette 8 instead of 0 when on the Overworld
+;Update VRAM tiles in yoshis house credits cutscene (UVR, Credits: MisterMan)
+.org 0x800076E
+	bne DownVRAMUpdate
+
+.org 0x8000780
+	bhi 80007BCh
+	
+.org 0x8000794
+DownVRAMUpdate:
+	ldr r0,=3002340h
+	ldr r1,=0CE8h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,10h
+	bne 80007BCh
+	bl FreeSpaceUVR
+	bl 80021C4h
+	b 80007C4h
+	.pool
+	.word 0x00000000
+
+;Makes Mario/Luigi use palette 9 instead of 0 when on the Overworld
 ;to fix a graphical issue with yellow yoshi (MPM);;;;;;;;;;;;;;;;;;
+.org 0x80021F8
+	ldrb r6,[r0]
+	cmp r6,0h
+
 .org 0x8002202
 	ldr r5,=500020Ch
 	bl FreeSpaceMPM1
@@ -22,6 +49,14 @@
 	ldrb r0,[r1]
 	bl CheckTriggerCutscene
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Update the Framecounter during the welcome to dinosaurland and yoshis house credit cutscene to animate the berries (UFC, Credits: MisterMan)
+.org 0x80044A6	;Welcome to dinosaurland cutscene
+	bl FreeSpaceUFC
+	
+.org 0x8004F3A	;Yoshis house credits cutscene
+	bl FreeSpaceUFC
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevents extra lifes from beeing omited when exiting the level not at a goal (ELO)
 .org 0x8004704
@@ -457,7 +492,7 @@ ReturnSPR2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix out of bounds access of sprite status value (SOB) and despawn sprite that is in limbo when yoshis mouth is empty (DSL)
-;Also contains code to fix the Bravo Mario/Luigi message (FBM )when stunning a htrowable sprite with the cape;;;;;;;;;;;;;;
+;Also contains code to fix the Bravo Mario/Luigi message (FBM) when stunning a thrown sprite with the cape;;;;;;;;;;;;;;;;;
 .org 0x802B880	;Remove empty fct for when sprite is in yoshis mouth
 	.halfword 0x0000
 
@@ -520,8 +555,8 @@ DownCheckMessage2:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 
-;Fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains code to update yoshi sprite slot earlier to prevent bugs (UYE)
+;Fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains code to update yoshi sprite slot earlier to prevent bugs from occuring (UYE)
 .org 0x802C52E	;Fix skulll bug (FSB)
 	ldr r2,=3007A48h
 	ldr r0,=300302Ch
@@ -659,7 +694,7 @@ DownUYE2:
 	pop r0
 	bx r0
 	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent the player carrying an item while gliding, climbing, riding a yoshi or sliding (FIC)
 .org 0x802C750
@@ -744,7 +779,7 @@ DownUYE2:
 
 .org 0x803168C	;Prevent loosing yoshi when touching a ghost while beeing invincible
 	bl FreeSpaceFGS2
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix coins dropped by chucks when killed with fireballs don't sink in normal level lava
 .org 0x80338D0
@@ -787,7 +822,6 @@ DoCoinCheck:
 ;Also contains a fix for 0-time glitch;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent itembox item drops from turning into a coin at the goal (DIC);;;;;;;;;
 ;Also contains a fix for the palette of the reminders of a block destroyed by a chuck (FRB);;;;;;;;;;
-;Also contains a fix for a bug that causes chucks to destroy the ceiling in certain cases;;;;;;;;;;;;
 ;Also contains part 2 of fix item carry (FIC);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent the Player from activating a secret exit with a key after dying (FSD);
 ;Also contains part 2 of fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -934,82 +968,6 @@ GoodItem:
 .org 0x803E298
 	.pool
 
-.org 0x80428D4	;Fixes the palette of the reminders of a block destroyed by a chuck and prevents chucks from destroying the ceiling in certain cases
-	push r4-r7,r14
-	mov r7,r9
-	mov r6,r8
-	push r6,r7
-	add r0,2Bh
-	ldrb r0,[r0]
-	mov r1,4h
-	and r0,r1
-	cmp r0,0h
-	beq DownChuckDestroyNo
-	ldr r6,=3002340h
-	ldr r0,=1C58h
-	add r5,r6,r0
-	ldr r1,[r5]
-	add r1,31h
-	ldrb r0,[r1]
-	mov r8,r0
-	sub r1,1h
-	ldrb r0,[r1]
-	mov r9,r0
-	sub r1,3h
-	ldrb r7,[r1]
-	sub r1,1h
-	ldrb r4,[r1]
-	bl FreeSpaceFRB1
-	mov r0,r2
-	bl 802F044h
-	ldr r1,=1D4Ah
-	add r6,r6,r1
-	mov r0,2h
-	strb r0,[r6]
-	bl 800EEC8h
-	sub r4,10h
-	lsl r4,r4,18h
-	lsr r4,r4,18h
-	bl FreeSpaceFRB2
-	cmp r0,2Eh
-	beq ChuckDestroyMoreBlocks
-	cmp r0,1Eh
-	bne ChuckDestroyedBlocks
-ChuckDestroyMoreBlocks:
-	ldr r1,[r5]
-	add r1,31h
-	mov r0,r8
-	strb r0,[r1]
-	sub r1,1h
-	mov r0,r9
-	strb r0,[r1]
-	sub r1,3h
-	strb r7,[r1]
-	sub r1,1h
-	strb r4,[r1]
-	bl FreeSpaceFRB1
-	mov r0,r2
-	bl 802F044h
-	mov r0,2h
-	strb r0,[r6]
-	bl 800EEC8h
-ChuckDestroyedBlocks:
-	mov r0,1h
-	b DownChuckDestroyYes
-	.pool
-
-DownChuckDestroyNo:
-	mov r0,0h
-
-DownChuckDestroyYes:
-	pop r3,r4
-	mov r8,r3
-	mov r9,r4
-	pop r4-r7
-	pop r1
-	bx r1
-	.halfword 0x0000
-	
 .org 0x804923C	;Prevent yoshi from eating sparks (FYS)
 	push r14
 	mov r2,r0
@@ -1492,6 +1450,7 @@ DownOthers1:
 	bl FreeSpaceMPM3
 	
 .org 0x806BCE6
+	ldrb r0,[r4,5h]
 	bl FreeSpaceMPM4
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1585,7 +1544,7 @@ DownBlockHit:
 .org 0x806E430	;Put a mushroom in item stock if touching a checkpoint flag while big and item stock empty
 	bl FreeSpaceDMI
 	
-.org 0x806E5AA	;Fix a glitch that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins
+.org 0x806E5AA	;Fix a bug that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins
 	add r4,r1,r2
 	ldrb r0,[r4]
 	

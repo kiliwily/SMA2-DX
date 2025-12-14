@@ -88,7 +88,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	22h if bob-omb then exploding flag
 	2Ah Horizontal direction of sprite
 	2Bh blocked status. Sprite is blocked in direction:
-     (x8h=up, x4h=down, x2h=left, x1h = right, 1x=Sprite is inside block, 8x=Sprite touches side of screen)
+     (x8h=up, x4h=down, x2h=left, x1h = right, 2x=Sprite touching layer 2 from below, 4x=Sprite touching layer 2 from the side, 8x=Sprite touches layer 2 from above)
 	2Dh if yoshi then tongue animation
 	35h Palette
 	36h Animation frame
@@ -174,7 +174,7 @@ Format: n--sifhb
 3FE2 Players current pose
 3FEC Cape interaction X position within the level
 3FF0 Cape interaction Y position within the level
-3FF4 Player sliding flag (0=no sliing, 1C=normal sliding, 80=cape sliding)
+3FF4 Player pose when sliding (0=no sliing, 1C=normal sliding, 80=cape sliding)
 3FF6 Player is on the ground flag
 400D if = 80h, the player bounces off of a pink triangle
 400E current cape flying phase
@@ -183,6 +183,8 @@ Format: n--sifhb
 402D Flashing invulnerability timer (?)
 402E Picking up timer
 4043 Blue P-Switch active
+4058 Amount of tiles for the Player GFX to load (6h in overworld, 0Ah in levels)
+408A
 
 4100 Intro state
 4140 if != 0 then A or Start was pressed during the Intro
@@ -190,7 +192,7 @@ Format: n--sifhb
 422A+LevelId Levelbyte
 428C Player Points
 42C0 Player Lifes
-42C4(/4C6A?) Current Level Id (Adress written in 4224(/3F98?))
+42C4(/4C6A?) Current Level Id (Adress written in 3F98?)
 42F8 Unlocked Switch Palaces (RBYG 0000)
 42F9 Number of Exits found
 42FA Number of levels with Yoshi Coins collected
@@ -222,23 +224,25 @@ Format: n--sifhb
 4355 if And (40,02) != 0: Moon in W(1,3) collected
 4357 if And 20 != 0: Moon in W7 collected
 4358 if And 40 != 0: Moon in W5 collected
+43A8 xPos of Block checked
+43AC yPos of Block checked
 4434 BG3 scrolling speed
-408A
 546C No. of 1ups you get from a life chain (via Star, Stomping or Cape 1up trick)
 546E Timer between the 1ups when geting >1up (2up, 3up, 5up etc.)
 5476 Riding Yoshi flag
 54BB Flag that determines if Mario/Luigi dies or the level ends when they fall below the ground
 54D4 Star Timer
 54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
+54DE Level background color
 54E5 Timer between in game time updates
 54E6 ingame time hundreds
 54E7 ingame time tens
 54E8 ingame time ones
-550C Something with player animation
+550C Game freeze timer
 5578 Overworld path animation related
 558E Overworld path animation related (if = 1 the don't trigger animation)
 558F Current Overworld unlock event
-559B Current exit triggered (0=none, 1=normal, 2=secret, 80=exit already triggered)
+559B Current exit triggered (0=none, 1=normal, 2=secret, 80=exit already triggered or level ended before the exit)
 559F
 55A2
 55C9 Timer for screen shake and music change during the rise bowser skull cutscene
@@ -400,7 +404,7 @@ Format: uuucuuuu
 	u=Unknown
 	u=Unknown
 10A538 Pointer related to sprite OAM (used with byte 1Ah of sprite ram)
-13A76C Sprite related pointer (used with byte 1Ah of sprite ram)
+13A76C Number of OAM slots allocated per Sprite (used with byte 1Ah of sprite ram)
 
 109C00 First sprite property byte (3Eh in Enemy Ram) (Size: 0D2h)
 Format: sSjJcccc

@@ -1,4 +1,23 @@
 ;others
+.org 0x8000528	;Make the game wait for a VBlank with a BIOS function to reduce battery consumption on real GBA (Credits: MisterMan)
+	bne WaitEnd
+	ldr r2,=3002B64h
+	ldrh r0,[r2]
+	cmp r0,0h
+	bne WaitEnd
+	swi 5h
+WaitEnd:
+	ldr r1,=3002BC5h
+	ldrb r0,[r1]
+	cmp r0,0h
+	bne 8000468h
+	bl 809BE6Ch
+	b 8000468h
+	.halfword 0x0000
+	
+.org 0x8000560
+	.pool
+	
 .org 0x8002E6C	;Prevents the button combo from showing build date
 	beq 8002EBCh
 	
@@ -227,6 +246,75 @@ StartLoopGameOver:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix all bgs in the enemy roll credits use the same sky color (Credits: MisterMan)
+.org 0x8005098
+	ldr r2,=3002340h
+	ldr r5,=08C4h
+
+.org 0x80050A4
+	ldr r1,=1C58h
+	
+.org 0x80050B2
+	ldr r3,=1C5Ch
+	add r2,r2,r3
+	ldr r0,[r2]
+	ldrb r0,[r0,1Eh]
+	cmp r0,0Bh
+	bhi NoBGColor
+	ldr r1,=SkyColors
+	ldrb r0,[r1,r0]
+	lsl r0,r0,1h
+	ldr r2,=80D6584h
+	add r0,r2,r0
+	ldrh r0,[r0]
+	b StoreBGColor
+SkyColors:
+	.byte	0x00, 0x01, 0x02, 0x06, 0x01, 0x03, 0x08, 0x07
+	.byte	0x04, 0x05, 0x01, 0x03
+	.pool
+
+.org 0x80050F0
+StoreBGColor:
+	ldr r1,=2012C00h
+	strh r0,[r1]
+NoBGColor:
+	ldr r4,=3002340h
+	ldr r2,=8C8h
+
+.org 0x8005100
+	ldr r5,=1C58h
+
+.org 0x800510A
+	ldr r0,=08CCh
+	add r1,r4,r0
+	ldr r0,=0FF80h
+
+.org 0x8005116
+	ldr r1,=0FE80h
+	strh r1,[r0]
+	ldr r1,=08C4h
+	add r0,r4,r1
+	ldr r5,=08D4h
+
+.org 0x8005126
+	ldr r1,=08D8h
+
+.org 0x800514E
+	ldr r2,=0FFBFh
+
+.org 0x8005156
+	ldr r1,=4000008h
+	ldrh r0,[r1]
+	ldr r2,=0FFBFh
+
+.org 0x8005178
+	ldr r3,=0CE8h
+
+.org 0x8005194
+	.pool
+	.word 0x00000000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Set highscore to 0 when starting a new file and make each star in smw worth 2 000 000 points
 ;and in cmb 200 000 points (HST);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .org 0x8007796
@@ -316,6 +404,9 @@ ReturnPSS2:
 ;Also fixes bug when star runs out with less the 100 secs left;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .org 0x8008930
 	mov r1,30h
+
+.org 0x80093D2	;Fix pallete used by spat out Volcano Lotus / Lakitu getting partially overwritten (Credits: MisterMan)
+	mov	r3,0h
 
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
 	bne 800A6B8h
@@ -1340,9 +1431,9 @@ DownStomping1Ups1:
 	ldr r2,=0F33h
 	add r1,r0,r2
 	ldrb r0,[r1]
-	cmp r0,0Ah
+	cmp r0,2h
 	bls DownStomping1Ups2
-	mov r0,0Bh
+	mov r0,3h
 	strb r0,[r1]
 DownStomping1Ups2:
 	sub r3,r4,7h
@@ -1589,6 +1680,66 @@ SetPlayerHeightGhosts:
 .org 0x803176C
 	.pool
 
+.org 0x803229C	;Fix block check routine doesn't handle 16bit values properly (1)
+	push r4-r6,r14
+	mov r5,r0
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r4,r0,r1
+	ldr r1,[r4]
+	ldr r2,=3007A48h
+	ldr r0,[r2]
+	ldr r6,=0EC8h
+	add r0,r0,r6
+	add r1,30h
+	ldrh r0,[r0]
+	strh r0,[r1]
+	ldr r1,[r4]
+	ldr r0,[r2]
+	add r6,2h
+	add r0,r0,r6
+	add r1,2Ch
+	ldrh r0,[r0]
+	strh r0,[r1]
+	ldr r2,[r2]
+	ldr r1,=0ECDh
+	add r0,r2,r1
+	ldrb r3,[r0]
+	cmp r3,3h
+	bne Down16Bit1
+	ldr r0,[r4]
+	add r6,92h
+	add r1,r2,r6
+	ldrh r0,[r0,30h]
+	strh r0,[r1]
+	ldr r0,[r4]
+	ldr r4,=0F5Eh
+	add r1,r2,r4
+	ldrh r0,[r0,2Ch]
+	strh r0,[r1]
+
+Down16Bit1:
+	mov r2,r5
+	add r2,2Bh
+	ldr r0,=810A8CCh
+	add r0,r3,r0
+	ldrb r1,[r2]
+	ldrb r0,[r0]
+	orr r1,r0
+	strb r1,[r2]
+	pop r4-r6
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
 .org 0x803233E	;Despawn sprites faster after they sank in lava
 	mov r1,2h
 
@@ -1657,9 +1808,9 @@ DownThrownA1:
 	ldr r2,=0F33h
 	add r1,r0,r2
 	ldrb r0,[r1]
-	cmp r0,0Ah
+	cmp r0,2h
 	bls DownThrownA2
-	mov r0,0Bh
+	mov r0,3h
 	strb r0,[r1]	
 DownThrownA2:
 	ldrh r0,[r4,3Ah]
@@ -1732,9 +1883,9 @@ DownThrownB1:
 	ldr r2,=0F33h
 	add r1,r0,r2
 	ldrb r0,[r1]
-	cmp r0,0Ah
+	cmp r0,2h
 	bls DownThrownB2
-	mov r0,0Bh
+	mov r0,3h
 	strb r0,[r1]	
 DownThrownB2:
 	ldrh r0,[r4,3Ah]
@@ -1799,20 +1950,70 @@ DownLightSwitch:
 	cmp r2,1h
 	bhi 80344B2h
 	
-.org 0x8034506
+.org 0x8034502
+	mov r6,0h
+	ldrb r0,[r4,1Ah]
 	cmp r0,0C8h
-	beq 8034510h
+	beq ActivateBlock1
 	sub r0,83h
 	cmp r0,1h
-	bhi 8034518h
-
-.org 0x8034524
-	cmp r6,0C8h
-	beq 8034530h
-	mov r0,r6
+	bhi KillSprite1
+ActivateBlock1:
+	mov r0,r4
+	bl 8033DA4h
+	b CheckSprite2
+KillSprite1:
+	mov r0,2h
+	strb r0,[r4,1Ch]
+	ldr r0,=0FFFD0000h
+	str r0,[r4,0Ch]
+	add r6,1h
+CheckSprite2:
+	ldrb r0,[r5,1Ah]
+	cmp r0,80h
+	beq EndOfSpriteCheck
+	cmp r0,0C8h
+	beq ActivateBlock2
 	sub r0,83h
 	cmp r0,1h
-	bhi 803453Ch
+	bhi KillSprite2
+ActivateBlock2:
+	mov r0,r5
+	bl 8033DA4h
+	b EndOfSpriteCheck
+KillSprite2:	
+	mov r0,2h
+	strb r0,[r5,1Ch]
+	ldr r0,=0FFFD0000h
+	str r0,[r5,0Ch]
+	add r6,1h
+EndOfSpriteCheck:
+	mov r0,r4
+	bl 8033E58h
+	cmp r6,0h
+	beq OneSpriteKilled
+	mov r1,1h
+	cmp r6,2h
+	bne OneSpriteKilled
+	mov r1,3h
+OneSpriteKilled:
+	mov r0,r4
+	bl 803E430h
+NoSpriteKilled:
+	mov r1,80h
+	lsl r1,r1,9h
+	ldr r0,[r4,8h]
+	cmp r0,0h
+	blt SpriteDirection
+	neg r1,r1
+SpriteDirection:
+	neg r0,r1
+	str r1,[r4,8h]
+	str r0,[r5,8h]
+	pop r4-r6
+	pop r0
+	bx r0
+	.pool
 	
 .org 0x803516A	;Fixes a bug that causes big sprites to lose their interaction with the Player if too big parts of their sprite is horizonztally offscreen
 	bne DoPlayerInteraction
@@ -1894,11 +2095,6 @@ DownStar5up:
 	
 .org 0x8035246
 	add r0,r0,r3
-	
-.org 0x80352D8
-	cmp r0,0Ah
-	bls 80352E0h
-	mov r0,0Bh
 	
 ;Fix looping sound when hitting a solid sprite from below
 .org 0x803539A	;Fix momentum when standing or jumping/falling on a solid block
@@ -2398,6 +2594,170 @@ CallRewardFct:
 	mov r1,1h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+.org 0x803D23E	;Fix block check routine doesn't handle 16bit values properly (2)
+	ldr r3,=0EB4h
+
+.org 0x803D244
+	ldr r1,=1C58h
+
+.org 0x803D24E
+	strh r0,[r1]
+
+.org 0x803D266
+	bne Down16Bit2
+	b Down16Bit3
+	.word 0x00000000
+	.word 0x00000000
+Down16Bit2:
+	ldr r1,=0EB4h
+	add r0,r2,r1
+	mov r1,0h
+	ldsh r0,[r0,r1]
+	lsl r0,r0,10h
+	lsr r0,r0,18h
+	ldr r3,=0EBAh
+	
+.org 0x803D286
+	ldr r0,=0EB4h
+	
+.org 0x803D292
+	ldr r2,=0EBAh
+	
+.org 0x803D298
+	ldr r2,=1174h
+
+.org 0x803D2A8
+	ldr r0,=1CACh
+	add r2,r4,r0
+	ldr r0,=810B9EEh
+	add r0,r5,r0
+	mov r1,0h
+	ldsb r1,[r0,r1]
+	ldrh r2,[r2]
+	add r1,r1,r2
+	ldr r2,[r6]
+	ldr r3,=0EB6h
+	add r0,r2,r3
+	strh r1,[r0]
+	ldr r0,[r7]
+	add r0,30h
+	strh r1,[r0]
+	lsl r1,r1,10h
+	lsr r1,r1,18h
+	ldr r5,=0EB8h
+	add r0,r2,r5
+	strh r1,[r0]
+	add r1,r2,r3
+	ldrb r0,[r1]
+	strh r0,[r1]
+	add r0,r2,r5
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	cmp r0,1h
+	ble 803D2F4h
+	b 803D526h
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.halfword 0x0000
+
+.org 0x803D348
+	.pool
+
+.org 0x803D3B8
+	.word 0x00000000
+	.word 0x00000000
+Down16Bit3:
+	ldr r4,=3007A48h
+	ldr r2,[r4]
+	ldr r6,=3002340h
+	ldr r0,=1C58h
+	add r7,r6,r0
+	ldr r3,=0EB4h
+	add r0,r2,r3
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	lsl r0,r0,10h
+	lsr r0,r0,18h
+	ldr r1,=0EB8h
+	
+.org 0x803D3DE
+	ldr r0,=0EB4h
+	
+.org 0x803D3EA
+	ldr r1,=0EB8h
+	
+.org 0x803D3F8
+	ldr r0,=1CACh
+	add r2,r6,r0
+	ldr r0,=810B9EEh
+	add r0,r5,r0
+	mov r1,0h
+	ldsb r1,[r0,r1]
+	ldrh r2,[r2]
+	add r1,r1,r2
+	ldr r2,[r4]
+	ldr r3,=0EB6h
+	add r0,r2,r3
+	strh r1,[r0]
+	ldr r0,[r7]
+	add r0,30h
+	strh r1,[r0]
+	lsl r1,r1,10h
+	lsr r1,r1,18h
+	ldr r5,=0EBAh
+	add r2,r2,r5
+	strh r1,[r2]
+	ldr r2,[r4]
+	add r3,r2,r3
+	ldrb r0,[r3]
+	strh r0,[r3]
+	add r4,r2,r5
+	ldr r0,[r7]
+	ldr r5,=1174h
+	add r0,r0,r5
+	mov r5,0h
+	ldsh r1,[r4,r5]
+	ldrb r0,[r0]
+	cmp r1,r0
+	bge 803D526h
+	mov r1,0h
+	ldsh r0,[r3,r1]
+	asr r0,r0,4h
+	ldr r5,=0EB4h
+	add r3,r2,r5
+	ldrh r1,[r3]
+	orr r0,r1
+	strh r0,[r3]
+	ldrb r6,[r4]
+	ldr r1,=0ECDh
+	add r0,r2,r1
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bne 803D4BCh
+	ldr r0,=8119FD8h
+	lsl r2,r6,2h
+	add r0,r2,r0
+	mov r4,0h
+	ldsh r3,[r3,r4]
+	ldr r0,[r0]
+	add r4,r3,r0
+	ldr r0,[r7]
+	add r0,2Dh
+	ldrb r1,[r0]
+	lsl r1,r1,8h
+	add r4,r4,r1
+	ldr r0,=811A058h
+	b 803D4E4h
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
 ;Prevent Bravo Mario/Luigi message OAM from overwriting reward pop-ups on screen
 .org 0x803DBE6
 	b EndOfAllLoopsMessageOAM
@@ -2564,15 +2924,17 @@ No1upSound:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fix chucks and koopalings use the same counter for fireballs and stomp hits
-;Makes boos, boo blocks and big boos track the Players y-position accurately
-;Prevents ninjis from clipping into the ceiling;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for whistelin' chuck summons super koopas underwater;;;
-;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for thwomps always falling when vertically offscreen;;; 
-;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;
-;Also makes it so you can get up to a 5up when defeating wiggler with a star
-;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;
+;Fix chucks and koopalings use the same counter for fireballs and stomp hits;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Makes boos, boo blocks and big boos track the Players y-position accurately;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Prevents ninjis from clipping into the ceiling;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for a bug that causes the reminders of a block destroyed by a chuck use the wrong palette
+;Also contains a fix for a bug that causes chucks to destroy the ceiling in certain cases;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for whistelin' chuck summons super koopas underwater;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for thwomps always falling when vertically offscreen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also makes it so you can get up to a 5up when defeating wiggler with a star;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .org 0x803E7C4	;chucks fireballs 
 	add r1,3h
 
@@ -2599,6 +2961,81 @@ No1upSound:
 
 .org 0x8042830
 	cmp r0,0Eh
+	
+.org 0x80428D4	;Fixes the palette of the reminders of a block destroyed by a chuck and prevents chucks from destroying the ceiling in certain cases
+	push r4-r7,r14
+	add r0,2Bh
+	ldrb r0,[r0]
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
+	beq DownChuckDestroyNo
+	ldr r6,=3002340h
+	ldr r0,=1C58h
+	add r5,r6,r0
+	ldr r1,[r5]
+	add r1,30h
+	ldrh r7,[r1]
+	sub r1,4h
+	ldrh r4,[r1]
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0674h
+	add r0,r0,r1
+	ldrh r2,[r0]
+	mov r0,0h
+	cmp r2,1Eh
+	beq TurnBlockDestroyed1
+	mov r0,0FFh
+TurnBlockDestroyed1:
+	bl 802F044h
+	ldr r1,=1D4Ah
+	add r6,r6,r1
+	mov r0,2h
+	strb r0,[r6]
+	bl 800EEC8h
+	sub r4,10h
+	mov r0,r7
+	mov r1,r4
+	bl 8032478h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldrb r2,[r0]
+	ldr r1,=0674h
+	add r0,r0,r1
+	strh r2,[r0]
+	ldrh r2,[r0]
+	cmp r2,2Eh
+	beq ChuckDestroyMoreBlocks
+	cmp r2,1Eh
+	bne ChuckDestroyedBlocks
+ChuckDestroyMoreBlocks:
+	ldr r1,[r5]
+	add r1,30h
+	strh r7,[r1]
+	sub r1,4h
+	strh r4,[r1]
+	mov r0,0h
+	cmp r2,1Eh
+	beq TurnBlockDestroyed2
+	mov r0,0FFh
+TurnBlockDestroyed2:
+	bl 802F044h
+	mov r0,2h
+	strb r0,[r6]
+	bl 800EEC8h
+ChuckDestroyedBlocks:
+	mov r0,1h
+	b DownChuckDestroyYes
+	.pool
+
+DownChuckDestroyNo:
+	mov r0,0h
+
+DownChuckDestroyYes:
+	pop r4-r7
+	pop r1
+	bx r1
 	
 .org 0x8043494	;Fix whistlin' chucks summons super koopas underwater
 	ldr r2,=3002340h
@@ -2699,16 +3136,14 @@ NotAt5ups2:
 .org 0x80458C4
 	.pool
 	
-.org 0x8045904
-	cmp r0,0Ah
-	bls 804590Ch
-	mov r0,0Bh
-	
 .org 0x804A1AE	;Prevent thwomps from always falling when vertially offscreen
 	ble 804A210h
 
 .org 0x804A1F4
 	add r0,28h
+
+.org 0x80501C4	;Fixed kamek's wand having a higher sprite priority than its body (Credits: MisterMan)
+	.halfword 0x0939
 
 .org 0x80506B6	;Fix kamek's magic turns stone into sprites
 	bhi 805074Ah
@@ -2718,6 +3153,15 @@ NotAt5ups2:
 	
 .org 0x80506F2
 	bhi 80506F6h
+	
+.org 0x8052F3E	;Fix lakitu's / lishin' lakitu's incorrect head positioning (Credits: MisterMan)
+	bne 8052F54h
+	
+.org 0x8052F44
+	mov r1,0h
+
+.org 0x8052F58
+	mov r1,2h
 	
 .org 0x8055A6A	;Fix priority of smasher
 	mov r0,0Ch
@@ -2801,11 +3245,6 @@ WigglerWriteLimit:
 
 .org 0x80589DC
 	.pool
-	
-.org 0x8058A14
-	cmp r0,0Ah
-	bls 8058A4Eh
-	mov r0,0Bh
 	
 .org 0x805CBB0	;Reset Yoshicolor when reseting Yoshi
 	strh r1,[r0]
@@ -3023,6 +3462,9 @@ SpriteDoesNotHurt:
 	cmp r0,8h
 	bne 805FC40h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.org 0x8062BF4	;Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: MisterMan)
+	sub	r0,0Eh
 	
 .org 0x8064FF8	;koopaling stomp
 	add r0,4h
@@ -3032,6 +3474,16 @@ SpriteDoesNotHurt:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
+.org 0x8066CC4	;Prevent Lemmy and Wendy from giving points after stomping on them
+	bgt StompedKoopalingOrPuppet
+
+.org 0x8066CD4
+	.word 0x00000000
+	.word 0x00000000
+StompedKoopalingOrPuppet:
+	mov r0,r4
+	bl 803056Ch
+
 .org 0x8067E60	;Reduce y-speed of item on goal to prevent it from despawn
 	.word 0xFFFE0000
 	
@@ -3042,6 +3494,33 @@ SpriteDoesNotHurt:
 
 .org 0x8067E92
 	strh r4,[r1]
+	
+.org 0x806D3D6	;Fix Player floating if they fell from Iggy's / Larry's tilting platform while sliding (Credits: MisterMan)
+	blt DownNotAirborne
+	
+.org 0x806D3E6
+	b DownNotAirborne
+
+.org 0x806D3FC
+	ldr r2,=3002340h
+	ldr r1,=1C66h
+
+.org 0x806D408
+	ldr r1,=1C61h
+
+.org 0x806D412
+	bne DownNotAirborne
+	mov r0,24h
+	strb r0,[r3]
+DownNotAirborne:
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
 ;;;;;;;
 
 ;Part of StarBlockRespawn (SBR)
@@ -3456,11 +3935,44 @@ SpriteTableStatus:
 	.halfword 0x114D, 0x1144
 	.halfword 0x1152
 	
-.org 0x80EE1B2	;Fixes tiling error in intro level
+.org 0x80E7AE6	;Restored Bill Blaster's unused right bottom tile (Credits: MisterMan)
+	.byte	0x1B ,0x40	
+	
+.org 0x80EE1B2	;Fix tiling error in intro level
 	.byte 0x1A
 	
 .org 0x80EF1C2	;Removes time limit in top secret area
 	.byte 0x00
+	
+.org 0x80EF1E4	;Fix Donut ghosthouse has wrong bg color	
+	.byte 0x60
+	
+.org 0x80F9999	;Fix a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: MisterMan)
+	.byte	0x64
+
+.org 0x80FA330	;Swap the dark rooms in front and back door to make the font door one have the checkpoint (Credits: MisterMan)
+	.word	0x080F6D1C
+	
+.org 0x80FA5EC
+	.word	0x080F3737
+	
+.org 0x80FBE7D
+	.byte	0x62, 0x02
+	
+.org 0x80FD19A
+	.halfword	0x01BD
+
+.org 0x80FD8A0	;Fix Forest of Illusion 2's background being positioned incorrectly after a checkpoint (Credits: MisterMan)
+	.byte	0x60
+	
+.org 0x80FD93D	;Swap the dark rooms in front and back door to make the font door one have the checkpoint (Credits: MisterMan)
+	.byte	0x62	
+	
+.org 0x80FE727	;Fix bottom part of one of Yoshi's left facing sprites always uses Red Yoshi's palette regardless of the Yoshi's palette (Credits: MisterMan)
+	.byte	0x22, 0x62, 0x22, 0x63, 0x22	
+	
+.org 0x80FE77F	;Fix one of Yoshi's idle inside water sprites is not mirrored (Credits: MisterMan)
+	.byte	0x64	
 	
 .org 0x8101B2B	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3
 	.byte 0x55, 0x58, 0x5D, 0x00, 0x00
@@ -4137,6 +4649,9 @@ SpriteTableStatus:
 	
 .org 0x811A456
 	.halfword 0x0008
+	
+.org 0x813A76C +1Fh	;Fix Kamek allocating an incorrect number of sprites in OAM (Credits: MisterMan)
+	.byte 0x03
 ;;;;;;;
 
 .org 0x813BA88
@@ -4153,4 +4668,10 @@ SpriteTableStatus:
 
 .org 0x822425C
 	.byte 0x71, 0x40
+	
+.org 0x823C317	;Fix the SMW orchesta hit sample being off-key (Credits: MisterMan)
+	.byte	0x34
+	
+.org 0x8330CEE	;Fix the lead channel in the "Bowser Battle Phase 1" music track starting too early (Credits: MisterMan)
+	.byte	0x81, 0x50
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

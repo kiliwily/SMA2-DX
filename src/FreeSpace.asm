@@ -6,11 +6,26 @@ FreeSpaceLDT:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceUVR:
+	push r14
+	ldr r1,=3002340h
+	ldr r0,=886h
+	add r1,r1,r0
+	ldrb r0,[r1]
+	sub r0,2Eh
+	cmp r0,3h
+	bhi NoVRAMUpdate
+	bl 800204Ch
+NoVRAMUpdate:
+	pop r0
+	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceMPM1:
 	push r14
-	bl CheckMarioOverworld
-	cmp r0,0h
-	beq NotInOverworld1
+	cmp r6,6h
+	bne NotInOverworld1
 	mov r0,90h
 	lsl r0,r0,1h
 	add r5,r5,r0
@@ -19,44 +34,20 @@ NotInOverworld1:
 	add r1,r5,0
 	pop r2
 	bx r2
-	
-CheckMarioOverworld:
-	ldr r2,=3002340h
-	ldr r1,=0886h
-	add r0,r2,r1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceUFC:
+	push r14
+	bl 80014F4h
+	ldr r0,=3002340h
+	ldr r1,=0894h
+	add r0,r0,r1
 	ldrb r1,[r0]
-	mov r0,0h
-	cmp r1,1Ch
-	bcc ReturnNotOverworld
-	cmp r1,1Fh
-	bcc ReturnOverworld
-	cmp r1,3Eh
-	beq ReturnOverworld
-	cmp r1,3Fh
-	beq ReturnOverworld
-	cmp r1,43h
-	beq ReturnOverworld
-	cmp r1,44h
-	beq ReturnOverworld
-	cmp r1,1Fh
-	bne ReturnNotOverworld
-	ldr r0,=1C58h
-	add r1,r2,r0
-	ldr r0,[r1]
-	ldr r1,=114Bh
-	add r2,r0,r1
-	ldrb r1,[r2]
-	mov r0,0h
-	cmp r1,0h
-	bne ReturnNotOverworld
-	add r2,3h
-	ldrb r1,[r2]
-	cmp r1,0h
-	bne ReturnNotOverworld
-ReturnOverworld:
-	mov r0,1h
-ReturnNotOverworld:	
-	bx r14
+	add r1,1h
+	strb r1,[r0]
+	pop r0
+	bx r0
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -570,40 +561,6 @@ DownPSPO2:
 	bx r14
 	.pool
 	
-FreeSpaceFRB1:
-	mov r2,0h
-	ldr r0,=3007A48h
-	ldr r0,[r0]
-	ldr r1,=0674h
-	add r0,r0,r1
-	ldrh r0,[r0]
-	cmp r0,1Eh
-	beq TurnBlockDestroyed
-	mov r2,0FFh
-TurnBlockDestroyed:
-	bx r14
-	.pool
-	
-FreeSpaceFRB2:
-	push r14
-	mov r0,r8
-	lsl r0,r0,8h
-	add r0,r9
-	mov r1,r7
-	lsl r1,r1,8h
-	add r1,r1,r4
-	bl 8032478h
-	ldr r1,=3007A48h
-	ldr r2,[r1]
-	ldrb r0,[r2]
-	ldr r1,=0674h
-	add r2,r2,r1
-	strh r0,[r2]
-	ldrh r0,[r2]
-	pop r1
-	bx r1
-	.pool
-	
 FreeSpaceFYS:
 	ldrb r0,[r2,1Ah]
 	cmp r0,0A5h
@@ -1095,34 +1052,37 @@ FreeSpaceGHP3:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceMPM3:
 	push r14
-	add r3,r0,0
-	bl CheckMarioOverworld
-	cmp r0,0h
-	beq NotInOverworld2
-	mov r0,90h
-	lsl r0,r0,1h
-	add r3,r3,r0
+	ldr r3,=1D18h
+	add r1,r5,r3
+	ldrb r1,[r1]
+	cmp r1,6h
+	bne NotInOverworld2
+	mov r2,90h
+	lsl r2,r2,1h
+	add r0,r0,r2
 NotInOverworld2:
-	add r0,r3,0
 	add r1,r4,0
 	mov r2,14h
 	pop r3
 	bx r3
+	.pool
 	
 FreeSpaceMPM4:
 	push r14
-	bl CheckMarioOverworld
-	add r2,r0,0h
-	ldrb r0,[r4,5h]
 	mov r1,0Fh
-	cmp r2,0h
-	beq NotInOverworld3
+	and r0,r1
+	ldr r3,=3002340h
+	ldr r2,=1D18h
+	add r2,r3,r2
+	ldrb r2,[r2]
+	cmp r2,6h
+	bne NotInOverworld3
 	mov r1,90h
 	orr r0,r1
-	mov r1,9Fh
 NotInOverworld3:
 	pop r2
 	bx r2
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
