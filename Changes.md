@@ -6,29 +6,29 @@
 - The game saves which save data was saved last.
 - The Yoshi coin in the second intro level changes in to a Peach coin once they are unlocked.
 - The status of the two intro cutscenes (color palette, sprite set, yoshi coin) now change depending on what is unlocked inthe last used save data.
-- Checkpoints get reset when you save & quit the game to make collecting yoshi coins easier.
-- Save and choosing back to return to the overworld can be used in Yoshis House and Top Secert Area at any time.
+- Checkpoints get reset when you save & quit the game to make collecting Yoshi coins easier.
+- Save and choosing back to return to the overworld can be used in Yoshi's House and Top Secert Area at any time.
 - The save promt no longer appears after beating a ghost house, the ghost ship or a level in the special world because you can save at any time by pressing start.
 - Wrap around (pressing up while on the top entry in a menu puts the cursor to the bottom entry and vice versa) has been added on several menus that didn't have it before.
 - Mushrooms no longer overwrite flowers and feathers in the item inventory.
-- Items in the inventory no longer auto drop when Mario/Luigi becomes small (to prevent Mario/Luigi being unable to get the item).
-- A sprite that was carried over the goal no longer gets changed into a red mushroom if Mario/Luigi is already big and the inventory is not empty. It gets changed to a 1up mushroom instead.
-- Mario/Luigi get 100p for collecting a regular coin (like in virtually every other Mario game). Coins from a coin block also give 100p each.
-- Several sprites (red mushroom, flower, feather, star, p-ballon, etc.) get changed to a coin when they're on screen while Mario/Luigi enters the goal (inspired by SMA4/SMB3). This does not happen to items in the inventory.
-- Yoshi now stays in Lakitus cloud even when Mario/Luigi unmounts him.
+- Items in the inventory no longer auto drop when the Player becomes small (to prevent the Player being unable to get the item).
+- A sprite that was carried over the goal no longer gets changed into a red mushroom if the Player is already big and the inventory is not empty. It gets changed to a 1up mushroom instead.
+- The Player now gets 100p for collecting a regular coin (like in virtually every other Mario game). Coins from a coin block also give 100p each.
+- Several sprites (red mushroom, flower, feather, star, p-ballon, etc.) get changed to a coin when they're on screen while the Player enters the goal (inspired by SMA4/SMB3). This does not happen to items in the inventory.
+- Yoshi now stays in Lakitus cloud even when the Player unmounts.
 - Removed the time limit in Top Secret Area.
 - Yoshi now swallows null sprites immediately, because he is not able to spite them out in SMA2 anyway.
-- ?-Block with yoshi inside and star blocks respawn after resetting the area (coin counter for star block still gets reseted after getting a 1up out of it).
+- ?-Block with Yoshi inside and star blocks respawn after resetting the area (coin counter for star block still gets reseted after getting a 1up out of it).
 - 3up moons and hidden 1ups reapear when reentering a level instead of having to reload the save file.
 - The background in Forest Secret now moves slower.
 - The smasher in several fortresses are behind other sprites (like in the SNES version).
-- Line guided Fuzzy can be killed and eaten by Yoshi like the other Fuzzys that move around blocks.
-- The reward chain when enemies are on the screen while touching the goal now starts at 1000p and gets increased by 1 step at a tim instead of starting at 100p and getting increased by 2 steps at a time (inspred by SMA4/SMB3).
+- Line guided fuzzys can be killed and eaten by Yoshi like the other Fuzzys that move around blocks.
+- The reward chain when enemies are on the screen while touching the goal now starts at 1000p and gets increased by 1 step at a time instead of starting at 100p and getting increased by 2 steps at a time (inspred by SMA4/SMB3).
 - The reward chain when killing multiple enemies with a shell or a star or stomping on multiple enemies in a row now caps at 5ups instead of 1ups.
 - The reward chain when collecting silver coins now caps at 5ups instead of 3ups.
 - The reward for collecting more than 5 Yoshi coins in a level caps at 5ups instead of 1ups.
 - Ups get added much faster to the counter.
-- When Mario/Luigi touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory.
+- When the Player touches a checkpoint while being at least big and the inventory is empty, a mushroom gets in the inventory.
 - The speed of an item that a sprite gets changed into when being carried through the goal was reduced to prevent it from going offscreen and despawning.
 - Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
 - Despawn the sprite in yoshis mouth when yoshi despawns.
@@ -48,8 +48,8 @@
 - Fixed a bug that causes the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
 - Fixed Yoshis bongos play in bonus room music even when Yoshi is not present.
 - Fixed an oversight that causes Iggy to use Larry's hair during his bossfight.
-- Fixed a bug that causes Mario/Luigi to glitch into the moving walls during Roys boss fight.
-- Fixed Wendys bow when she looks left/right during her bossfight.
+- Fixed a bug that causes the Player to glitch into the moving walls during Roy's boss fight.
+- Fixed Wendy's bow when she looks left/right during her bossfight.
 - Added a missing . in the german message of Wendy's Fortress getting destroyed cutscene.
 - Fixed an exploit that makes several bosses and chucks much easier to defeat, because the counter for hitting them with fire balls and stomping on them is the same.
 - Fixed a part of diggin' Chuck's shoulder was coverd by his head while digging.
