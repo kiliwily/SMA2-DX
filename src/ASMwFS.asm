@@ -50,7 +50,7 @@ DownVRAMUpdate:
 	bl CheckTriggerCutscene
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Update the Framecounter during the welcome to dinosaurland and yoshis house credit cutscene to animate the berries (UFC, Credits: MisterMan)
+;Update the Framecounter during the "Welcome to dinosaurland" and yoshis house credit cutscene to animate the berries (UFC, Credits: MisterMan)
 .org 0x80044A6	;Welcome to dinosaurland cutscene
 	bl FreeSpaceUFC
 	

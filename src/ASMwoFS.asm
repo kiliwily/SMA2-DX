@@ -405,7 +405,7 @@ ReturnPSS2:
 .org 0x8008930
 	mov r1,30h
 
-.org 0x80093D2	;Fix pallete used by spat out Volcano Lotus / Lakitu getting partially overwritten (Credits: MisterMan)
+.org 0x80093D2	;Fix pallete used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: MisterMan)
 	mov	r3,0h
 
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
@@ -3154,7 +3154,7 @@ NotAt5ups2:
 .org 0x80506F2
 	bhi 80506F6h
 	
-.org 0x8052F3E	;Fix lakitu's / lishin' lakitu's incorrect head positioning (Credits: MisterMan)
+.org 0x8052F3E	;Fix lakitu's/fishin' lakitu's incorrect head positioning (Credits: MisterMan)
 	bne 8052F54h
 	
 .org 0x8052F44
@@ -3474,7 +3474,7 @@ SpriteDoesNotHurt:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
-.org 0x8066CC4	;Prevent Lemmy and Wendy from giving points after stomping on them
+.org 0x8066CC4	;Prevent Lemmy/Wendy from giving points after stomping on them
 	bgt StompedKoopalingOrPuppet
 
 .org 0x8066CD4
@@ -3495,7 +3495,7 @@ StompedKoopalingOrPuppet:
 .org 0x8067E92
 	strh r4,[r1]
 	
-.org 0x806D3D6	;Fix Player floating if they fell from Iggy's / Larry's tilting platform while sliding (Credits: MisterMan)
+.org 0x806D3D6	;Fix Player floating if they fell from Iggy's/Larry's tilting platform while sliding (Credits: MisterMan)
 	blt DownNotAirborne
 	
 .org 0x806D3E6
@@ -3944,7 +3944,7 @@ SpriteTableStatus:
 .org 0x80EF1C2	;Removes time limit in top secret area
 	.byte 0x00
 	
-.org 0x80EF1E4	;Fix Donut ghosthouse has wrong bg color	
+.org 0x80EF1E4	;Fix first room of Donut ghosthouse has wrong bg color	
 	.byte 0x60
 	
 .org 0x80F9999	;Fix a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: MisterMan)
@@ -4650,7 +4650,7 @@ SpriteTableStatus:
 .org 0x811A456
 	.halfword 0x0008
 	
-.org 0x813A76C +1Fh	;Fix Kamek allocating an incorrect number of sprites in OAM (Credits: MisterMan)
+.org 0x813A76C +1Fh	;Fix Kamek allocating an incorrect number of OAM slots (Credits: MisterMan)
 	.byte 0x03
 ;;;;;;;
 
