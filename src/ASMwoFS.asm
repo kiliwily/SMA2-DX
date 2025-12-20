@@ -405,7 +405,7 @@ ReturnPSS2:
 .org 0x8008930
 	mov r1,30h
 
-.org 0x80093D2	;Fix pallete used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: Mister Man)
+.org 0x80093D2	;Fix palette used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: Mister Man)
 	mov	r3,0h
 
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
@@ -3934,6 +3934,42 @@ SpriteTableStatus:
 	.halfword 0x114A, 0x1144
 	.halfword 0x114D, 0x1144
 	.halfword 0x1152
+
+.org 0x80E680B	;Fix palette of Lemmy's/Wendy's pipe in enemy roll credits
+	.byte 0x15
+	
+.org 0x80E680F
+	.byte 0x15
+
+.org 0x80E6827
+	.byte 0x15
+	
+.org 0x80E682B
+	.byte 0x15
+
+.org 0x80E66AE	;Fix palette of Reznor platform in enemy roll credits
+	.byte 0x13
+
+.org 0x80E66B2
+	.byte 0x53
+
+.org 0x80E66D6
+	.byte 0x13
+	
+.org 0x80E66DA
+	.byte 0x53
+	
+.org 0x80E66DE
+	.byte 0x13
+	
+.org 0x80E66E2
+	.byte 0x53
+	
+.org 0x80E66F6
+	.byte 0x13
+	
+.org 0x80E66FA
+	.byte 0x53
 	
 .org 0x80E7AE6	;Restored Bill Blaster's unused right bottom tile (Credits: Mister Man)
 	.byte	0x1B ,0x40	
@@ -4522,7 +4558,7 @@ SpriteTableStatus:
 .org 0x8109F48 +87h	;Turn lakitu's cloud into a coin when goal passed
 	.byte 0x09
 
-.org 0x8109F48 +09Ch	;Prevent amazing flying hammer bro plattform from changing direction if touched
+.org 0x8109F48 +09Ch	;Prevent amazing flying hammer bro platform from changing direction if touched
 	.byte 0x99
 
 .org 0x8109F48 +0A6h	;Make iggy's ball projectile inedible
@@ -4540,7 +4576,7 @@ SpriteTableStatus:
 .org 0x8109F48 +0BBh	;Prevent moving castle block from turning into a coin on the goal
 	.byte 0x39
 	
-.org 0x8109F48 +0C0h	;Prevent sinking gray plattform from turning into a coin on the goal
+.org 0x8109F48 +0C0h	;Prevent sinking gray platform from turning into a coin on the goal
 	.byte 0xB9
 
 .org 0x8109F48 +0C6h	;Prevent spotlight from staying in yoshis mouth and spawning a new sprite
@@ -4558,7 +4594,7 @@ SpriteTableStatus:
 .org 0x810A01A +49h	;Make growing/shrinking pipe invincible
 	.byte 0x44
 
-.org 0x810A01A +64h	;Make several sprites which are no plattforms not passable from the ground and make fuzzies beatable by sliding
+.org 0x810A01A +64h	;Make several sprites which are no platforms not passable from the ground and make fuzzies beatable by sliding
 	.byte 0x44, 0x44, 0x44, 0x44, 0x00
 
 .org 0x810A01A +080h	;Make key invincible
@@ -4571,7 +4607,7 @@ SpriteTableStatus:
 	.byte 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x46, 0x44
 	.byte 0x05
 
-.org 0x810A01A +09Ch	;Make amazing flying hammer brother plattform invincible
+.org 0x810A01A +09Ch	;Make amazing flying hammer brother platform invincible
 	.byte 0x44
 
 .org 0x810A01A +0A1h	;Make bowsers ball invincible and prevent mecha koopas from getting stuck in walls
@@ -4587,7 +4623,7 @@ SpriteTableStatus:
 .org 0x810A01A +0C0h	;Make sinking gray platform in lava disapear on goal like other platforms
 	.byte 0x45
 
-.org 0x810A01A +0C4h	;Fix spotlight properties and make grey plattforms and big boo boss invincible
+.org 0x810A01A +0C4h	;Fix spotlight properties and make grey platforms and big boo boss invincible
 	.byte 0x45, 0x45, 0x46
 ;----------------------------------------------------------
 .org 0x810A0EC +05Bh	;Make several sprites solid for yoshi

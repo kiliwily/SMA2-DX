@@ -42,7 +42,7 @@
 - Restored Bill Blaster's unused tile (Credits: Mister Man).
 
 ## Bug Fixes
-- Fixed wendys castle has the wrong background color at the begin of the intro.
+- Fixed Wendy's castle has the wrong background color at the begin of the intro.
 - Fixed a bug, that causes the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro.
 - Fixed a tiling error in the intro level.
 - Fixed a bug that causes the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
@@ -122,3 +122,4 @@
 - Fixed the palette of spat out Volcano Lotus/Lakitu in a pipe getting partially overwritten (Credits: Mister Man).
 - Fixed Lakitu / Fishin' Lakitu's head being incorrect positioned (Credits: Mister Man).
 - Fixed first room in Donut ghosthouse uses a wrong background color.
+- Fixed Reznor platform and Lemmy's/Wendy's pipe use the wrong palette in the enemy roll credits.

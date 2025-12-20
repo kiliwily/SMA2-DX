@@ -23,6 +23,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 
 2355 Language Kopie
 2000395 Language Speicher
+2012C00 Main background color
 
 80083D0
 80032E0
