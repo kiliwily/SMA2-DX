@@ -17,7 +17,7 @@
 - Several sprites (red mushroom, flower, feather, star, p-ballon, etc.) get changed to a coin when they're on screen while the Player enters the goal (inspired by SMA4/SMB3). This does not happen to items in the inventory.
 - Yoshi now stays in Lakitus cloud even when the Player unmounts.
 - Removed the time limit in Top Secret Area.
-- Yoshi now swallows null sprites immediately, because he is not able to spite them out in SMA2 anyway.
+- Yoshi now swallows null sprites immediately, because he is not able to spit them out in SMA2 anyway.
 - ?-Block with Yoshi inside and star blocks respawn after resetting the area (coin counter for star block still gets reseted after getting a 1up out of it).
 - 3up moons and hidden 1ups reapear when reentering a level instead of having to reload the save file.
 - The background in Forest Secret now moves slower.
@@ -40,6 +40,7 @@
 - Gave the backgrounds in the enemy roll credits their own color instead of all using the same (Credits: Mister Man).
 - Swapped the dark rooms in Front and Back door in Bowser's castle (Credits: Mister Man).
 - Restored Bill Blaster's unused tile (Credits: Mister Man).
+- Player and Yoshi fireballs no longer despawn immediately when shooting them while being slightly offscreen.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
@@ -78,17 +79,17 @@
 - Fixed an oversight that causes the SMA2 exclusive cutscene after collecting all Yoshi coins to overwrite the castle gets destroyed cutscene.
 - Fixed an oversight that causes the game over message to overwrite the time up message.
 - Fixed an oversight that causes the Bravo Mario/Luigi message when collection >10ups in a row from overwritng a normal reward pop up in some cases.
-- Fixed a bug that causes a time up message being shown when the player dies in a level without time limit.
+- Fixed a bug that causes a time up message being shown when the Player dies in a level without time limit.
 - Fixed a bug that causes Mario to use Luigi's voice or vice versa when saying Bravo after collecting 5 Yoshi coins in a level.
 - Fixed a bug that causes the Player to be immune to unkillable sprites when riding a yoshi.
 - Fixed a bug that causes the Player to loose Yoshi when touching several sprites while having star immunity.
 - Fixed a bug that causes the key in Star Road 3 to change into a glitched sprite when it is in Yoshis mouth while activating to many !-Blocks at once.
 - Fixed several bugs that can causes multiple Yoshi eggs spawning from the same ?-Block.
 - Fixed a bug that causes a glitched Yoshi to spawn because another sprite occupied Yoshis sprite slot before Yoshi is fully despawned.
-- Fixed a bug that causes the Player to get the wrong amount of points when eating a coin with Yoshi that was dropped from a chuck after defeating him with fire balls.
+- Fixed a bug that causes the Player to get the wrong amount of points when eating a coin with Yoshi that was dropped from a chuck after defeating him with fireballs.
 - Fixed a bug that allows the Player to swim or fly under the ground below solid blocks.
 - Fixed a bug that causes weird behaviour when riding on floating skulls and touching more than on skull at once.
-- Fixed an oversight that made several sprites ignoring if Mario/Luigi is ducking.
+- Fixed an oversight that made several sprites ignoring if the Player is ducking.
 - Fixed several bugs when carrying an item through a pipe.
 - Fixed several bugs that allowed the Player to glide without a cape, while riding a Yoshi, while climbing and while holding an item.
 - Fixed a bug that allows the Player to hold an item while climbing.
@@ -100,9 +101,9 @@
 - Fixed a pixel error in the ?-Block spin animation.
 - Fixed a bug that allowed the Player to use the cape spin attack while riding a yoshi.
 - Fixed a bug that causes kamek's magic to change parts of the ceiling into sprites.
-- Fixed an oversight that causes sprites that chase/aim at Mario/Luigi chase/aim at a point above Mario/Luigi.
+- Fixed an oversight that causes sprites that chase/aim at the Player chase/aim at a point above the Player.
 - Fixed a bug that causes the midpoint to get always activated when dying after the level ended.
-- Fixed a bug that causes yoshi to move his head like he is running when he sinks in lava after running away.
+- Fixed a bug that causes Yoshi to move his head like he is running when he sinks in lava after running away.
 - Fixed a bug that causes buzzy beetle to immediately despawn when touching lava instead of sinking.
 - Fixed a bug that causes chucks to destroy blocks which they are not supposed to destroy, spawn block splitter even if they didn't destroy a block or spawn block splitter with the wrong color.
 - Fixed a bug that causes the game to softlock if collecting a feather offscreen during autoscroll.
@@ -118,8 +119,12 @@
 - Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: Mister Man).
 - Fixed kamek allocating an incorrect number of OAM slots (Credits: Mister Man).
 - Fixed kamek's wand having the wrong priority (Credits: Mister Man).
-- Fixed a bug that causes the player floating when sliding off of Larry's/Iggy's tilting platform (Credits: Mister Man).
+- Fixed a bug that causes the Player floating when sliding off of Larry's/Iggy's tilting platform (Credits: Mister Man).
 - Fixed the palette of spat out Volcano Lotus/Lakitu in a pipe getting partially overwritten (Credits: Mister Man).
 - Fixed Lakitu / Fishin' Lakitu's head being incorrect positioned (Credits: Mister Man).
 - Fixed first room in Donut ghosthouse uses a wrong background color.
 - Fixed Reznor platform and Lemmy's/Wendy's pipe use the wrong palette in the enemy roll credits.
+- Fixed a bug that causes some solid sprites to behave strangley when touching them from below because their status has been changed erroneously.
+- Fixed a bug that causes the Player to climb on thin air when getting pushed away by a solid block when climbing on a rope mechanism.
+- Fixed a bug that causes Player and Yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh.
+- Fixed a bug that cuases extended sprites to sometimes recognize a collision when being vertically offscreen.
