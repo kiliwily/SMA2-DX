@@ -1731,13 +1731,25 @@ Down16Bit1:
 	pop r0
 	bx r0
 	.pool
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceCSH:
+	mov r0,0h
+	ldrb r1,[r5,1Ah]
+	cmp r1,83h
+	beq SetHitFlag
+	cmp r1,84h
+	beq SetHitFlag
+	cmp r1,9Ch
+	beq SetHitFlag
+	cmp r1,0B9h
+	beq SetHitFlag
+	cmp r1,0C8h
+	bne ReturnNoHitFlag
+SetHitFlag:
+	mov r0,1h
+ReturnNoHitFlag:
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.word 0x00000000
 
 .org 0x803233E	;Despawn sprites faster after they sank in lava
@@ -1850,6 +1862,27 @@ DownThrownA4:
 .org 0x80340B6	;Prevents shellless koopas from hopping into anything that's not a shell
 	cmp r0,0Ch
 	
+.org 0x803426A	;Make sprites interact with lightswitch like they interact with flying ?-Block (1)
+	ldrb r0,[r5,1Ah]
+	cmp r0,0C8h
+	beq DownLightSwitch
+	sub r0,83h
+	cmp r0,1h
+	bhi 803429Ch
+DownLightSwitch:
+	mov r0,r4
+	bl 802FCECh
+	mov r0,0h
+	str r0,[r4,0Ch]
+	mov r0,r5
+	bl 8033DA4h
+	b 803441Ah
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000	
+	
 .org 0x8034332	;Allow to get up to a 5up for throwing a shell etc. into multiple other enemies
 	ldr r0,=0FFFD0000h
 	str r0,[r5,0Ch]
@@ -1921,28 +1954,7 @@ DownThrownB4:
 	.word 0x00000000
 	.word 0x00000000
 	
-.org 0x803426A	;Make sprites interact with lightswitch like they interact with flying ?-Block
-	ldrb r0,[r5,1Ah]
-	cmp r0,0C8h
-	beq DownLightSwitch
-	sub r0,83h
-	cmp r0,1h
-	bhi 803429Ch
-DownLightSwitch:
-	mov r0,r4
-	bl 802FCECh
-	mov r0,0h
-	str r0,[r4,0Ch]
-	mov r0,r5
-	bl 8033DA4h
-	b 803441Ah
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-
-.org 0x8034468
+.org 0x8034468	;Make sprites interact with lightswitch like they interact with flying ?-Block (2)
 	cmp r0,0C8h
 	beq 80344A0h
 	mov r2,r0
@@ -2096,10 +2108,7 @@ DownStar5up:
 .org 0x8035246
 	add r0,r0,r3
 	
-;Fix looping sound when hitting a solid sprite from below
-.org 0x803539A	;Fix momentum when standing or jumping/falling on a solid block
-	mov r0,0h
-
+;Fix looping sound when hitting a solid sprite from below and fix bugs when touching certain solid sprites from below
 .org 0x803546E
 	ldr r1,=3002340h
 	ldr r4,=1C62h
@@ -2131,7 +2140,7 @@ DownStar5up:
 .org 0x80354CA
 	add r1,1h
 	add r0,r2,r1
-	mov r3,0h
+	mov r3,10h
 	strb r3,[r0]
 	ldr r3,=1C94h
 	add r1,r2,r3
@@ -2150,13 +2159,12 @@ DownStar5up:
 	bne CheckSpriteId
 	b 80356F6h
 	.pool
-	.halfword 0x0000
 	
 CheckSpriteId:
-	ldrb r0,[r5,1Ah]
-	cmp r0,82h
-	bls 803553Ah
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	bl FreeSpaceCSH
+	cmp r0,0h
+	beq 803553Ah
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x80357F4	;Fix a bug that causes the game to softlock if obtaining a feather offscreen during autoscroll
 	ldr r2,=3002340h
@@ -2248,6 +2256,98 @@ DownSilverCoins:
 .org 0x8035DBC
 	mov r1,1h
 ;;;;;;;
+
+;Fix bug that causes extended sprites sometimes to recognize a wrong collision when they are offscreen
+.org 0x80360FE
+	b	StoreCollisionValue2
+	
+.org 0x803613E
+	b StoreCollisionValue2
+	
+.org 0x8036154
+	ldr r3,=0F18h
+	add r5,r4,r3 
+	lsl r2,r6,10h
+	asr r0,r2,14h
+	lsl r1,r0,3h
+	sub r1,r1,r0
+	lsl r1,r1,2h
+	sub r1,r1,r0
+	lsl r1,r1,4h
+	mov r0,0F0h
+	lsl r0,r0,0Ch
+	and r0,r2
+	asr r0,r0,10h
+	add r1,r1,r0
+	mov r2,r12
+	lsl r0,r2,10h
+	asr r0,r0,0Ch
+	add r2,r1,r0
+	str r2,[r5]
+	mov r0,0h
+	ldsb r0,[r7,r0]
+	cmp r0,0h
+	bne StoreCollisionValue1
+	ldr r3,=0F1Ch
+	add r1,r4,r3
+	ldr r3,=2002800h
+	add r0,r2,r3
+	ldrb r0,[r0]
+	str r0,[r1]
+	mov r0,0F2h
+	lsl r0,r0,4h
+	add r1,r4,r0
+	ldr r0,[r5]
+	ldr r2,=2006000h
+	b StoreCollisionValue2
+	.pool
+
+StoreCollisionValue1:
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r4,=0F1Ch
+	add r3,r1,r4
+	ldr r5,=0F18h
+	add r2,r1,r5
+	ldr r0,[r2]
+	ldr r4,=2004300h
+	add r0,r0,r4
+	ldrb r0,[r0]
+	str r0,[r3]
+	add r5,8h
+	add r1,r1,r5
+	ldr r0,[r2]
+	ldr r2,=2007B00h
+StoreCollisionValue2:
+	add r0,r0,r2
+	ldrb r0,[r0]
+	str r0,[r1]
+	ldr r0,=3007A48h
+	ldr r2,[r0]
+	mov r3,0F2h
+	lsl r3,r3,4h
+	add r0,r2,r3
+	ldr r1,[r0]
+	ldr r4,=0F1Ch
+	add r0,r2,r4
+	ldr r0,[r0]
+	ldr r5,=0F18h
+	add r7,r2,r5
+	ldr r5,[r7]
+	cmp r5,0h
+	bge BlockValuePositive
+	lsl r0,r0,8h
+	b OrBlockValue
+BlockValuePositive:
+	lsl r1,r1,8h
+OrBlockValue:
+	orr r0,r1
+	strh r0,[r2]
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix fireballs sometimes don't sink in normal level lava
 .org 0x8036A1A
@@ -2924,17 +3024,22 @@ No1upSound:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fix chucks and koopalings use the same counter for fireballs and stomp hits;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Makes boos, boo blocks and big boos track the Players y-position accurately;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Prevents ninjis from clipping into the ceiling;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for a bug that causes the reminders of a block destroyed by a chuck use the wrong palette
-;Also contains a fix for a bug that causes chucks to destroy the ceiling in certain cases;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for whistelin' chuck summons super koopas underwater;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for thwomps always falling when vertically offscreen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also makes it so you can get up to a 5up when defeating wiggler with a star;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Fix bug that causes player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh;;;;;;;;;;;;;;;;;
+;Also contains a fix for chucks and koopalings use the same counter for fireballs and stomp hits;;;;;;;;;;;;;;;;;
+;Also contains a fix for player fireballs despawning instantly when shooting them while beeing slightly offscreen
+;Makes boos, boo blocks and big boos track the Players y-position accurately;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Prevents ninjis from clipping into the ceiling;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for a bug that causes the reminders of a block destroyed by a chuck use the wrong palette;;;
+;Also contains a fix for a bug that causes chucks to destroy the ceiling in certain cases;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for whistelin' chuck summons super koopas underwater;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix of exploding bobomb death animation;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for thwomps always falling when vertically offscreen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also makes it so you can get up to a 5up when defeating wiggler with a star;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.org 0x803E6FC	;Fix bug that causes player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh
+	mov r2,0Bh
+
 .org 0x803E7C4	;chucks fireballs 
 	add r1,3h
 
@@ -2944,6 +3049,12 @@ No1upSound:
 .org 0x803E804	;Make chucks give the player 2000p (+3 coins) when killing him with fire balls
 	mov r1,5h
 
+.org 0x803E97E	;Prevent player fireballs from instantly despawning when shooting them while beeing slightly offscreen
+	mov r0,60h
+
+.org 0x803F21A
+	mov r1,60h
+
 .org 0x804024C	;big boos
 	mov r1,30h
 
@@ -2952,6 +3063,9 @@ No1upSound:
 	
 .org 0x8040A5C	;boo blocks
 	mov r1,0h
+
+.org 0x8041560	;Make amazing flying hammer bro give 200p when killing him by hitting blocks from below like every other enemy does
+	mov r1,1h
 	
 .org 0x8041DC8	;Prevent ninjis from clipping through the ceiling
 	mov r1,0Ch
@@ -3465,6 +3579,9 @@ SpriteDoesNotHurt:
 
 .org 0x8062BF4	;Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: Mister Man)
 	sub	r0,0Eh
+
+.org 0x8063332	;Fixed a bug that causes the Player to climb in the air when getting pushed from a rope mechanism by a solid block
+	b 806350Ch
 	
 .org 0x8064FF8	;koopaling stomp
 	add r0,4h
