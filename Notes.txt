@@ -227,6 +227,7 @@ Format: n--sifhb
 4358 if And 40 != 0: Moon in W5 collected
 43A8 xPos of Block checked
 43AC yPos of Block checked
+43B0 Hud in level
 4434 BG3 scrolling speed
 546C No. of 1ups you get from a life chain (via Star, Stomping or Cape 1up trick)
 546E Timer between the 1ups when geting >1up (2up, 3up, 5up etc.)

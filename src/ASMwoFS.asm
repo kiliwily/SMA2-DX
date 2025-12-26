@@ -420,6 +420,23 @@ ReturnPSS2:
 	str r0,[r2,68h]
 NoPointOverflow:
 	nop
+
+.org 0x800A8C4	;Make digits of lifecounter rightaligned in hud like al the other digits (in level)
+	strh r0,[r2,3Eh]
+	ldr r0,[r1]
+	mov r2,0FCh
+	strh r2,[r0,3Ah]
+	ldr r0,[r1]
+	strh r2,[r0,3Ch]
+
+.org 0x800A92C
+	strh r0,[r3,3Ch]
+
+.org 0x800A936
+	strh r0,[r3,3Eh]
+	ldr r1,[r2]
+	mov r0,0FCh
+	strh r0,[r1,3Ah]
 	
 .org 0x800A900
 	.word 0x000F423F
@@ -694,6 +711,16 @@ DownMBR8:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
+.org 0x801DC3C	;Make digits of lifecounter rightaligned in hud like al the other digits (on the overworld)
+	.word 0x200040A
+	.word 0x2000406
+
+.org 0x801DC74
+	.word 0x2000408
+
+.org 0x801DC80
+	.word 0x2000406
+
 .org 0x801F10C	;cleans up set yoshi flag when enter a level while riding a yoshi function
 	add r0,0E3h
 	
@@ -1744,13 +1771,14 @@ FreeSpaceCSH:
 	cmp r1,0B9h
 	beq SetHitFlag
 	cmp r1,0C8h
+	beq SetHitFlag
+	cmp r1,0C9h
 	bne ReturnNoHitFlag
 SetHitFlag:
 	mov r0,1h
 ReturnNoHitFlag:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	.word 0x00000000
 
 .org 0x803233E	;Despawn sprites faster after they sank in lava
 	mov r1,2h
@@ -4037,6 +4065,10 @@ SpriteTableStatus:
 
 .org 0x80D6A82	;Fixes color of blue yoshi in ow
 	.halfword 0x7DCE
+
+.org 0x80DC546	;Removes space between coin symbol, x and the coin number
+	.halfword 0x00FC, 0x102F
+	.halfword 0x1026
 	
 .org 0x80DE69E	;Fix issue with level mode 1Eh and 1Fh
 	.byte 0x05, 0x06

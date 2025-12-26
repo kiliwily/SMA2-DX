@@ -40,7 +40,9 @@
 - Gave the backgrounds in the enemy roll credits their own color instead of all using the same (Credits: Mister Man).
 - Swapped the dark rooms in Front and Back door in Bowser's castle (Credits: Mister Man).
 - Restored Bill Blaster's unused tile (Credits: Mister Man).
-- Player and Yoshi fireballs no longer despawn immediately when shooting them while being slightly offscreen.
+- Player and Yoshi fireballs no longer despawn immediately when shooting them while being slightly offscreen (inspired by SMA4/SMB3).
+- Removed the unnecessary space between the coin symbol, the x and the coin number in the hud.
+- Made the life counter in the hud rightaligned like all the other counters in the hud.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
