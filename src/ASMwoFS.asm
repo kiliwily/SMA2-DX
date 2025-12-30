@@ -2160,20 +2160,19 @@ DownStar5up:
 	ldr r3,=0EB4h
 	
 .org 0x80354BC
-	ldr r1,=1C6Ch
+	ldr r1,=1C6Dh
 	add r0,r2,r1
 	mov r3,0h
-	ldsh r0,[r0,r3]
+	ldsb r1,[r0,r3]
+	cmp r1,0h
 
 .org 0x80354CA
-	add r1,1h
-	add r0,r2,r1
-	mov r3,10h
+	mov r3,0h
 	strb r3,[r0]
 	ldr r3,=1C94h
 	add r1,r2,r3
 	ldrh r1,[r1]
-	sub r3,18h
+	ldr r3,=1C7Ch
 	add r0,r2,r3
 	ldrh r0,[r0]
 	cmp r1,r0
