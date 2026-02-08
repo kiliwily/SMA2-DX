@@ -266,7 +266,7 @@ Format: n--sifhb
 54E8 ingame time ones
 550C Game freeze flag
 5578 Overworld path animation related
-558E Overworld path animation related (if = 1 the don't trigger animation), scrren number in enemy roll credits
+558E Overworld path animation related (if = 1 the don't trigger animation), screen number in enemy roll credits
 558F Current Overworld unlock event
 559B Current exit triggered (0=none, 1=normal, 2=secret, 80=exit already triggered or level ended before the exit)
 559F

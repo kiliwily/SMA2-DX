@@ -140,7 +140,7 @@
 - Fixed an oversight that caused the flying ?-Block that always flies to the left to hurt the Player much earlier than other solid sprites when squashing the Player in the wall.
 - Fixed a bug that caused the Player to clip through mega moles when they have an upwards speed.
 - Fixed a bug that caused dino rhinos to get stuck when jumping in a corner.
-- Fixed a bug that caused mushrooms in bubbles to not give any points if it was eaten by yoshi before the bubble bursts.
+- Fixed a bug that caused mushrooms in bubbles to not give any points if they were eaten by yoshi before the bubble bursts.
 - Fixed a bug that caused the Layer 2 wall in Ludwig's castle to trigger a screen shake every frame it touches the ground and restored the sound effect when it hits the ground.
 - Fixed secret exit room in Donut ghosthouse uses the wrong sprite palette.
 - Fixed directional coin uses the block palette even if blue P-Switch isn't active.

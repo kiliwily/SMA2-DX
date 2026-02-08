@@ -2645,8 +2645,8 @@ DownFRW4:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix Music when not riding yoshi in switch palaces and bonus rooms (FYM)
-;Also contains parts of Save Prompt (SPR);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains part of level default value table expansion (LDT);;;;;;;
+;Also contains parts of Save Prompt (SPR);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains part of level default value table expansion (LDT);;;;;;;;
 .org 0x809BF50
 	beq SkipMethodFYM1
 
@@ -2715,4 +2715,4 @@ SkipMethodFYM2:
 	
 .org 0x81B3F39
 	.byte 0x04
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

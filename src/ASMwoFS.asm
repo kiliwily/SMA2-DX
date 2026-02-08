@@ -3699,7 +3699,7 @@ NotAt5ups2:
 .org 0x80458C4
 	.pool
 	
-.org 0x8045A06	;Adjust drawing height of rex
+.org 0x8045A06	;Adjust draw height of rex
 	lsl r2,r6,18h
 	asr r2,r2,18h
 	add r1,r2,r0
@@ -3721,7 +3721,7 @@ DownRex:
 .org 0x8045AE0
 	.pool
 	
-.org 0x8046862	;Adjust drawing height of super koopa on the ground
+.org 0x8046862	;Adjust draw height of super koopa on the ground
 	ldr r3,=3002340h
 	ldr r1,=08C4h
 
@@ -3802,7 +3802,7 @@ LoopSuperKoopa:
 .org 0x8046AD6
 	b LoopSuperKoopa
 
-.org 0x8048D88	;Adjust drawing height of flying question block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated
+.org 0x8048D88	;Adjust draw height of flying question block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated
 	ldr r0,=3002340h
 	ldr r1,=1C58h
 	add r0,r0,r1
@@ -4072,7 +4072,7 @@ DownSumoBrother:
 .org 0x80506F2
 	bhi 80506F6h
 
-.org 0x8051238	;Ajust drawing height of the first and the last of the snake blocks
+.org 0x8051238	;Ajust draw height of the first and the last of the snake blocks
 	ldr r3,=3002340h
 	mov r4,r6
 	add r4,34h
@@ -4270,7 +4270,7 @@ DownSnakeBlock6:
 .org 0x80523DC	;Fix wings of 3-tile flying gray turn blocks get drawn in front of blocks
 	mov r4,0h
 
-.org 0x8052440	;Adjust drawing height of 3-tile flying gray turn block platform
+.org 0x8052440	;Adjust draw height of 3-tile flying gray turn block platform
 	add r2,r0,1h
 	strb r2,[r5]
 	mov r1,r10
