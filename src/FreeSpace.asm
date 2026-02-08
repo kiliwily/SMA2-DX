@@ -6,6 +6,14 @@ FreeSpaceLDT:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceSSI1:
+	.halfword 0x000E, 0xFFF1
+	.halfword 0x0010, 0xFFE0
+	.halfword 0x001F, 0xFFF1
+	.halfword 0x002F, 0xFFF1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceUVR:
 	push r14
 	ldr r1,=3002340h
@@ -156,7 +164,7 @@ NoPeachCoinsCYC2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceCPP:
+FreeSpaceCPG:
 	push r14
 	bl 800E8ECh
 	cmp r5,38h
@@ -180,6 +188,59 @@ NotACheckPoint:
 	pop r0
 	bx r0
 	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceCEO:
+	mov r1,r7
+	ldr r2,=1C5Ch
+	add r0,r1,r2
+	ldr r0,[r0]
+	ldrb r0,[r0,1Eh]
+	cmp r0,5h
+	beq CaveEnemys
+	cmp r0,9h
+	bne ReturnNoPriorityChange
+	ldrb r0,[r5,2h]
+	cmp r0,0CCh
+	beq ChangePriority
+ReturnNoPriorityChange:
+	mov r0,0h
+	b ReturnToEnemyRollOAM
+	.pool
+	
+CaveEnemys:
+	ldrb r0,[r5,2h]
+	cmp r0,92h
+	beq ChangePriority
+	cmp r0,94h
+	beq ChangePriority
+	cmp r0,96h
+	beq ChangePriority
+	cmp r0,0C6h
+	beq ChangePriority
+	cmp r0,0C7h
+	beq ChangePriority
+	cmp r0,0C8h
+	beq ChangePriority
+	cmp r0,0D0h
+	beq ChangePriority
+	cmp r0,0D6h
+	beq ChangePriority
+	cmp r0,0E6h
+	beq ChangePriority
+	cmp r0,0E7h
+	bne ReturnNoPriorityChange
+ChangePriority:
+	ldrb r1,[r3,5h]
+	mov r0,0F3h
+	and r1,r0
+	mov r0,0Ch
+	orr r1,r0
+	strb r1,[r3,5h]
+	mov r0,1h
+ReturnToEnemyRollOAM:
+	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -278,6 +339,27 @@ LoopRCS:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFLE:
+	push r14
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=066Ah
+	add r0,r0,r1
+	mov r1,20h
+	strb r1,[r0]
+	ldr r1,=3002340h
+	ldr r2,=0828h
+	add r1,r1,r2
+	mov r0,78h
+	strh r0,[r1]
+	mov r0,3Fh
+	bl 809C1C4h
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceEUT:
 	add r0,r0,r2
 	ldr r1,[r1]
@@ -310,7 +392,7 @@ SpriteIsInYoshisMouth:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFBM:
 	push r4,r14
-	mov r1,r4
+	mov r4,r1
 	bl 8030D90h
 	mov r0,0h
 	strh r0,[r4,3Ah]
@@ -323,14 +405,86 @@ FreeSpaceFBM:
 	pop r0
 	bx r0
 	
-FreeSpaceSOB:
-	ldrb r0,[r4,1Ch]
-	cmp r0,0Ch
-	bls NotOutOfBounds
+FreeSpacePBF:
+	push r14
+	cmp r0,0h
+	bne PBalloonPlayerGotHitOrPBalloonExpires
+	ldr r0,=3002340h
+	mov r2,0E3h
+	lsl r2,r2,5h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq PBalloonPlayerNotHit
+PBalloonPlayerGotHitOrPBalloonExpires:
+	ldr r4,=3002340h
+	ldr r0,=1CBAh
+	add r1,r4,r0
 	mov r0,0h
-	strb r0,[r4,1Ch]
-NotOutOfBounds:
-	bx r14
+	strb r0,[r1]
+	mov r0,r5
+	bl 802F2F0h
+	ldr r1,=1C58h
+	add r4,r4,r1
+	ldr r0,[r4]
+	ldr r2,=116Ah
+	add r1,r0,r2
+	ldrb r1,[r1]
+	mov r0,0h
+	lsl r1,r1,18h
+	asr r1,r1,18h
+	cmp r1,0h
+	bne PBalloonMoreThan100SecsLeft
+	mov r0,1h
+PBalloonMoreThan100SecsLeft:
+	bl 809C024h
+	b PBalloonReturn
+	.pool
+	
+PBalloonPlayerNotHit:
+	mov r6,0h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0EE1h
+	add r2,r0,r1
+	ldrb r0,[r2]
+	ldr r4,=3002340h
+	ldr r1,=1CD1h
+	add r3,r4,r1
+	ldrb r1,[r3]
+	orr r0,r1
+	cmp r0,0h
+	beq PBalloonNoSpinJump
+	strb r6,[r2]
+	strb r6,[r3]
+PBalloonNoSpinJump:
+	ldr r0,=1CB4h
+	add r2,r4,r0
+	ldrb r0,[r2]
+	ldr r1,=1CCEh
+	add r3,r4,r1
+	ldrb r1,[r3]
+	orr r0,r1
+	cmp r0,0h
+	beq PBalloonNoSlideOrGlide
+	strb r6,[r2]
+	strb r6,[r3]
+PBalloonNoSlideOrGlide:
+	ldr r0,=1CF5h
+	add r1,r4,r0	
+	strb r6,[r1]
+	ldr r1,=1C61h
+	add r0,r4,r1
+	mov r2,24h
+	strb r2,[r0]
+	mov r0,r5
+	bl CheckFreezeFlagController
+	mov r0,r5
+	bl 802BED0h
+PBalloonReturn:
+	pop r0
+	bx r0
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -360,6 +514,10 @@ FreeSpaceFIC1:
 	add r6,1Ah
 	add r0,r3,r6
 	ldrb r0,[r0]
+	orr r1,r0
+	add r6,3h
+	add r0,r3,r6
+	ldrb r0,[r0]
 	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -373,6 +531,74 @@ FreeSpaceITA:
 	mov r0,8h
 RealItem:
 	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceASH:
+	push r4,r14
+	mov r4,r0
+	bl 802F4C4h
+	mov r2,r4
+	ldrh r0,[r2,10h]
+	ldrh r1,[r2,12h]
+	orr r0,r1
+	cmp r0,0h
+	beq ReturnPositionAdjustment
+	ldrb r0,[r2,1Ah]
+	cmp r0,49h
+	beq AdjustPosition
+	cmp r0,4Ch
+	beq AdjustPosition
+	cmp r0,55h
+	beq AdjustPosition
+	cmp r0,57h
+	beq AdjustPosition
+	cmp r0,59h
+	beq AdjustPosition
+	cmp r0,5Ah
+	beq AdjustPosition
+	cmp r0,5Bh
+	beq AdjustPosition
+	cmp r0,5Ch
+	beq AdjustPosition
+	cmp r0,6Dh
+	beq AdjustPosition
+	cmp r0,83h
+	beq AdjustPosition
+	cmp r0,84h
+	beq AdjustPosition
+	cmp r0,8Fh
+	beq AdjustPosition
+	cmp r0,9Ch
+	beq AdjustPosition
+	cmp r0,0B1h
+	beq AdjustPosition
+	cmp r0,0B9h
+	beq AdjustPosition
+	cmp r0,0BAh
+	beq AdjustPosition
+	cmp r0,0BBh
+	beq AdjustPosition
+	cmp r0,0BEh
+	beq AdjustPosition
+	cmp r0,0C1h
+	beq AdjustPosition
+	cmp r0,0C4h
+	beq AdjustPosition
+	cmp r0,0C8h
+	bne ReturnPositionAdjustment
+AdjustPosition:
+	ldrh r0,[r2,12h]
+	sub r0,1h
+	strh r0,[r2,12h]
+	mov r0,12h
+	ldsh r1,[r2,r0]
+	lsl r1,r1,10h
+	str r1,[r2,4h]
+ReturnPositionAdjustment:
+	pop r4
+	pop r0
+	bx r0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -419,6 +645,37 @@ DownFCS2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceSSI2:
+	mov r1,0h
+	cmp r4,83h
+	bne Check3TurnblockFlyingPlatform
+	ldrb r0,[r5,1Bh]
+	cmp r0,0h
+	bne ReturnNoSpecialSprite
+	cmp r7,1h
+	bne ReturnNoSpecialSprite
+	b SpecialSprite
+Check3TurnblockFlyingPlatform:
+	cmp r4,0C1h
+	bne ReturnNoSpecialSprite
+	ldr r0,=3002340h
+	ldr r3,=1C5Ch
+	add r0,r0,r3
+	ldr r2,[r0]
+	add r2,54h
+	ldrb r0,[r2]
+	cmp r0,0h
+	beq ReturnNoSpecialSprite
+	cmp r7,6h
+	bne ReturnNoSpecialSprite
+SpecialSprite:
+	mov r1,1h
+ReturnNoSpecialSprite:
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceMFIS:
 	push r14
 	bl 8035738h
@@ -432,21 +689,22 @@ FreeSpaceMFIS:
 FreeSpacePII:
 	add r2,r3,0h
 	add r2,0E0h
-	ldrb r1,[r2,1h]
-	cmp r1,4h
-	bls ContinuePII1
-	mov r1,0h
-	strb r1,[r2,1h]
-ContinuePII1:
 	ldrb r1,[r2]
 	cmp r1,3h
-	bls ContinuePII2
+	bls ContinuePII1
 	mov r1,0h
 	strb r1,[r2]
-ContinuePII2:
+ContinuePII1:
 	orr r0,r1
 	lsl r0,r0,18h
 	lsr r7,r0,18h
+	add r3,0E1h
+	ldrb r0,[r3]
+	cmp r0,4h
+	bls ContinuePII2
+	mov r0,0h
+	strb r0,[r3]
+ContinuePII2:
 	ldr r1,=3002340h
 	mov r0,0E3h
 	lsl r0,r0,5h
@@ -456,10 +714,7 @@ ContinuePII2:
 	.pool
 
 FreeSpacePMO:
-	ldrb r2,[r2]
-	add r1,r3,0h
-	add r1,0E1h
-	ldrb r0,[r1]
+	ldrb r0,[r3]
 	cmp r2,r0
 	beq ReturnPMO
 	cmp r2,1h
@@ -469,7 +724,7 @@ FreeSpacePMO:
 	cmp r0,4h
 	beq ReturnPMO
 UpdateItemPMO:
-	strb r2,[r1]
+	strb r2,[r3]
 	mov r0,1h
 	b ReturnPMOPlaySound
 ReturnPMO:
@@ -485,12 +740,12 @@ FreeSpaceJWN:
 	beq Gotcha
 	mov r0,6Eh
 	b ReturnJWN
+	.pool
 Gotcha:
 	mov r0,70h
 ReturnJWN:
 	add r1,r4,0h
 	bx r14
-	.pool
 	
 FreeSpacePLO:
 	mov r3,0h
@@ -514,6 +769,58 @@ FreeSpacePNPO1:
 DownPNPO1:
 	bx r14
 	.pool
+	
+FreeSpaceCSC:
+	push r14
+	ldr r2,=3002340h
+	ldr r1,=1C58h
+	add r3,r2,r1
+	ldr r0,[r3]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne SkipCapeSpinCode
+	ldr r1,[r2,20h]
+	add r1,0E0h
+	ldrb r0,[r1]
+	cmp r0,2h
+	bne ResetCapeSpin
+	ldr r0,[r3]
+	ldr r1,=10FAh
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq HandleCapeSpin
+ResetCapeSpin:
+	ldr r2,=3007A48h
+	ldr r0,[r2]
+	ldr r1,=0EE1h
+	add r0,r0,r1
+	ldrb r1,[r0]
+	cmp r1,0h
+	beq HandleCapeSpin
+	mov r1,0h
+	strb r1,[r0]
+HandleCapeSpin:
+	bl 803D5BCh
+SkipCapeSpinCode:
+	pop r0
+	bx r0
+	.pool
+	
+FreeSpaceDCM:
+	push r14
+	bl 809C004h
+	lsl r0,r0,10h
+	asr r0,r0,10h
+	cmp r0,0Dh
+	bne MusicIsNotAlreadyPlaying
+	mov r0,8h
+	bl 809BF40h
+MusicIsNotAlreadyPlaying:
+	pop r0
+	bx r0
 	
 FreeSpacePSPO1:
 	add r0,5h
@@ -561,6 +868,12 @@ DownPSPO2:
 	bx r14
 	.pool
 	
+FreeSpaceCDH:
+	strh r0,[r5,2h]
+	add r4,1h
+	strb r4,[r5]
+	bx r14
+	
 FreeSpaceFYS:
 	ldrb r0,[r2,1Ah]
 	cmp r0,0A5h
@@ -583,6 +896,14 @@ FreeSpaceFYS:
 NotSparky:
 	bx r14
 	.pool
+	
+FreeSpaceHVL:
+	ldrh r0,[r2]
+	add r0,1h
+	strh r0,[r2]
+	ldrh r0,[r2]
+	strb r0,[r3]
+	bx r14
 	
 FreeSpaceFMY:
 	ldrb r0,[r4,1Fh]
@@ -617,15 +938,7 @@ NoYoshiEgg:
 	strb r0,[r4,1Ah]
 	bx r14
 	
-FreeSpaceDCF:
-	add r2,r2,r0
-	ldrh r0,[r2,4h]
-	mov r1,0FCh
-	lsl r1,r1,8h
-	and r0,r1
-	mov r1,1Eh
-	orr r0,r1
-	strh r0,[r2,4h]
+FreeSpaceDCBF:
 	ldrb r0,[r2,5h]
 	mov r1,3h
 	and r0,r1
@@ -639,6 +952,18 @@ FreeSpaceDCF:
 	orr r0,r1
 	strb r0,[r2,3h]
 	bx r14
+	
+FreeSpaceDCF:
+	push r14
+	bl 8054148h
+	ldr r0,=3002340h
+	ldr r2,=1D0Eh
+	add r0,r0,r2
+	mov r1,0h
+	strb r1,[r0]
+	pop r0
+	bx r0
+	.pool
 	
 FreeSpaceFSD:
 	add r0,r2,r1
@@ -769,8 +1094,15 @@ NoSpriteInMouth:
 	mov r0,0FFh
 	strb r0,[r2]
 ReturnNoSwallow2:
-	pop r0
-	bx r0
+	ldr r2,=1C58h
+	add r0,r6,r2
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	pop r1
+	bx r1
+	.pool
 	
 FreeSpaceF0T1:
 	mov r2,0E3h
@@ -806,11 +1138,41 @@ FreeSpaceFYA:
 YoshiNotMounted:
 	bx r14
 	
-FreeSpaceYLC:
+FreeSpaceSYF:
+	ldr r0,=1CB5h
+	add r1,r3,r0
+	ldrb r1,[r1]
+	cmp r1,0h
+	beq YoshiIsSliding
+	sub r0,1h
+	add r0,r3,r0
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bne YoshiIsSliding
+	mov r0,1h
+	b ReturnYoshiSlope
+	.pool
+YoshiIsSliding:
+	mov r0,0h
+ReturnYoshiSlope:
+	bx r14
+	
+FreeSpaceYSP:
+	ldrb r0,[r5,1Fh]
+	cmp r0,0h
+	bne PlayerIsOnTheSameSkull
 	ldrh r0,[r5,12h]
-	sub r0,20h
-	cmp r6,87h
-	bne StoreYposYoshi
+	sub r0,1Ch
+	b ReturnYoshiOnSkull
+PlayerIsOnTheSameSkull:
+	ldrh r0,[r5,12h]
+	sub r0,1Bh
+ReturnYoshiOnSkull:
+	bx r14
+
+FreeSpaceYLC:
 	ldr r0,=3007A48h
 	ldr r0,[r0]
 	ldr r1,=0F31h
@@ -826,12 +1188,41 @@ FreeSpaceYLC:
 	str r0,[r5,8h]
 	ldrh r0,[r4,10h]
 	strh r0,[r5,10h]
-YoshiRunCloud:
 	ldrh r0,[r5,12h]
 	sub r0,10h
-StoreYposYoshi:
 	strh r0,[r4,12h]
 NoLakituCloud:
+	bx r14
+	.pool
+	
+FreeSpaceYLP:
+	mov r3,18h
+	mov r1,r6
+	add r1,36h
+	ldrb r1,[r1]
+	cmp r1,0h
+	beq NotCheckered
+	mov r3,28h
+NotCheckered:
+	sub r0,r0,r3
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFRG:
+	ldrb r0,[r0]
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
+	beq RopeNoGround
+	mov r1,0h
+	mov r0,r4
+	add r0,28h
+	strb r1,[r0]
+	ldr r2,=1D0Fh
+	add r0,r5,r2
+	strb r1,[r0]
+RopeNoGround:
 	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -910,16 +1301,23 @@ FreeSpaceFWC:
 	cmp r0,0h
 	beq HandleCape
 ResetCape:
-	ldr r3,=1CCEh
-	add r0,r2,r3
-	mov r1,0h
-	strb r1,[r0]
-	sub r3,1Ah
-	add r0,r2,r3
-	ldrb r1,[r0]
-	mov r3,7Fh
-	and r1,r3
-	strb r1,[r0]
+	ldr r1,=1CB4h
+	add r3,r2,r1
+	ldrb r0,[r3]
+	mov r1,80h
+	and r0,r1
+	ldr r1,=1CCEh
+	add r2,r2,r1
+	ldrb r1,[r2]
+	orr r0,r1
+	cmp r0,0h
+	beq HandleCape
+	mov r0,0h
+	strb r0,[r2]
+	ldrb r0,[r3]
+	mov r1,7Fh
+	and r0,r1
+	strb r0,[r3]
 HandleCape:
 	bl 806FC54h
 	pop r0
@@ -1103,21 +1501,6 @@ PlayerNotDied1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceCSI:
-	ldr r0,[r4]
-	ldr r3,=0EDBh
-	add r0,r0,r3
-	ldrb r0,[r0]
-	cmp r0,0h
-	bne NotSliding
-	mov r0,80h
-	strb r0,[r1]
-NotSliding:
-	bx r14
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFBB:
 	mov r3,0h
 	ldsh r1,[r0,r3]
@@ -1135,23 +1518,6 @@ FreeSpaceFBB:
 PlayerIsSmall:
 	mov r3,98h
 PlayerIsBig:
-	bx r14
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceFMB:
-	ldr r0,=3002340h
-	ldr r2,=1C58h
-	add r0,r0,r2
-	ldr r0,[r0]
-	ldr r2,=1190h
-	add r0,r0,r2
-	ldrb r0,[r0]
-	cmp r0,0h
-	beq NoFreezeChecked
-	mov r1,0h
-NoFreezeChecked:
 	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1189,18 +1555,6 @@ FreeSpaceF0T3:
 	mov r1,0h
 PlayerNotDied2:
 	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceCYR:
-	ldr r1,=1C58h
-	add r0,r0,r1
-	ldr r0,[r0]
-	ldr r2,=10FAh
-	add r0,r0,r2
-	ldrb r0,[r0]
-	bx r14
-	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1246,8 +1600,7 @@ NoPeachCoinsCYC3:
 	.pool
 	
 MakePeachCoins:
-	push r14
-	push r4-r7
+	push r4-r7,r14
 	ldr r4,=82002F4h
 	ldr r1,=6000100h
 	add r0,r4,0h

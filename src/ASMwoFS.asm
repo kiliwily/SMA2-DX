@@ -18,6 +18,95 @@ WaitEnd:
 .org 0x8000560
 	.pool
 	
+.org 0x80024D4	;Reset the directional coin flag when entering a door/pipe
+	ldr r2,=3002340h
+	ldr r0,[r2,20h]
+	mov r4,r0
+	add r4,0FCh
+	ldrb r3,[r4]
+	ldr r0,=1D03h
+	add r6,r2,r0
+	ldr r1,=1D04h
+	add r5,r2,r1
+	add r0,0Bh
+	add r2,r2,r0
+	ldrb r1,[r6]
+	ldrb r0,[r5]
+	orr r1,r0
+	ldrb r0,[r2]
+	orr r1,r0
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r7,=06B7h
+	add r7,r0,r7
+	ldrb r0,[r7]
+	orr r1,r0
+	cmp r1,0h
+	beq NoTimerActive
+	lsl r0,r3,18h
+	cmp r0,0h
+	bge MusicFlagIsPositive1
+	mov r0,7Fh
+	and r3,r0
+MusicFlagIsPositive1:
+	mov r0,40h
+	orr r3,r0
+	mov r1,0h
+	strh r3,[r4]
+	strb r1,[r6]
+	strb r1,[r5]
+	strb r1,[r2]
+	strb r1,[r7]
+	ldr r2,=3002340h
+	ldr r4,=1C58h
+	add r0,r2,r4
+	ldr r0,[r0]
+	ldr r5,=1158h
+	add r0,r0,r5
+	strb r1,[r0]
+	b 8002590h
+	.pool
+
+NoTimerActive:
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+	add r0,r0,r2
+	ldr r0,[r0]
+	ldr r1,=1158h
+	add r7,r0,r1
+	ldrb r0,[r7]
+	cmp r0,0h
+	beq 8002590h
+	lsl r0,r3,18h
+	cmp r0,0h
+	bge MusicFlagIsPositive2
+	mov r0,7Fh
+	and r3,r0
+MusicFlagIsPositive2:
+	mov r0,40h
+	orr r3,r0
+	mov r2,0h
+	strh r3,[r4]
+	ldr r1,=3002340h
+	ldr r3,=1D03h
+	add r0,r1,r3
+	strb r2,[r0]
+	ldr r4,=1D04h
+	add r0,r1,r4
+	strb r2,[r0]
+	add r3,0Bh
+	add r0,r1,r3
+	strb r2,[r0]
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r5,=06B7h
+	add r0,r0,r5
+	strb r2,[r0]
+	strb r2,[r7]
+	
+.org 0x800265A
+	.pool
+	
 .org 0x8002E6C	;Prevents the button combo from showing build date
 	beq 8002EBCh
 	
@@ -517,7 +606,6 @@ DownPSS0:
 	pop r0
 	bx r0
 	.pool
-	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFIN:
 	add r4,r0,0h
@@ -545,7 +633,7 @@ FreeSpaceFIN:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fixes weird player pose during the credits when holding up after rescuing Peach (PUP)
+;Fixes weird Player pose during the credits when holding up after rescuing Peach (PUP)
 .org 0x80137EE
 	add r1,r2,r0
 	bl FreeSpacePUP
@@ -792,7 +880,7 @@ CheckpointSetStatus:
 .org 0x8020BFE	;Part of fix bug when pressing select + A, Start or a directional button at the same frame on the overworld
 	mov r1,0h
 
-.org 0x8020E04	;makes sure, that the player id is valid when changing the player
+.org 0x8020E04	;makes sure, that the Player id is valid when changing the Player
 	ldrb r0,[r1]
 	mov r2,1h
 	and r0,r2
@@ -1338,6 +1426,69 @@ DownDiscoShell:
 .org 0x802DD0C	;Fixes a bug that caused several sprites not sinking before despawn in lava
 	ldrb r0,[r5]
 
+.org 0x802EDD0	;Adjust draw height of moving coin
+	ldr r3,=3002340h
+	ldr r1,=08C4h
+	add r0,r3,r1
+	mov r7,r12
+	ldrh r1,[r7,10h]
+	ldrh r0,[r0]
+	sub r1,r1,r0
+	lsl r1,r1,10h
+	ldr r4,=08C8h
+	add r2,r3,r4
+	ldrh r0,[r7,12h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	lsl r0,r0,10h
+	lsr r2,r0,10h
+	lsr r6,r1,10h
+	asr r5,r1,10h
+	mov r0,80h
+	lsl r0,r0,0Eh
+	add r1,r1,r0
+	ldr r0,=012F0000h
+	cmp r1,r0
+	bls DownMovingCoin1
+	b 802EF1Ch
+DownMovingCoin1:
+	lsl r0,r2,10h
+	asr r1,r0,10h
+	cmp r1,0BFh
+	ble DownMovingCoin2
+	b 802EF1Ch
+DownMovingCoin2:
+	mov r0,20h
+	cmn r1,r0
+	bge DownMovingCoin3
+	b 802EF1Ch
+DownMovingCoin3:
+	mov r0,r12
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	add r4,20h
+	add r1,r3,r4
+	add r4,r0,r1
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r7,=0ED5h
+	add r0,r0,r7
+	ldr r7,=0894h
+	add r1,r3,r7
+	ldrb r3,[r0]
+	ldrb r1,[r1]
+	add r3,r3,r1
+	asr r3,r3,2h
+	mov r0,3h
+	and r3,r0
+	add r2,1h
+	strb r2,[r4]
+	ldr r1,=8108770h
+	
+.org 0x802EE7C
+	.pool
+
 .org 0x802F2FA	;Makes sure that Mario is not riding a Yoshi and no sprite is in yoshis mouth, when Yoshi despawns
 	ldr r2,=3007A48h
 	ldr r0,[r2]
@@ -1392,7 +1543,7 @@ DownOthers:
 	bx r0
 	.pool
 	
-.org 0x802FBA0	;Prevents sprites that chase/aim at Mario/Luigi from chasing/aiming at a point above Mario/Luigi
+.org 0x802FBA0	;Prevents sprites that chase/aim at the Player from chasing/aiming at a point above the Player
 	mov r0,0h
 	ldsh r1,[r2,r0]
 	add r1,10h
@@ -1502,19 +1653,32 @@ DownEnemyStomping:
 	pop r0
 	bx r0
 	.pool
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceRBT:
+	mov r2,r5
+	add r2,21h
+	mov r0,0h
+	strb r0,[r2]
+	add r2,20h
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x8030D98	;Prevent Bravo Mario/luigi Message from overwritting a reward pop-up
 	bls EndOfFctMessage
 	mov r0,0FAh
 	lsl r0,r0,2h
 	cmp r6,r0
-	bls DownNotMaxLifes
-	ldr r6,=03E7h
+	bcc DownNotMaxLifes
+	sub r6,r0,1h
 
 DownNotMaxLifes:
+	ldr r2,=3002340h
+	mov r1,0E3h
+	lsl r1,r1,5h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,9h
+	beq EndOfFctMessage
 	ldr r1,=3007A48h
 	ldr r1,[r1]
 	ldr r0,=174h
@@ -1664,8 +1828,6 @@ FreeSpaceRDF:
 	strb r2,[r3]
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	.word 0x00000000
-	.word 0x00000000
 
 .org 0x80316D0	;Fix ducking flag is not considered when touching ghosts
 	ldr r0,=3007A48h
@@ -1781,7 +1943,7 @@ ReturnNoHitFlag:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x803233E	;Despawn sprites faster after they sank in lava
-	mov r1,2h
+	mov r1,12h
 
 ;Fix certain sprites don't sink in normal level lava
 .org 0x80328A8
@@ -2165,10 +2327,10 @@ DownStar5up:
 	mov r3,0h
 	ldsb r1,[r0,r3]
 	cmp r1,0h
-
-.org 0x80354CA
-	mov r3,0h
-	strb r3,[r0]
+	blt CheckSpriteDownwardsSpeed
+	b 80356F6h
+CheckSpriteDownwardsSpeed:
+	bl FreeSpaceSDS
 	ldr r3,=1C94h
 	add r1,r2,r3
 	ldrh r1,[r1]
@@ -2217,7 +2379,7 @@ CheckSpriteId:
 .org 0x80358A8
 	.pool
 	
-.org 0x8035A60	;Give the player the same timer when they can obtain an item as grab it with yoshi
+.org 0x8035A60	;Give the Player the same timer when they can obtain an item as when yoshi can grab it after it spawned
 	ldrb r1,[r6,1Fh]
 	cmp r1,0h
 	beq 8035A6Eh
@@ -2282,6 +2444,9 @@ DownSilverCoins:
 
 .org 0x8035DBC
 	mov r1,1h
+	
+.org 0x8035E38	;Fix yoshi's position on top of the growing/shrinking pipe
+	sub r0,1Fh
 ;;;;;;;
 
 ;Fix bug that causes extended sprites sometimes to recognize a wrong collision when they are offscreen
@@ -2579,23 +2744,156 @@ SpriteInYoshisMouth:
 	sub r3,1h
 	b 8037E92h
 	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+.org 0x8037E22	;Fix block check routine doesn't handle 16bit values properly (2)
+	ldr r0,=3007A48h
+	
+.org 0x8037E40
+	ldr r2,=3007A48h
+	ldr r1,[r2]
+	ldr r3,=065Eh
 
-;Coin chain blocks respawn
-.org 0x8037FB2
+.org 0x8037E5C
+	ldr r0,=3007A48h
+	ldr r2,[r0]
+	ldr r5,=065Eh
+
+.org 0x8037E68
+	ldr r0,=3002340h
+
+.org 0x8037E74
+	ldr r0,=810AFE4h
+
+.org 0x8037E86
+	ldr r1,=06E6h
+
+.org 0x8037E92
+	ldr r2,=3007A48h
+	ldr r0,[r2]
+	ldr r5,=065Bh
+
+.org 0x8037EA2
+	ldr r1,=06CCh
+
+.org 0x8037EAA
+	ldr r0,=810B028h
+
+.org 0x8037EB4
+	ldr r2,=0689h
+
+.org 0x8037EC0
+	ldr r1,=3007A48h
+
+.org 0x8037EC8
+	ldr r2,=810AFE4h
+
+.org 0x8037ED0
+	ldr r3,=0ECCh
+
+.org 0x8037ED8
+	ldr r3,=3002340h
+	ldr r1,=1C58h
+
+.org 0x8037EE0
+	ldr r1,=1164h
+
+.org 0x8037EE8
+	beq Down16Bit4
+	mov r0,r2
+	add r0,30h
+	ldrh r1,[r0]
+	ldrh r0,[r2,8h]
+	sub r1,r1,r0
+	ldr r2,=0828h
+	add r0,r3,r2
+	strh r1,[r0]
+	b 8037F5Ch
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.halfword 0x0000
+	
+Down16Bit4:
+	ldr r2,=3002340h
+	ldr r3,=1C58h
+	add r0,r2,r3
+	ldr r0,[r0]
+	add r0,30h
+	ldrh r1,[r0]
+
+.org 0x8037F78
+	.pool
+	
+.org 0x8037FEA
 	ldr r1,=3002340h
 	ldr r0,=1D0Eh
-	add r1,r1,r0
-	ldrb r0,[r1]
-	cmp r0,0FFh
-	bne 8037FE4h
-	mov r0,0h
-	strb r0,[r1]
-	b 8037FE4h
 
-.org 0x8037FC8
+.org 0x8037FFE
+	ldr r0,=3007A48h
+	ldr r2,[r0]
+	ldr r1,=06C9h
+	
+.org 0x803801A
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+
+.org 0x8038022
+	ldr r1,=1164h
+
+.org 0x803802A
+	beq Down16Bit5
+	mov r0,r2
+	add r0,30h
+	ldrh r1,[r0]
+	ldrh r0,[r2,8h]
+	sub r1,r1,r0
+	strh r1,[r5,10h]
+	mov r2,10h
+	ldsh r0,[r5,r2]
+	lsl r0,r0,10h
+	str r0,[r5]
+	ldr r2,[r3]
+	mov r0,r2
+	add r0,2Ch
+	ldrh r1,[r0]
+	ldrh r0,[r2,0Ah]
+	sub r1,r1,r0
+	strh r1,[r5,12h]
+	mov r3,12h
+	ldsh r0,[r5,r3]
+	b 80380B2h
 	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+Down16Bit5:
+	ldr r2,=3002340h
+	ldr r0,=1C58h
+	add r2,r2,r0
+	ldr r0,[r2]
+	add r0,30h
+	ldrh r1,[r0]
+	strh r1,[r5,10h]
+	mov r1,10h
+	ldsh r0,[r5,r1]
+	lsl r0,r0,10h
+	str r0,[r5]
+	ldr r0,[r2]
+	add r0,2Ch
+	ldrh r1,[r0]
+
+.org 0x80380F0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Repoint sprite status table to make space for 1 more entry to prevent glitchy sprite spawn
 .org 0x80380F8
@@ -2721,7 +3019,7 @@ CallRewardFct:
 	mov r1,1h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.org 0x803D23E	;Fix block check routine doesn't handle 16bit values properly (2)
+.org 0x803D23E	;Fix block check routine doesn't handle 16bit values properly (3)
 	ldr r3,=0EB4h
 
 .org 0x803D244
@@ -3051,9 +3349,9 @@ No1upSound:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fix bug that causes player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh;;;;;;;;;;;;;;;;;
+;Fix bug that causes Player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh;;;;;;;;;;;;;;;;;
 ;Also contains a fix for chucks and koopalings use the same counter for fireballs and stomp hits;;;;;;;;;;;;;;;;;
-;Also contains a fix for player fireballs despawning instantly when shooting them while beeing slightly offscreen
+;Also contains a fix for Player fireballs despawning instantly when shooting them while beeing slightly offscreen
 ;Makes boos, boo blocks and big boos track the Players y-position accurately;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Prevents ninjis from clipping into the ceiling;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains a fix for a bug that causes the reminders of a block destroyed by a chuck use the wrong palette;;;
@@ -3064,7 +3362,7 @@ No1upSound:
 ;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also makes it so you can get up to a 5up when defeating wiggler with a star;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.org 0x803E6FC	;Fix bug that causes player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh
+.org 0x803E6FC	;Fix bug that causes Player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh
 	mov r2,0Bh
 
 .org 0x803E7C4	;chucks fireballs 
@@ -3073,11 +3371,19 @@ No1upSound:
 .org 0x803E7CA
 	cmp r0,0Eh
 	
-.org 0x803E804	;Make chucks give the player 2000p (+3 coins) when killing him with fire balls
+.org 0x803E804	;Make chucks give the Player 2000p (+3 coins) when killing him with fire balls
 	mov r1,5h
 
-.org 0x803E97E	;Prevent player fireballs from instantly despawning when shooting them while beeing slightly offscreen
+.org 0x803E97E	;Prevent Player fireballs from instantly despawning when shooting them while beeing slightly offscreen
 	mov r0,60h
+	
+.org 0x803E9B2	;Adjust draw height of reznor fireball
+	add r6,1h
+	strb r6,[r4]
+	sub r3,54h
+	ldrb r3,[r3]
+	lsr r3,r3,2h
+	mov r1,3h
 
 .org 0x803F21A
 	mov r1,60h
@@ -3091,8 +3397,124 @@ No1upSound:
 .org 0x8040A5C	;boo blocks
 	mov r1,0h
 
+.org 0x80413A0	;Swap draw order of amazing flying hammer bro and his platform to prevent the wings of the platform from getting drawn in front of the hammer bro
+	ldr r0,=3002340h
+	ldr r1,=0894h
+	add r0,r0,r1
+	ldrb r0,[r0] 
+	lsr r0,r0,3h
+	mov r1,1h
+	and r0,r1
+	mov r1,r5
+	add r1,48h
+	strb r0,[r1]
+	sub r1,1Bh
+	mov r0,0FFh
+	strb r0,[r1]
+	mov r6,9h
+	ldr r2,=3007A48h
+HammerBroLoopStart:
+	mov r0,64h
+	mul r0,r6
+	ldr r1,=06CCh
+	add r0,r0,r1
+	ldr r1,[r2]
+	add r4,r0,r1
+	ldrb r0,[r4,1Ch]
+	cmp r0,8h
+	bne HammerBroLoopCheck
+	ldrb r0,[r4,1Ah]
+	cmp r0,9Bh
+	bne HammerBroLoopCheck
+	mov r1,r5
+	add r1,2Dh
+	strb r6,[r1]
+	ldr r0,[r5]
+	str r0,[r4]
+	ldrh r0,[r5,10h]
+	strh r0,[r4,10h]
+	ldr r0,[r5,4h]
+	ldr r1,=0FFF00000h
+	add r0,r0,r1
+	str r0,[r4,4h]
+	ldrh r0,[r5,12h]
+	sub r0,0Fh
+	strh r0,[r4,12h]
+	ldr r0,[r2]
+	mov r1,0F6h
+	lsl r1,r1,4h
+	add r2,r0,r1
+	mov r1,r5
+	add r1,34h
+	ldrb r0,[r1]
+	ldrb r3,[r2]
+	strb r3,[r1]
+	mov r1,r4
+	add r1,34h
+	strb r0,[r1]
+	ldr r3,=813A807h
+	ldrb r0,[r3]
+	ldrb r1,[r2]
+	add r0,r0,r1
+	strb r0,[r2]
+	mov r0,r4
+	bl 804191Ch
+	b HammerBroLoopEnd
+	.pool
+HammerBroLoopCheck:
+	sub r6,1h
+	cmp r6,0h
+	bge HammerBroLoopStart
+HammerBroLoopEnd:
+	mov r0,r5
+	bl 80415ACh
+	cmp r6,0h
+	bge HammerBroNotAlive
+	mov r0,1h
+	strb r0,[r5,1Bh]
+HammerBroNotAlive:
+	ldr r4,=3002340h
+	ldr r1,=1C58h
+	add r0,r4,r1
+	ldr r0,[r0]
+	ldr r2,=1190h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq HammerBroGameNotFrozen
+	b 8041566h
+HammerBroGameNotFrozen:
+	mov r0,r5
+	bl 802FA2Ch
+	ldr r1,=0894h
+	add r0,r4,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne 80414CAh
+	mov r2,r5
+	add r2,21h
+	ldrb r6,[r2]
+
 .org 0x8041560	;Make amazing flying hammer bro give 200p when killing him by hitting blocks from below like every other enemy does
 	mov r1,1h
+
+.org 0x804156C
+	.pool
+
+.org 0x804163C	;Fix wings of 2-tile flying gray turn blocks get drawn in front of blocks
+	mov r6,0h
+
+.org 0x8041762
+	add r0,r6,1h
+	lsl r0,r0,18h
+	lsr r6,r0,18h
+	cmp r6,4h
+	bge 804176Eh
+	
+.org 0x80418B4	;Make amazing flying hammer bro use the freezable frame counter because there is a check for the game freeze flag right before this code
+	.halfword 0x0894
 	
 .org 0x8041DC8	;Prevent ninjis from clipping through the ceiling
 	mov r1,0Ch
@@ -3277,11 +3699,366 @@ NotAt5ups2:
 .org 0x80458C4
 	.pool
 	
+.org 0x8045A06	;Adjust drawing height of rex
+	lsl r2,r6,18h
+	asr r2,r2,18h
+	add r1,r2,r0
+
+.org 0x8045A1C
+	bge DownRex
+	
+.org 0x8045A30
+	.halfword 0x0000
+DownRex:
+	ldr r0,=810CC88h
+	add r1,r2,r0
+	ldrb r0,[r1]
+	ldr r1,[sp]
+	add r0,r1,r0
+	add r0,1h
+	strb r0,[r5]
+
+.org 0x8045AE0
+	.pool
+	
+.org 0x8046862	;Adjust drawing height of super koopa on the ground
+	ldr r3,=3002340h
+	ldr r1,=08C4h
+
+.org 0x8046870
+	ldr r7,=08C8h
+
+.org 0x80468AE
+	ldr r2,=08E8h
+	
+.org 0x80468B4
+	ldr r0,=3007A48h
+	mov r10,r0
+	ldr r2,[r0]
+	mov r0,r6
+	add r0,35h
+	ldrb r1,[r0]
+	mov r0,0Eh
+	and r1,r0
+	ldr r3,=0EBEh
+	add r0,r2,r3
+	mov r3,0h
+	strh r1,[r0]
+	mov r0,r6
+	add r0,48h
+	ldrb r0,[r0]
+	lsl r0,r0,2h
+	ldr r7,=0EBAh
+	add r1,r2,r7
+	strh r0,[r1]
+	ldr r0,=0EBCh
+	add r2,r2,r0
+	strh r3,[r2]
+	mov r7,1h
+	lsl r0,r5,10h
+	asr r0,r0,10h
+	mov r9,r0
+	ldr r2,=810CE78h
+	str r2,[sp,4h]
+	ldr r3,=810CE9Ch
+	str r3,[sp,8h]
+	ldr r0,=810CF08h
+	str r0,[sp,0Ch]
+	ldr r1,=810CEE4h
+	mov r12,r1
+	ldr r2,=810CF2Ch
+	str r2,[sp,10h]
+	ldr r3,=3002340h
+	mov r8,r3
+	ldr r0,=810CE54h
+	str r0,[sp,14h]
+	ldr r1,=810CE30h
+	str r1,[sp,18h]
+	ldr r2,=810A688h
+	str r2,[sp,1Ch]
+LoopSuperKoopa:
+	mov r3,r10
+	ldr r0,[r3]
+	ldr r2,=0EBAh
+	add r1,r0,r2
+	ldr r3,=0EBCh
+	add r0,r0,r3
+	ldrb r0,[r0]
+	ldrb r1,[r1]
+	add r0,r0,r1
+	lsl r0,r0,18h
+	lsr r5,r0,18h
+	ldr r1,[sp,4h]
+	add r0,r5,r1
+	ldrb r0,[r0]
+	ldr r2,[sp]
+	add r0,r2,r0
+	add r0,1h
+	strb r0,[r4]
+
+.org 0x804698C
+	.pool
+
+.org 0x8046AD6
+	b LoopSuperKoopa
+
+.org 0x8048D88	;Adjust drawing height of flying question block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r0,[r0]
+	ldr r2,=1190h
+
+.org 0x8048DB4
+	mov r0,r4
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	ldr r5,=3002C28h
+	add r6,r0,r5
+	mov r0,r4
+	add r0,20h
+	mov r1,0h
+	strb r1,[r0]
+	ldrb r0,[r4,1Bh]
+	cmp r0,0h
+	bne DownFB4
+	mov r0,r4
+	bl 802E234h
+	ldr r3,=1370h
+	add r0,r5,r3
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownFB4
+	mov r0,r5
+	sub r0,55h
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne DownFB1
+	mov r3,r4
+	add r3,2Dh
+	ldrb r0,[r3]
+	mov r2,r0
+	and r2,r1
+	ldr r0,=810D1DCh
+	lsl r2,r2,2h
+	add r0,r2,r0
+	ldr r1,[r4,0Ch]
+	ldr r0,[r0]
+	add r1,r1,r0
+	str r1,[r4,0Ch]
+	ldr r0,=810D1ECh
+	add r2,r2,r0
+	ldr r0,[r2]
+	cmp r1,r0
+	bne DownFB1
+	ldrb r0,[r3]
+	add r0,1h
+	strb r0,[r3]
+DownFB1:
+	mov r0,r4
+	bl 802F254h
+	ldrb r0,[r4,1Ah]
+	cmp r0,83h
+	beq DownFB2
+	mov r5,r4
+	add r5,22h
+	ldrb r0,[r5]
+	cmp r0,0h
+	bne DownFB3
+	ldr r0,=3002340h
+	ldr r2,=0893h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	mov r1,3h
+	and r0,r1
+	cmp r0,0h
+	bne DownFB3
+	mov r3,r4
+	add r3,21h
+	ldrb r1,[r3]
+	mov r0,1h
+	mov r2,r1
+	and r2,r0
+	ldr r0,=810D1E4h
+	lsl r2,r2,2h
+	add r0,r2,r0
+	ldr r1,[r4,8h]
+	ldr r0,[r0]
+	add r1,r1,r0
+	str r1,[r4,8h]
+	ldr r0,=810D1F4h
+	add r2,r2,r0
+	ldr r0,[r2]
+	cmp r1,r0
+	bne DownFB3
+	ldrb r0,[r3]
+	add r0,1h
+	strb r0,[r3]
+	mov r0,20h
+	strb r0,[r5]
+	b DownFB3
+	.pool
+	
+DownFB2:
+	ldr r0,=0FFFF4000h
+	str r0,[r4,8h]
+DownFB3:
+	mov r0,r4
+	bl 802F214h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=0EE9h
+	add r0,r0,r3
+	mov r1,r4
+	add r1,20h
+	ldrb r0,[r0]
+	strb r0,[r1]
+	add r1,9h
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+DownFB4:
+	mov r0,r4
+	bl 8034964h
+	mov r0,r4
+	bl 8035324h
+	mov r0,r4
+	bl 802F9D8h
+	mov r0,r4
+	add r0,24h
+	ldrb r7,[r0]
+	cmp r7,8h
+	bne 8048F60h
+	ldrb r2,[r4,1Bh]
+	cmp r2,2h
+	beq 8048F60h
+	ldrb r0,[r4,1Bh]
+	add r0,1h
+	strb r0,[r4,1Bh]
+	mov r0,0h
+	str r0,[r4,8h]
+	str r0,[r4,0Ch]
+	mov r1,r4
+	add r1,28h
+	mov r0,50h
+	strb r0,[r1]
+	ldr r3,=3002340h
+	ldr r5,=1C58h
+	add r2,r3,r5
+	ldr r1,[r2]
+	ldrh r0,[r4,10h]
+	strh r0,[r1,30h]
+	ldr r1,[r2]
+	ldrh r0,[r4,12h]
+	add r0,1h
+	strh r0,[r1,2Ch]
+
+.org 0x8048F92
+	.pool
+	
 .org 0x804A1AE	;Prevent thwomps from always falling when vertially offscreen
 	ble 804A210h
 
 .org 0x804A1F4
 	add r0,28h
+	
+.org 0x804A4FC	;Fix dino rhino get stuck when jumping in a corner (1)
+	lsl r0,r0,10h
+	ldr r1,[r2]
+	add r1,r1,r0
+	str r1,[r2]
+	ldr r0,[r2]
+	asr r0,r0,10h
+	strh r0,[r2,10h]
+	
+.org 0x804A8B6	;Fix draw height of dino rhino in certain frames
+	sub r0,r0,r3
+	
+.org 0x804C4F2	;Prevent the Player from clipping through mega moles when they have an upwards speed
+	mov r0,20h
+
+.org 0x804C67A	;Adjust draw height of mega mole
+	lsl r2,r4,18h
+	asr r2,r2,18h
+	add r0,r2,r7
+
+.org 0x804C68C
+	bls DownMegaMole
+
+.org 0x804C6B8
+	.halfword 0x0000
+DownMegaMole:
+	add r0,r2,r7
+	ldrb r0,[r0]
+	add r0,r10
+	add r0,1h
+	strb r0,[r3]
+
+.org 0x804D990	;Adjust draw height of sumo brother
+	b DownSumoBrother
+
+.org 0x804D9C4
+	add r0,1h
+DownSumoBrother:
+	strb r0,[r6]
+
+.org 0x804D9CA
+	lsl r0,r5,18h
+
+.org 0x804DA28
+	lsl r0,r5,18h
+
+.org 0x804DA64
+	lsl r0,r5,18h
+	
+.org 0x804FEA8	;Adjust draw height of magikoopa
+	ldr r0,=3007A48h
+	ldr r6,[r0]
+	ldr r1,=0EE8h
+	add r0,r6,r1
+	ldrb r1,[r0]
+	cmp r1,0D0h
+	bhi 804FF68h
+	ldr r2,=08C8h
+	add r1,r7,r2
+	ldrb r0,[r0]
+	ldrh r1,[r1]
+	add r0,r0,r1
+	mov r4,0Fh
+	bic r0,r4
+	add r0,1h
+	strh r0,[r5,12h]
+	mov r1,12h
+	ldsh r0,[r5,r1]
+	lsl r0,r0,10h
+	str r0,[r5,4h]
+	bl 802FA80h
+	ldr r2,=0EE8h
+	add r0,r6,r2
+	ldr r2,=08C4h
+	add r1,r7,r2
+	ldrb r0,[r0]
+	ldrh r1,[r1]
+	add r0,r0,r1
+	bic r0,r4
+	strh r0,[r5,10h]
+	mov r1,10h
+	ldsh r0,[r5,r1]
+	lsl r0,r0,10h
+	str r0,[r5]
+	mov r0,r5
+	bl 802FB50h
+	ldr r2,=0ECEh
+	add r0,r6,r2
+
+.org 0x804FF7C
+	.pool
 
 .org 0x80501C4	;Fixed kamek's wand having a higher sprite priority than its body (Credits: Mister Man)
 	.halfword 0x0939
@@ -3294,6 +4071,235 @@ NotAt5ups2:
 	
 .org 0x80506F2
 	bhi 80506F6h
+
+.org 0x8051238	;Ajust drawing height of the first and the last of the snake blocks
+	ldr r3,=3002340h
+	mov r4,r6
+	add r4,34h
+	ldrb r0,[r4]
+	lsl r0,r0,3h
+	add r0,r0,r3
+	ldr r1,=08ECh
+	add r0,r0,r1
+	ldrh r1,[r0]
+	mov r2,0FCh
+	lsl r2,r2,8h
+	and r1,r2
+	mov r2,1Eh
+	orr r1,r2
+	strh r1,[r0]
+	ldrb r0,[r4]
+	lsl r0,r0,3h
+	add r0,r0,r3
+	ldr r1,=08EBh
+	add r0,r0,r1
+	ldrb r1,[r0]
+	mov r2,0EFh
+	and r1,r2
+	strb r1,[r0]
+	ldrb r0,[r4]
+	lsl r0,r0,3h
+	add r0,r0,r3
+	ldr r1,=08EBh
+	add r0,r0,r1
+	ldrb r1,[r0]
+	mov r2,0DFh
+	and r1,r2
+	strb r1,[r0]
+	mov r2,4h
+	ldr r0,=1D48h
+	add r3,r3,r0
+	ldrb r0,[r3]
+	cmp r0,0FFh
+	beq DownSnakeBlock2
+	ldr r0,[r6,4Ch]
+	cmp r0,0h
+	bne DownSnakeBlock1
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r0,=0F38h
+	add r1,r1,r0
+	ldr r0,[r1]
+	str r0,[r6,4Ch]
+	ldr r0,[r1]
+	add r0,1h
+	str r0,[r1]
+DownSnakeBlock1:
+	ldr r3,=3002340h
+	ldr r0,=08C4h
+	add r1,r3,r0
+	ldrh r0,[r6,10h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	ldr r1,=0828h
+	add r2,r3,r1
+	strh r0,[r2]
+	ldr r0,=08C8h
+	add r1,r3,r0
+	ldrh r0,[r6,12h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	ldr r1,=082Ah
+	add r3,r3,r1
+	strh r0,[r3]
+	ldr r0,[r6,4Ch]
+	mov r1,5h
+	bl 809C3B4h
+	mov r0,r6
+	add r0,2Ah
+	ldrb r2,[r0]
+DownSnakeBlock2:
+	ldr r5,=3002340h
+	ldr r1,=1C58h
+	add r0,r5,r1
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r4,[r0]
+	cmp r4,0h
+	beq DownSnakeBlock3
+	b 805146Eh
+DownSnakeBlock3:
+	ldr r0,=810E1DCh
+	lsl r1,r2,18h
+	asr r1,r1,18h
+	add r0,r1,r0
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	lsl r0,r0,0Ch
+	str r0,[r6,8h]
+	ldr r0,=810E1E1h
+	add r1,r1,r0
+	mov r0,0h
+	ldsb r0,[r1,r0]
+	lsl r0,r0,0Ch
+	str r0,[r6,0Ch]
+	mov r0,r6
+	bl 802F254h
+	mov r0,r6
+	bl 802F214h
+	mov r0,r6
+	add r0,20h
+	strb r4,[r0]
+	mov r0,r6
+	bl 8035324h
+	ldr r1,=1D48h
+	add r0,r5,r1
+	ldrb r0,[r0]
+	cmp r0,0FFh
+	bne DownSnakeBlock4
+	b 805146Eh
+DownSnakeBlock4:
+	ldrh r0,[r6,12h]
+	add r0,1h
+	ldrh r1,[r6,10h]
+	orr r0,r1
+	mov r1,0Fh
+	and r0,r1
+	cmp r0,0h
+	beq DownSnakeBlock5
+	b 805146Eh
+DownSnakeBlock5:
+	ldrb r0,[r6,1Fh]
+	cmp r0,0h
+	bne 8051400h
+	mov r1,r6
+	add r1,29h
+	ldrb r0,[r1]
+	sub r0,1h
+	strb r0,[r1]
+	ldrb r0,[r1]
+	cmp r0,0FFh
+	beq DownSnakeBlock6
+	cmp r0,0h
+	bne 80513E4h
+DownSnakeBlock6:
+	ldr r0,=3002340h
+	ldr r0,[r0,20h]
+	add r0,0DEh
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 80513B0h
+	ldr r1,=810E24Ch
+	b 80513B2h
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x8051410
+	ldrh r4,[r6,12h]
+	ldrh r0,[r6,12h]
+	add r0,1h
+	strh r0,[r6,12h]
+	mov r0,r6
+	bl 8033088h
+	strh r4,[r6,12h]
+	mov r7,r6
+	add r7,2Bh
+	ldrb r0,[r7]
+	mov r8,r0
+	ldr r0,=0FFFFF000h
+	str r0,[r6,0Ch]
+	str r0,[r6,8h]
+	ldrh r5,[r6,10h]
+	ldrh r0,[r6,10h]
+	sub r0,1h
+	strh r0,[r6,10h]
+	mov r0,r6
+	bl 8033088h
+	strh r5,[r6,10h]
+
+.org 0x805144E
+	.pool
+	
+.org 0x8051490
+	ldrh r0,[r0,12h]
+	add r0,1h
+	strh r0,[r2,2Ch]
+
+.org 0x80518D8	;Make growing/shrinking pipe grow/shrink exactly to the block grid position
+	bls 8051900h
+	
+.org 0x8051920
+	cmp r0,0Fh
+
+.org 0x80523DC	;Fix wings of 3-tile flying gray turn blocks get drawn in front of blocks
+	mov r4,0h
+
+.org 0x8052440	;Adjust drawing height of 3-tile flying gray turn block platform
+	add r2,r0,1h
+	strb r2,[r5]
+	mov r1,r10
+	add r0,r4,r1
+	ldrb r2,[r0]
+	ldrh r0,[r5,4h]
+	mov r1,0FCh
+	lsl r1,r1,8h
+	and r0,r1
+	orr r0,r2
+	strh r0,[r5,4h]
+	mov r2,r9
+	add r0,r4,r2
+	ldrb r3,[r0]
+	lsr r1,r3,6h
+	and r1,r6
+	lsl r1,r1,4h
+	ldrb r2,[r5,3h]
+	mov r0,0EFh
+	and r2,r0
+	orr r2,r1
+	lsr r0,r3,7h
+
+.org 0x80524BC
+	add r0,1h
+	lsl r0,r0,18h
+	lsr r4,r0,18h
+	cmp r4,4h
+	ble 80523FEh
 	
 .org 0x8052F3E	;Fix lakitu's/fishin' lakitu's incorrect head positioning (Credits: Mister Man)
 	bne 8052F54h
@@ -3387,6 +4393,29 @@ WigglerWriteLimit:
 .org 0x80589DC
 	.pool
 	
+.org 0x805C0A4	;Adjust draw height of moving castle block
+	add r2,r4,r0
+	ldrb r0,[r2]
+
+.org 0x805C0B6
+	bge DownMovingCastleBlock
+
+.org 0x805C0D4
+	.halfword 0x0000
+DownMovingCastleBlock:
+	ldrb r0,[r2]
+	add r0,r12
+	add r0,1h
+	strb r0,[r5]
+	ldr r0,=810FAD0h
+
+.org 0x805C132
+	.pool
+	.word 0x00000000
+
+.org 0x805C108	;Fix priority of moving castle block
+	mov r0,8h
+	
 .org 0x805CBB0	;Reset Yoshicolor when reseting Yoshi
 	strh r1,[r0]
 	
@@ -3460,6 +4489,9 @@ StartLoopCoinsEaten:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
+	
+.org 0x805DBC8	;Fix mushrooms in bubbles don't give points when eaten by yoshi
+	bl FreeSpaceRBT
 	
 ;Prevents updating some Yoshi stuff when the sprite	in Yoshis sprite slot is no longer a Yoshi
 ;Also contains code that resets the Yoshicolor when reseting the riding a Yoshi flag;;;;;;;;;;
@@ -3598,6 +4630,79 @@ SpriteDoesNotHurt:
 	add r1,0Ah
 	ldrb r1,[r1]
 	orr r0,r1
+
+.org 0x805F8E4	;Fix yoshis position when he stands on a turn block bridge
+	bl 805F5F0h
+
+.org 0x805F8FC
+	sub r0,1Fh
+	
+.org 0x805FA9A		;Fix yoshi's position on top of the rotating gray platform
+	ldr r3,=811A76Ch
+
+.org 0x805FACE
+	ldr r0,=3007A48h
+
+.org 0x805FAD8
+	ldr r3,=0EB4h
+
+.org 0x805FADE
+	ldr r0,=0EB8h
+
+.org 0x805FAE6
+	ldr r1,=0EB6h
+
+.org 0x805FB06
+	bgt DownYoshiPosRGP3
+
+.org 0x805FB10
+	beq DownYoshiPosRGP3
+	ldrb r0,[r4,1Bh]
+	cmp r0,0h
+	bne DownYoshiPosRGP1
+	mov r0,0h
+	str r0,[r4,8h]
+DownYoshiPosRGP1:
+	lsl r0,r5,10h
+	asr r0,r0,10h
+	sub r0,1Fh
+	strh r0,[r4,12h]
+	mov r1,12h
+	ldsh r0,[r4,r1]
+	lsl r0,r0,10h 
+	str r0,[r4,4h]
+	mov r0,r4
+	add r0,2Bh
+	ldrb r0,[r0]
+	mov r1,3h
+	and r0,r1
+	cmp r0,0h
+	bne DownYoshiPosRGP2
+	mov r0,r6
+	add r0,20h
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	ldrh r2,[r4,10h]
+	add r0,r0,r2
+	strh r0,[r4,10h]
+	mov r3,10h
+	ldsh r0,[r4,r3]
+	lsl r0,r0,10h
+	str r0,[r4]
+DownYoshiPosRGP2:	
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r0,=0F2Eh
+	add r1,r1,r0
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+DownYoshiPosRGP3:
+	pop r4-r6
+	pop r0
+	bx  r0
+	.pool
 	
 .org 0x805FBA6	;Prevents Yoshi from standing on sprites that have not a normal status
 	cmp r0,8h
@@ -3607,8 +4712,129 @@ SpriteDoesNotHurt:
 .org 0x8062BF4	;Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: Mister Man)
 	sub	r0,0Eh
 
-.org 0x8063332	;Fixed a bug that causes the Player to climb in the air when getting pushed from a rope mechanism by a solid block
-	b 806350Ch
+.org 0x806321E	;Center line-guided platforms
+	sub r0,6h
+
+.org 0x8063260
+	sub r0,6h
+
+.org 0x8063D22	;Fix stem of scaling mushrooms is sometimes visible above the head of the mushroom
+	cmp r0,0Fh
+
+.org 0x8063D4E
+	ldrh r0,[r4,12h]
+	add r0,1h
+	strh r0,[r2,2Ch]
+
+.org 0x8063F04	;Adjust draw height of scaling mushrooms
+	ldr r2,=3002340h
+	ldr r1,=08C4h
+	add r0,r2,r1
+	ldrh r3,[r7,10h]
+	ldrh r0,[r0]
+	sub r3,r3,r0
+	ldr r0,=08C8h
+	add r1,r2,r0
+	ldrh r0,[r7,12h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	lsl r0,r0,10h
+	lsr r0,r0,10h
+	mov r10,r0
+	mov r0,r7
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	ldr r1,=08E8h
+	add r2,r2,r1
+	add r5,r0,r2
+	mov r6,0h
+	lsl r3,r3,10h
+	asr r3,r3,10h
+	mov r8,r3
+	ldr r0,=810A688h
+	mov r9,r0
+LoopScalingMushrooms:
+	ldr r0,=8116794h
+	add r0,r6,r0
+	mov r1,0h
+	ldsb r1,[r0,r1]
+	add r1,r8
+	ldr r2,=01FFh
+	mov r0,r2
+	and r1,r0
+	ldrh r0,[r5,2h]
+	ldr r2,=0FFFFFE00h
+	and r0,r2
+	orr r0,r1
+	strh r0,[r5,2h]
+	mov r1,r10
+	lsl r0,r1,10h
+	mov r2,80h
+	lsl r2,r2,0Eh
+	add r0,r0,r2
+	lsr r0,r0,10h
+	cmp r0,0DFh
+	bls DownScalingMushrooms1
+	mov r0,0C0h
+	b DownScalingMushrooms2
+	.pool
+	.halfword 0x0000
+DownScalingMushrooms1:
+	mov r0,r10
+	add r0,1h
+DownScalingMushrooms2:
+
+.org 0x806400C
+	bls LoopScalingMushrooms
+	
+.org 0x8064056	;Adjust height of sinking grey platform on lava
+	cmp r0,0DFh
+
+.org 0x806409C
+	add r0,1h
+	strb r0,[r5]
+	lsl r4,r3,18h
+	asr r4,r4,18h
+	mov r1,r8
+	add r0,r4,r1
+	ldrb r3,[r0]
+	lsr r1,r3,1h
+	mov r0,7h
+	and r1,r0
+	lsl r1,r1,4h
+	ldrb r2,[r5,5h]
+	mov r0,0Fh
+	and r2,r0
+	orr r2,r1
+	strb r2,[r5,5h]
+	ldr r0,=1C58h
+	add r0,r12
+	ldr r0,[r0]
+	ldr r1,=1177h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	lsr r0,r0,4h
+	add r0,r10
+	ldrb r1,[r0]
+	mov r0,3h
+	and r1,r0
+	lsl r1,r1,2h
+	mov r0,0F3h
+	and r2,r0
+	orr r2,r1
+	strb r2,[r5,5h]
+	lsr r2,r3,6h
+	and r2,r6
+	lsl r2,r2,4h
+	ldrb r1,[r5,3h]
+	mov r0,0EFh
+	and r1,r0
+	orr r1,r2
+	lsr r3,r3,7h
+
+.org 0x8064168
+	.pool
 	
 .org 0x8064FF8	;koopaling stomp
 	add r0,4h
@@ -3627,6 +4853,86 @@ SpriteDoesNotHurt:
 StompedKoopalingOrPuppet:
 	mov r0,r4
 	bl 803056Ch
+	
+.org 0x8066DC0	;Adjust draw height of reznor platform
+	and r1,r3
+	ldrh r0,[r4,2h]
+	mov r3,r9
+	and r0,r3
+	orr r0,r1
+	strh r0,[r4,2h]
+	ldr r0,=0EB6h
+	add r2,r2,r0
+	ldrb r0,[r2]
+	mov r1,r8
+	sub r0,r0,r1
+	add r0,1h
+
+.org 0x8066E68
+	.pool
+	
+.org 0x8066EF2	;Adjust draw height of reznor
+	mov r0,r7
+	add r0,r0,r1
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	add r2,r2,r0
+	add r0,r2,1h
+	cmp r2,0BFh
+	ble DownReznor
+	mov r0,0C0h
+DownReznor:
+	strb r0,[r5]
+	
+.org 0x8066FBC	;Initialize reznor facing left
+	push r4,r14
+	mov r4,r0
+	ldr r2,=3007A48h
+	ldr r2,[r2]
+	ldr r1,=06BCh
+	add r0,r2,r1
+	mov r1,2h
+	strb r1,[r0]
+	ldr r1,=0ED5h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,8h
+	bne DownReznorInit
+	mov r0,4h
+	strb r0,[r4,1Bh]
+	add r1,31h
+	add r0,r2,r1
+	mov r1,58h
+	strh r1,[r0]
+	ldr r0,=3002340h
+	ldr r1,=1CC3h
+	add r0,r0,r1
+	ldrb r1,[r4,1Bh]
+	strb r1,[r0]
+	mov r0,r4
+	bl 8067434h
+DownReznorInit:
+	bl 802FA80h
+	ldr r2,=3007A48h
+	ldr r2,[r2]
+	ldr r1,=0EE7h
+	add r0,r2,r1
+	mov r1,r4
+	add r1,29h
+	mov r3,0h
+	ldrb r0,[r0]
+	strb r0,[r1]
+	ldr r1,=06AEh
+	add r0,r2,r1
+	strh r3,[r0]
+	add r4,2Ah
+	mov r0,1h
+	strb r0,[r4]
+	pop r4
+	pop r0
+	bx r0
+	.pool
 
 .org 0x8067E60	;Reduce y-speed of item on goal to prevent it from despawn
 	.word 0xFFFE0000
@@ -3638,6 +4944,119 @@ StompedKoopalingOrPuppet:
 
 .org 0x8067E92
 	strh r4,[r1]
+	
+.org 0x80696C2	;Fix p-switch run out sfx plays in certain cases when p-switch timer is 1
+	ldrb r3,[r0]
+	cmp r3,0h
+	
+.org 0x806B452	;Fix star timer gets either never or every frame decremented when game freeze flag is set and gets not reset when the Player dies instandly  
+	add r4,r0,r4
+	ldrb r6,[r4]
+	
+.org 0x806B484
+	ldr r2,=3002340h
+	mov r1,0E3h
+	lsl r1,r1,5h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,9h
+	bne NotDeadStarMan
+	mov r0,0h
+	strb r0,[r4]
+	b 806B45Ah
+	.pool
+
+NotDeadStarMan:
+	ldr r1,=1C67h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,0FFh
+	beq NoStarTimerDecrement
+	ldr r3,=1C58h
+	add r0,r2,r3
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne NoStarTimerDecrement
+	ldr r3,=0894h
+	add r0,r2,r3
+	ldrb r0,[r0]
+	mov r1,3h
+	and r0,r1
+	cmp r0,0h
+	bne NoStarTimerDecrement
+	ldrb r0,[r4]
+	sub r0,1h
+	strb r0,[r4]
+	ldrb r5,[r4]
+	cmp r5,0h
+	bne NoStarTimerDecrement
+	ldr r4,=3007A48h
+	ldr r0,[r4]
+	mov r2,0D8h
+	lsl r2,r2,3h
+	add r0,r0,r2
+	ldrh r0,[r0]
+	bl 8030D90h
+	ldr r0,[r4]
+	mov r3,0D8h
+	lsl r3,r3,3h
+	add r1,r0,r3
+	mov r2,0h
+	strh r5,[r1]
+	ldr r4,=069Fh
+	add r0,r0,r4
+	strb r2,[r0]
+NoStarTimerDecrement:
+	cmp r6,1Dh
+	bls 806B580h
+	cmp r6,1Eh
+	bne DifferentColorFlashing
+	ldr r2,=3002340h
+	ldr r0,[r2,20h]
+	mov r3,r0
+	add r3,0FCh
+	ldrh r0,[r3]
+	cmp r0,0FFh
+	beq 806B580h
+	ldrh r0,[r3]
+	mov r1,7Fh
+	and r0,r1
+	strh r0,[r3]
+	ldr r6,=1D03h
+	add r0,r2,r6
+	ldr r1,=1D04h
+	add r2,r2,r1
+	ldrb r1,[r0]
+	ldrb r0,[r2]
+	orr r1,r0
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=06B7h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	orr r1,r0
+	cmp r1,0h
+	beq NormalizeMusic
+	mov r0,0Dh
+	bl 809BF40h
+	b 806B580h
+NormalizeMusic:
+	bl 8003D68h
+	b 806B580h
+	.pool
+	
+DifferentColorFlashing:
+	ldr r0,=3002340h
+	ldr r4,=0893h
+	add r0,r0,r4
+	ldrb r0,[r0]
+	b 806B58Ah
+	.pool
+	.word 0x00000000
+	.word 0x00000000
 	
 .org 0x806D3D6	;Fix Player floating if they fell from Iggy's/Larry's tilting platform while sliding (Credits: Mister Man)
 	blt DownNotAirborne
@@ -3660,12 +5079,131 @@ DownNotAirborne:
 	pop r0
 	bx r0
 	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceSDS:
+	mov r3,0h
+	ldr r1,[r5,0Ch]
+	cmp r1,0h
+	ble SpriteMovesNotDownwards
+	mov r3,10h
+SpriteMovesNotDownwards:
+	strb r3,[r0]
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
+	.halfword 0x0000
 ;;;;;;;
+
+;Fix bug that causes the Bravo Mario/Luigi to not get displayed when killing enough enemies with sliding and prevent the Player to slide when carrying an item
+.org 0x806D554
+	ldr r0,=8119A99h
+	add r0,r7,r0
+	ldrb r4,[r0]
+	ldr r2,=3002340h
+	ldr r1,=1C88h
+	
+.org 0x806D56A
+	ldr r3,=1CD2h
+	
+.org 0x806D574
+	ldr r1,=1C58h
+	add r0,r2,r1
+	ldr r0,[r0]
+	ldr r2,=10F9h
+	
+.org 0x806D5AE
+	ldr r2,=3002340h
+	ldr r0,=1C90h
+	
+.org 0x806D5C6
+	ldr r1,=3002340h
+	ldr r2,=1C6Dh
+	
+.org 0x806D5D8
+	ldr r3,=1CB6h
+
+.org 0x806D5E2
+	ldr r3,=3002340h
+	ldr r1,=1D4Bh
+
+.org 0x806D5EC
+	ldr r2,=1C61h
+
+.org 0x806D604
+	ldr r0,=1C66h
+
+.org 0x806D610
+	ldr r1,=1CCEh
+
+.org 0x806D618
+	bne DownCheckResetCounter
+	ldr r2,=1C58h
+	add r0,r3,r2
+	ldr r0,[r0]
+	ldr r1,=10FAh
+
+.org 0x806D634
+	ldr r1,=1D47h
+	
+.org 0x806D642
+DownCheckResetCounter:
+	ldr r6,=3002340h
+	ldr r2,=1D4Ch
+	add r0,r6,r2
+	ldrh r1,[r0]
+	mov r5,0h
+	strh r5,[r0]
+	cmp r1,0h
+	bne ResetCounter
+	ldr r1,=1CB4h
+	add r0,r6,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne SkipCounterResetSliding
+ResetCounter:
+	ldr r4,=3007A48h
+	ldr r0,[r4]
+	ldr r1,=06BEh
+	add r0,r0,r1
+	ldrh r0,[r0]
+	bl 8030D90h
+	ldr r0,[r4]
+	ldr r2,=06BEh
+	add r0,r0,r2
+	strh r5,[r0]
+SkipCounterResetSliding:
+	cmp r7,0h
+	beq 806D722h
+	ldr r3,=1CCEh
+	add r0,r6,r3
+	mov r1,0h
+	strb r1,[r0]
+	cmp r7,4h
+	bhi 806D708h
+	ldr r0,[r6,20h]
+	add r0,0E0h
+	ldrb r0,[r0]
+	cmp r0,2h
+	bne 806D722h
+	ldr r1,=3007A48h
+	ldr r0,[r1]
+	ldr r3,=0EDBh
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 806D722h
+	ldr r2,=1CB4h
+	add r1,r6,r2
+	mov r0,80h
+	strb r0,[r1]
+	b 806D722h
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part of StarBlockRespawn (SBR)
 .org 0x806E07C
@@ -3678,7 +5216,7 @@ DownNotAirborne:
 	strb r0,[r1]
 	b 806E114h
 
-.org 0x806E420	;Prevent Mario/Luigi from getting a mushroom from a midpoint that doesn't work
+.org 0x806E420	;Prevent the Player from getting a mushroom from a midpoint that doesn't work
 	beq 806E43Ch
 	
 .org 0x806E4F6
@@ -3727,7 +5265,6 @@ DownNotAirborne:
 	ldrb r0,[r1]
 	add r0,1h
 	strb r0,[r1]
-
 Checkpoint1:
 	ldr r0,[r6,20h]
 	add r0,0A0h
@@ -3740,7 +5277,6 @@ Checkpoint1:
 	add r0,0A0h
 	ldrh r1,[r0]
 	ldr r3,=811A2A8h
-
 Checkpoint_Loop:
 	add r0,r3,r2
 	ldrb r0,[r0]
@@ -3762,14 +5298,12 @@ Checkpoint2:
 	ldrh r0,[r1]
 	add r0,1h
 	strh r0,[r1]
-
 Checkpoint3:
 	add r1,r2,1
 	ldr r2,=089Eh
 	add r0,r6,r2
 	strb r1,[r0]
 	mov r5,28h
-
 Checkpoint4:
 	ldr r2,=886h
 	add r0,r6,r2
@@ -3792,7 +5326,6 @@ Checkpoint4:
 	sub r2,1h
 	add r1,r0,r2
 	strb r3,[r1]
-	
 Checkpoint5:
 	bl 800CC64h
 	bl 8070B08h
@@ -4083,17 +5616,210 @@ SpriteTableStatus:
 	.halfword 0x114D, 0x1144
 	.halfword 0x1152
 
-.org 0x80E680B	;Fix palette of Lemmy's/Wendy's pipe in enemy roll credits
-	.byte 0x15
-	
-.org 0x80E680F
-	.byte 0x15
+.org 0x80E6205	;Fix position of koopas in enemy roll credits
+	.byte 0x91
 
-.org 0x80E6827
-	.byte 0x15
+.org 0x80E6209
+	.byte 0xA1
+
+.org 0x80E6215
+	.byte 0x91
+
+.org 0x80E621D
+	.byte 0xA1
+
+.org 0x80E625D	;Fix position of spike tops in enemy roll credits
+	.byte 0x3C, 0x33
+
+.org 0x80E6261
+	.byte 0x40
+
+.org 0x80E626A	;Fix position of buzzy beetles in enemy roll credits
+	.byte 0x90
 	
-.org 0x80E682B
-	.byte 0x15
+.org 0x80E626E
+	.byte 0x90
+	
+.org 0x80E6286	;Fix position of sparky in enemy roll credits
+	.byte 0x74
+
+.org 0x80E62C8	;Fix position of mecha koopas in enemy roll credits
+	.byte 0x68
+
+.org 0x80E62CC
+	.byte 0x68
+
+.org 0x80E62D0
+	.byte 0x68
+
+.org 0x80E62D4
+	.byte 0x68
+
+.org 0x80E62D8
+	.byte 0x6F
+
+.org 0x80E62DC
+	.byte 0x6F
+
+.org 0x80E62E0
+	.byte 0x6F
+
+.org 0x80E62E4
+	.byte 0x70
+
+.org 0x80E62E8
+	.byte 0x70
+
+.org 0x80E62EC
+	.byte 0x70
+
+.org 0x80E62F0
+	.byte 0x70
+
+.org 0x80E62F4
+	.byte 0x78
+
+.org 0x80E62F8
+	.byte 0x78
+
+.org 0x80E62FC	;Fix position and draworder of the wings of 2-tile flying gray turnblock platform and the amazing flying hammerbro in enemy roll credits
+	.byte 0x25, 0x46, 0xC6, 0x56, 0x4B, 0x46, 0xC6, 0x16
+	.byte 0x30, 0x4F, 0x40, 0x12, 0x40, 0x4F, 0x40, 0x12
+	.byte 0x20, 0x37, 0x5D, 0x57, 0x38, 0x38, 0x6A, 0x07
+	.byte 0x40, 0x38, 0x4A, 0x07, 0x30, 0x40, 0x46, 0x17
+	.byte 0x40, 0x40, 0x48, 0x17
+	
+.org 0x80E6331	;Fix position of chargin chuck and vulcano lotus in enemy roll credits
+	.byte 0x85
+
+.org 0x80E6335
+	.byte 0x88
+
+.org 0x80E6339
+	.byte 0x88
+
+.org 0x80E633D
+	.byte 0x90
+
+.org 0x80E6341
+	.byte 0x90
+
+.org 0x80E6345
+	.byte 0x90
+
+.org 0x80E6349
+	.byte 0x90
+
+.org 0x80E634D
+	.byte 0x90
+
+.org 0x80E6351
+	.byte 0x90
+
+.org 0x80E6391	;Fix position of super koopa on the ground in enemy roll credits
+	.byte 0x50
+
+.org 0x80E6395
+	.byte 0x50
+
+.org 0x80E6399
+	.byte 0x58
+
+.org 0x80E639D
+	.byte 0x58
+	
+.org 0x80E63A2	;Fix position of sumo brother in enemy credits roll
+	.byte 0x30
+
+.org 0x80E63A6
+	.byte 0x30
+
+.org 0x80E63AA
+	.byte 0x28
+
+.org 0x80E63CA	;Fix position of pokey and monty mole in enemy credits roll
+	.byte 0x40
+
+.org 0x80E63DA
+	.byte 0x50
+
+.org 0x80E63DE
+	.byte 0x50
+
+.org 0x80E63E2
+	.byte 0x50
+
+.org 0x80E63EE
+	.byte 0x60
+
+.org 0x80E63F2
+	.byte 0x60
+
+.org 0x80E63F6
+	.byte 0x70
+
+.org 0x80E6443	;Fix position of rex in enemy roll credits
+	.byte 0x30
+
+.org 0x80E6447
+	.byte 0x40
+	
+.org 0x80E645B	;Fix position of mega mole in enemy roll credits
+	.byte 0x70
+
+.org 0x80E645F
+	.byte 0x70
+
+.org 0x80E6463
+	.byte 0x80
+
+.org 0x80E6467
+	.byte 0x80
+		
+.org 0x80E6551	;Fix position of spiny in enemy roll credits
+	.byte 0x80
+
+.org 0x80E6555	;Fix position of bob-omb in enemy roll credits
+	.byte 0x9F
+
+.org 0x80E6559 	;Fix position of wiggler in enemy roll credits
+	.byte 0xA0
+
+.org 0x80E655D
+	.byte 0xA0
+
+.org 0x80E6561
+	.byte 0x9F
+
+.org 0x80E6565
+	.byte 0xA0
+
+.org 0x80E6569
+	.byte 0xA0
+
+.org 0x80E656D
+	.byte 0x98
+
+.org 0x80E661F	;Fix position of grinder in enemy roll credits
+	.byte 0x3F
+
+.org 0x80E6623
+	.byte 0x3F
+
+.org 0x80E6627
+	.byte 0x4F
+
+.org 0x80E662B
+	.byte 0x4F
+
+.org 0x80E662F	;Fix position of magikoopa in enemy roll credits
+	.byte 0x31
+
+.org 0x80E6633
+	.byte 0x41
+
+.org 0x80E6637
+	.byte 0x41
 
 .org 0x80E66AE	;Fix palette of Reznor platform in enemy roll credits
 	.byte 0x13
@@ -4119,6 +5845,18 @@ SpriteTableStatus:
 .org 0x80E66FA
 	.byte 0x53
 	
+.org 0x80E680B	;Fix palette of Lemmy's/Wendy's pipe in enemy roll credits
+	.byte 0x15
+	
+.org 0x80E680F
+	.byte 0x15
+
+.org 0x80E6827
+	.byte 0x15
+	
+.org 0x80E682B
+	.byte 0x15
+	
 .org 0x80E7AE6	;Restored Bill Blaster's unused right bottom tile (Credits: Mister Man)
 	.byte	0x1B ,0x40	
 	
@@ -4130,6 +5868,9 @@ SpriteTableStatus:
 	
 .org 0x80EF1E4	;Fix first room of Donut ghosthouse has wrong bg color	
 	.byte 0x60
+
+.org 0x80F13D2	;Fix Donut ghosthouse secret exit room uses wrong sprite palette
+	.byte 0x94
 	
 .org 0x80F9999	;Fix a tile above Vanilla Dome's entrance being mirrored incorrectly in the world map (Credits: Mister Man)
 	.byte	0x64
@@ -4592,6 +6333,9 @@ SpriteTableStatus:
 	.halfword 0x016E, 0x0000	;0x0173, 0x0000	;0x78-0x79
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.org 0x8103921	;Fix distance of Layer 2 bg scrolling
+	.byte 0x40, 0x60, 0x40, 0x20, 0x10, 0x40, 0x20
+ 
 .org 0x81052C9	;Fix misplaced tile in doorhole animation
 	.byte 0x49
 	
@@ -4617,6 +6361,9 @@ SpriteTableStatus:
 .org 0x8109CD2 +0C6h	;Fix spotlight properties
 	.byte 0x00
 ;----------------------------------------------------------
+.org 0x8109DA4 +45h	;Fix palette of directional coin when blue p-switch is not active
+	.byte 0x34
+
 .org 0x8109DA4 +55h	;Fix several sprites fireball immunity
 	.byte 0xF3, 0xF3, 0xF3, 0xF3, 0xF3, 0xF3, 0xF1, 0xF1 
 	.byte 0xFB, 0xFB, 0xF3, 0xF3, 0xF3, 0xF1, 0xF1, 0xB3
@@ -4625,7 +6372,7 @@ SpriteTableStatus:
 .org 0x8109DA4 +0A3h
 	.byte 0xF3
 ;----------------------------------------------------------
-.org 0x8109E76 +0Eh	;Make keyhole not use default player interaction
+.org 0x8109E76 +0Eh	;Make keyhole not use default Player interaction
 	.byte 0x82
 
 .org 0x8109E76 +33h	;Fix normal fireball property
@@ -4646,7 +6393,7 @@ SpriteTableStatus:
 .org 0x8109E76 +6Dh	;Prevent invisible blocks from triggering the item routine
 	.byte 0xA2
 
-.org 0x8109E76 +8Ah	;Prevent several sprites from using the default interaction with the player
+.org 0x8109E76 +8Ah	;Prevent several sprites from using the default interaction with the Player
 	.byte 0x82, 0x82, 0x82, 0x82
 
 .org 0x8109E76 +91h	;Prevent chucks from triggering the item routine
@@ -4769,7 +6516,7 @@ SpriteTableStatus:
 	.byte 0x44, 0x45, 0x44, 0x04
 	
 .org 0x810A01A +0C0h	;Make sinking gray platform in lava disapear on goal like other platforms
-	.byte 0x45
+	.byte 0x45, 0x44
 
 .org 0x810A01A +0C4h	;Fix spotlight properties and make grey platforms and big boo boss invincible
 	.byte 0x45, 0x45, 0x46
@@ -4780,7 +6527,7 @@ SpriteTableStatus:
 .org 0x810A0EC +06Dh	;Make invisible solid block solid for yoshi
 	.byte 0x01
 
-.org 0x810A0EC +087h	;Prevent yoshi from falling thrugh lakitus cloud
+.org 0x810A0EC +087h	;Prevent yoshi from falling thrugh lakitu's cloud
 	.byte 0x05
 
 .org 0x810A0EC +0B1h	;Make snake block solid for yoshi
@@ -4803,8 +6550,47 @@ SpriteTableStatus:
 .org 0x810B080
 	.word SpriteTableStatus
 	
+.org 0x810C37E	;Fix position of the wings of 2-tile flying gray turnblock platform
+	.byte 0xF5, 0x1B
+
+.org 0x810C382
+	.byte 0xFD, 0x1B
+	
+.org 0x810C386
+	.byte 0xF7, 0xF7
+	
+.org 0x810C38A
+	.byte 0xFF, 0xFF
+
+.org 0x810C396	;Fix palette of the wings of 2-tile flying gray turnblock platform
+	.byte 0x76, 0x36
+	
+.org 0x810C39A
+	.byte 0x76, 0x36	
+
 .org 0x810CA95	;Fixes incorrect shoulder tile of diggin chucks
 	.byte 0x0C
+
+.org 0x810D462	;Fix dino rhino get stuck when jumping in a corner (2)
+	.halfword 0xFFFF, 0x0001
+	
+.org 0x810E42F	;Fix position of the wings of 3-tile flying gray turnblock platform
+	.byte 0xF5, 0x2B
+
+.org 0x810E434
+	.byte 0xFD, 0x2B
+	
+.org 0x810E439
+	.byte 0xF7, 0xF7
+	
+.org 0x810E43E
+	.byte 0xFF, 0xFF
+
+.org 0x810E44D	;Fix palette of the wings of 3-tile flying gray turnblock platform
+	.byte 0x76, 0x36
+	
+.org 0x810E452
+	.byte 0x76, 0x36	
 	
 .org 0x8110208	;Fix sprite of fuzzy when spit out by yoshi
 	.halfword 0x1C8
