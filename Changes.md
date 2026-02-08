@@ -43,6 +43,13 @@
 - Player and Yoshi fireballs no longer despawn immediately when shooting them while being slightly offscreen (inspired by SMA4/SMB3).
 - Removed the unnecessary space between the coin symbol, the x and the coin number in the hud.
 - Made the life counter in the hud rightaligned like all the other counters in the hud.
+- Made the turnblocks of the 3 tile wide flying turnblock platform unpassable from below like all the other turnblocks in the game.
+- Made the directional coin block reset the P-Switch/Directional coin active music when hit while the music is already playing, similar to how a P-Switch does it.
+- A sound effect now playes right before the directional coin timer runs out, similar to how it happens right before the P-Switch timer runs out.
+- The wings of the 2 and 3 tile wide flying turnblock platform now use their blue palette instead of the grey turnblock palette (They already use that palette in the enemy roll credits).
+- Changed the position of the wings of the 2 and 3 tile wide flying turnblock platform to be more in line with how they are positioned on other blocks and sprites.
+- Reznor now faces the Player when the Battle starts instead of looking away from them.
+- Line-guided platforms are now horizontally centerd on the line.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
@@ -58,7 +65,7 @@
 - Fixed a part of diggin' Chuck's shoulder was coverd by his head while digging.
 - Several enemies are now invulnerable to cape gliding or disapear with smoke to prevent them from showing glitched death animations.
 - Fixed an oversight that caused whistlin' Chucks to spawn glitched super koopas in Forest of Illusion 2.
-- Fixed silver coins and top of directional coin having ugly purple dots.
+- Fixed silver coins (and directional coin (only hat it because it used the wrong palette)) having ugly purple dots.
 - Fixed the animation of the checkpoint post.
 - Fixed inconsistencies in sprite of P-Switch and Trampolin.
 - Fixed the palette of disco Koopa shell to prevent it from looking weird after the sprite change after obtaining all 96 exits.
@@ -124,9 +131,29 @@
 - Fixed a bug that causes the Player floating when sliding off of Larry's/Iggy's tilting platform (Credits: Mister Man).
 - Fixed the palette of spat out Volcano Lotus/Lakitu in a pipe getting partially overwritten (Credits: Mister Man).
 - Fixed Lakitu / Fishin' Lakitu's head being incorrect positioned (Credits: Mister Man).
-- Fixed first room in Donut ghosthouse uses a wrong background color.
+- Fixed first room in Donut ghosthouse uses the wrong background color.
 - Fixed Reznor platform and Lemmy's/Wendy's pipe use the wrong palette in the enemy roll credits.
 - Fixed a bug that causes some solid sprites to behave strangley when touching them from below because their status has been changed erroneously.
 - Fixed a bug that causes the Player to climb on thin air when getting pushed away by a solid block when climbing on a rope mechanism.
 - Fixed a bug that causes Player and Yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh.
 - Fixed a bug that cuases extended sprites to sometimes recognize a collision when being vertically offscreen.
+- Fixed an oversight that caused the flying ?-Block that always flies to the left to hurt the Player much earlier than other solid sprites when squashing the Player in the wall.
+- Fixed a bug that caused the Player to clip through mega moles when they have an upwards speed.
+- Fixed a bug that caused dino rhinos to get stuck when jumping in a corner.
+- Fixed a bug that caused mushrooms in bubbles to not give any points if it was eaten by yoshi before the bubble bursts.
+- Fixed a bug that caused the Layer 2 wall in Ludwig's castle to trigger a screen shake every frame it touches the ground and restored the sound effect when it hits the ground.
+- Fixed secret exit room in Donut ghosthouse uses the wrong sprite palette.
+- Fixed directional coin uses the block palette even if blue P-Switch isn't active.
+- Fixed directional coin is drawn 1 pixel too high when P-Switch isn't active.
+- Fixed a bug that caused the starman timer, the p-ballon timer and the yoshi swallow timer to sometimes get decremented even if the game is frozen and even faster than normal.
+- Fixed a bug that caused the Player to cycle through colors when dying while having a star (e.g. fall in lava or in a pit).
+- Fixed a bug that caused the Bravo Mario/Luigi message sometimes appear after the Player died, even though it's not supposed to.
+- Fixed a bug that caused the Bravo Mario/Luigi message to show a glitched number if the Player gets exactly 1000 lifes in a row.
+- Fixed a bug that caused the game in certain cases to check the button input while the game freeze flag is set.
+- Fixed the Player's and Yoshi's positions on top of several solid sprites.
+- Fixed several sprites were not properly alligned on the ground or on the grid by one pixel.
+- Fixed the position and draw priority of several sprites in the enemy roll credits.
+- Fixed a bug that caused the Bravo Mario/Luigi message to not get displayed when killing enough enemies by sliding.
+- Fixed the skull platform doesn't take into account, that it gets slightly pushed downwards when the Player stands on it when putting the Player and Yoshi on top of it.
+- Fixed a bug that caused Yoshi to run in the air for a few frames when he's running on a line-guided checkered platform before he falls downwards.
+- Fixed a bug that cuased the Player to slide up slopes when riding a Yoshi.
