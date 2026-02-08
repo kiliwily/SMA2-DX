@@ -156,4 +156,4 @@
 - Fixed a bug that caused the Bravo Mario/Luigi message to not get displayed when killing enough enemies by sliding.
 - Fixed the skull platform doesn't take into account, that it gets slightly pushed downwards when the Player stands on it when putting the Player and Yoshi on top of it.
 - Fixed a bug that caused Yoshi to run in the air for a few frames when he's running on a line-guided checkered platform before he falls downwards.
-- Fixed a bug that cuased the Player to slide up slopes when riding a Yoshi.
+- Fixed a bug that caused the Player to slide up slopes when riding a Yoshi.
