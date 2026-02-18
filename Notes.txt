@@ -59,6 +59,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 30F4 Start of Reward pop-ups Ram
 3696 Screen shake timer (?)
 369E P-Balloon timer
+36BE Skull platform x speed
 36CD Number of red berries eaten by Yoshi, resets when 10 are consumed
 36CE Number of pink berries eaten by Yoshi, resets when 2 are consumed
 36CF Type of sprite in Yoshis Mouth (0=enemy, 1=red berry, 2=pink berry, 3=green berry)

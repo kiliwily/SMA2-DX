@@ -978,6 +978,7 @@ FreeSpaceFSB:
 	sub r4,4h
 	add r0,r2,r4
 	ldr r1,[r3]
+	add r7,33h
 	add r1,r1,r7
 	ldrb r1,[r1]
 	lsl r1,r1,18h
@@ -1242,6 +1243,36 @@ FreeSpaceFDA:
 NoFuzzyDeath:
 	pop r0
 	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFMS:
+	ldr r0,=811676Ah
+	add r0,r2,r0
+	ldrb r0,[r0]
+	cmp r0,2h
+	bne MushroomRises
+	ldrh r0,[r4,12h]
+	mov r1,0Fh
+	and r0,r1
+	cmp r0,0h
+	beq ChangeStemTile
+NoStemTileChange:
+	mov r0,0h
+	b ReturnNoTileChange
+	.pool
+MushroomRises:
+	ldr r0,[r4,4h]
+	mov r1,80h
+	lsl r1,r1,8h
+	add r0,r0,r1
+	lsl r0,r0,0Ch
+	cmp r0,0h
+	bne NoStemTileChange
+ChangeStemTile:
+	mov r0,1h
+ReturnNoTileChange:
+	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

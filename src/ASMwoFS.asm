@@ -1942,9 +1942,6 @@ ReturnNoHitFlag:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.org 0x803233E	;Despawn sprites faster after they sank in lava
-	mov r1,12h
-
 ;Fix certain sprites don't sink in normal level lava
 .org 0x80328A8
 	ldr r0,=3007A48h
@@ -4264,9 +4261,6 @@ DownSnakeBlock6:
 .org 0x80518D8	;Make growing/shrinking pipe grow/shrink exactly to the block grid position
 	bls 8051900h
 	
-.org 0x8051920
-	cmp r0,0Fh
-
 .org 0x80523DC	;Fix wings of 3-tile flying gray turn blocks get drawn in front of blocks
 	mov r4,0h
 
@@ -4717,14 +4711,6 @@ DownYoshiPosRGP3:
 
 .org 0x8063260
 	sub r0,6h
-
-.org 0x8063D22	;Fix stem of scaling mushrooms is sometimes visible above the head of the mushroom
-	cmp r0,0Fh
-
-.org 0x8063D4E
-	ldrh r0,[r4,12h]
-	add r0,1h
-	strh r0,[r2,2Ch]
 
 .org 0x8063F04	;Adjust draw height of scaling mushrooms
 	ldr r2,=3002340h

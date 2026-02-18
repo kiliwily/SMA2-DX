@@ -32,7 +32,6 @@
 - The speed of an item that a sprite gets changed into when being carried through the goal was reduced to prevent it from going offscreen and despawning.
 - Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
 - Despawn the sprite in yoshis mouth when yoshi despawns.
-- Despawn sprites immediately after they sank in lava.
 - Made the lightswitch solid for and hitable with sprites.
 - Lemmy/Wendy no longer give points when stomping on them, because no other boss does that.
 - Made the amount of points the Player gets when crushing two sprites together depending on how many of the sprites die.
@@ -157,3 +156,4 @@
 - Fixed the skull platform doesn't take into account, that it gets slightly pushed downwards when the Player stands on it when putting the Player and Yoshi on top of it.
 - Fixed a bug that caused Yoshi to run in the air for a few frames when he's running on a line-guided checkered platform before he falls downwards.
 - Fixed a bug that caused the Player to slide up slopes when riding a Yoshi.
+- Fixed a bug that caused skull rafts to have small gaps between the skulls when moving depending on which skull the Player touched first.

@@ -1785,7 +1785,53 @@ DownFSD2:
 .org 0x8057464
 	.pool
 
-.org 0x8057928	;Part of fix skull bug (FSB)
+.org 0x805785C	;Part of fix skull bug (FSB)
+	b DownSkull4
+
+.org 0x80578B4
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+	add r0,r0,r2
+	ldr r0,[r0]
+	ldr r3,=1190h
+
+.org 0x80578C6
+	b DownSkull4
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r7,=0EB4h
+
+.org 0x80578D4
+	ldr r6,=3007A48h
+	
+.org 0x80578E0
+	ldr r1,=06CCh
+
+.org 0x8057900
+	ldr r7,=0EB4h
+	
+.org 0x8057914	
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=0692h
+	add r3,r0,r2
+	ldrb r0,[r3]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bge SkullMovementNotInitialized
+	ldrb r0,[r4,1Bh]
+	cmp r0,0h
+	beq SkullMovementNotInitialized
+	mov r0,0Ch
+	strb r0,[r3]
+SkullMovementNotInitialized:
+	lsl r0,r0,0Ch
+	str r0,[r4,8h]
+	ldr r1,[r4,0Ch]
+	mov r0,80h
+	lsl r0,r0,0Ah
+	cmp r1,r0
 	blt DownSkull1
 	str r0,[r4,0Ch]
 DownSkull1:
@@ -1804,20 +1850,62 @@ DownSkull1:
 DownSkull2:
 	mov r0,r4
 	bl 803515Ch
-	strb r0,[r4,1Fh]
-
-.org 0x80579CC
-	.word 0x20000
-
-.org 0x80579AE
-	b DownSkull3
-
-.org 0x80579E4
+	lsl r0,r0,18h
+	lsr r1,r0,18h
+	strb r1,[r4,1Fh]
+	cmp r0,0h
+	beq DownSkull4
+	ldr r5,=3002340h
+	ldr r3,=1C6Dh
+	add r0,r5,r3
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	blt DownSkull4
+	ldr r6,=3007A48h
+	ldr r0,[r6]
+	ldr r7,=0692h
+	add r0,r0,r7
+	ldrb r1,[r0]
+	cmp r1,0h
+	bne SkullAlreadyMoving
+	mov r1,80h
+	strb r1,[r0]
+SkullAlreadyMoving:
+	mov r0,r4
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	ldr r3,=08E8h
+	add r1,r5,r3
+	add r3,r0,r1
+	ldrb r0,[r3]
+	add r0,1h
+	strb r0,[r3]
+	ldr r0,[r6]
+	ldr r7,=0EDCh
+	add r0,r0,r7
+	mov r1,1h
+	strb r1,[r0]
+	ldr r1,=1C61h
+	add r0,r5,r1
+	mov r2,0h
+	strb r2,[r0]
+	mov r1,1Ch
+	ldr r2,=1C58h
+	add r0,r5,r2
+	ldr r0,[r0]
+	ldr r3,=10FAh
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownSkull3
+	mov r1,2Ch
+DownSkull3:
 	ldr r0,[r6]
 	sub r7,26h
 	add r0,r0,r7
-	mov r1,1Ch
-DownSkull3:
 	strh r1,[r0]
 	ldr r2,=3002340h
 	ldr r3,=3007A48h
@@ -1831,18 +1919,20 @@ DownSkull3:
 	ldr r4,=1C94h
 	add r0,r2,r4
 	strh r1,[r0]
-	ldr r7,=1C66h
-
-.org 0x8057A14
-	ldr r0,[r3]
-	ldr r1,=0683h
-	add r5,r0,r1
-	ldrb r0,[r5]
+	ldr r6,=1C66h
+	add r0,r2,r6
+	ldrb r0,[r0]
+	mov r5,1h
+	and r0,r5
 	cmp r0,0h
 	bne DownSkull4
-	mov r0,1h
-	strb r0,[r5]
-	ldr r7,=0EE9h
+	ldr r1,[r3]
+	ldr r0,=0683h
+	add r1,r1,r0
+	ldrb r0,[r1]
+	cmp r0,0h
+	bne DownSkull4
+	strb r5,[r1]
 	bl FreeSpaceFSB
 DownSkull4:
 	pop r4-r7
@@ -2231,8 +2321,43 @@ RopeDown:
 	bl FreeSpaceFDA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix stem of scaling mushrooms is sometimes visible above the head of the mushroom (FMS)
+.org 0x8063D1C
+	ldr r0,[r4,0Ch]
+	cmp r0,0h
+	beq 8063D58h
+	cmp r0,0h
+	bge DownMushroom
+	add r0,r2,1h
+	lsl r0,r0,18h
+	lsr r2,r0,18h
+DownMushroom:
+	bl FreeSpaceFMS
+	cmp r0,0h
+	beq 8063D58h
+	ldr r1,=3002340h
+	ldr r0,=811676Ah
+	add r0,r2,r0
+	ldr r3,=1D4Ah
+	add r2,r1,r3
+	ldrb r0,[r0]
+	strb r0,[r2]
+	ldr r0,=1C58h
+	add r1,r1,r0
+	ldr r2,[r1]
+	ldrh r0,[r4,10h]
+	strh r0,[r2,30h]
+	ldr r1,[r1]
+	ldrh r0,[r4,12h]
+	add r0,1h
+	strh r0,[r1,2Ch]
+
+.org 0x8063D76
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Adjusts the spawn height of several sprites (2)
-.org 0x802F4B8
+.org 0x8065632
 	bl FreeSpaceASH
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
