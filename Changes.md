@@ -49,6 +49,8 @@
 - Changed the position of the wings of the 2 and 3 tile wide flying turnblock platform to be more in line with how they are positioned on other blocks and sprites.
 - Reznor now faces the Player when the Battle starts instead of looking away from them.
 - Line-guided platforms are now horizontally centerd on the line.
+- Made the growing/shrinking pipe sprite look more like the normal pipe.
+- Removed the white line in the grass tiles in yoshi's house to make them look like the grass tiles in other levels.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
