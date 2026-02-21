@@ -133,7 +133,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 3EE2/A Related to Player ypos??
 3F01 Spriteslot currently processed
 3F06/7 Player is carrying a sprite flag
-3F0D Cape spin interacts with sprites and blocks flag (0 = don't interact, 1 = do interact)
+3F0D Cape spin interacts with sprites and blocks flag (0 = don't interact, 1 = do interact), also used when punching on a net
 3F50 Number of coins to give the player (Adress in 7A48h + 0F24h)
 3F52 Yoshi has a key in his mouth flag
 3F53 Sprite slot of the sprite in yoshis mouth
@@ -188,13 +188,17 @@ Format: n--sifhb
 3FF5 What kind of slope the Player is on (0=not on slope)
 3FF6 Player is on the ground flag
 3FFA P-Balloon flag (if > 1 then also P-Balloon inflation/deflation timer)
+4008 Timer for how long to press L + directional button until the screen scrolls
 400D if = 80h, the player bounces off of a pink triangle
 400E current cape flying phase
 400F Next step in cape flight
 4010 Diving stage (FFh = minimal diving, C8h = completely diving (Player causes an eathquake when landing))
 4011 Spin jump flag
+4015 Scaling factor of circle/keyhole effect in titelscreen and level end
+4016 if = 30h, then level ends via keyhole
 402D Flashing invulnerability timer (?)
 402E Picking up timer
+4034 Player punches while climbing a net timer and flag
 4035 Cape take off timer
 4043 Blue P-Switch timer
 4044 Silver P-Switch timer
@@ -257,6 +261,8 @@ Format: n--sifhb
 546E Timer between the 1ups when geting >1up (2up, 3up, 5up etc.)
 5476 Riding Yoshi flag
 54BB Flag that determines if Mario/Luigi dies or the level ends when they fall below the ground
+54C2 Vertical scrolling enable/disable flag?
+54C3 Horizontal scrolling enable/disable flag?
 54D3 Message box flag
 54D4 Star Timer
 54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
@@ -274,7 +280,7 @@ Format: n--sifhb
 55A2
 55C4 if != 0 then no layer 2 autoscroll, else layer 2 autoscroll speed
 55C9 Timer for screen shake and music change during the rise bowser skull cutscene
-55CC
+55CC Timer for how long Mario/Luigi walks after crossing the goal (if < 28 then Mario/Luigi stops for victory pose)
 
 79FE	Mario Bros. Status?
 

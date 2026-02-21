@@ -1965,8 +1965,46 @@ DownSkull4:
 .org 0x805CCD2
 	.pool
 	
-.org 0x805CED8	;Gives 100p when yoshi eats a red/pink berry and 200p when yoshi eats an enemy and gives a coin
+.org 0x805CED4	;Gives 100p when yoshi eats a red/pink berry and 200p when yoshi eats an enemy and gives a coin
 	bl FreeSpaceGHP1
+	ldr r0,[r6]
+	ldr r2,=06A3h
+	add r0,r0,r2
+	ldrb r1,[r0]
+	cmp r1,0h
+	beq 805CFD2h
+	mov r2,r1
+	strb r7,[r0]
+	cmp r2,1h
+	bne 805CF3Ch
+	ldr r1,[r6]
+	ldr r3,=06A1h
+	add r1,r1,r3
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	ldr r0,[r6]
+	add r1,r0,r3
+	ldrb r0,[r1]
+	cmp r0,0Ah
+	bne 805CFD2h
+	strb r7,[r1]
+	ldr r1,=810FCCCh
+	mov r0,r5
+	add r0,35h
+	ldrb r0,[r0]
+	lsr r0,r0,1h
+	sub r0,2h
+	cmp r0,3h
+	bls DownGoodYoshiColor
+	mov r0,3h
+DownGoodYoshiColor:
+	add r0,r0,r1
+	ldrb r2,[r0]
+	b 805CFBEh
+
+.org 0x805CF30
+	.pool
 	
 .org 0x805D204	;Fix 0-time glitch (yoshi eats upgrade)
 	bl FreeSpacePII
@@ -2571,9 +2609,37 @@ DownOthers1:
 .org 0x806E430	;Put a mushroom in item stock if touching a checkpoint flag while big and item stock empty
 	bl FreeSpaceDMI
 	
+.org 0x806E548	;Gives the Player 100p when collecting a coin (1)
+	ldr r0,=3002340h
+	ldr r1,=1D03h
+
+.org 0x806E55A
+	bls DownGiveCoin
+	
+.org 0x806E560
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+
+.org 0x806E570
+	ldr r3,=3002340h
+	mov r9,r3
+	ldr r5,=1C90h
+
+.org 0x806E57C
+	ldr r4,=1C94h
+	add r4,r9
+	ldrh r6,[r4]
+	ldr r7,=1C58h
+
+.org 0x806E59E
+	ldr r2,=1153h
+
 .org 0x806E5AA	;Fix a bug that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins
 	add r4,r1,r2
 	ldrb r0,[r4]
+
+.org 0x806E5B2
+	ldr r3,=11B1h
 	
 .org 0x806E5BA
 	ldrb r0,[r4]
@@ -2586,16 +2652,30 @@ DownOthers1:
 	ldrh r0,[r0]
 	strh r0,[r1]
 	bl FreeSpaceFLB
-
-.org 0x806E614
-	.pool
 	
-.org 0x806E620	;Gives the Player 100p when collecting a coin
+.org 0x806E5D6
+	ldr r4,=3002340h
+	ldr r1,=1C70h
+	add r0,r4,r1
+	ldr r2,=0828h
+
+.org 0x806E5F0	;Gives the Player 100p when collecting a coin (2)
+	mov r0,18h
+	b DownRemoveCoinTile
+	.pool
+	.word 0x00000000
+DownGiveCoin:
 	ldr r4,=3002340h
 	bl FreeSpaceGHP2
 	ldr r1,=1C70h
 	add r0,r4,r1
-	bl FreeSpaceGHP3
+	mov r2,0h
+	ldsh r0,[r0,r2]
+	bl 803BBA0h
+	mov r0,1h
+DownRemoveCoinTile:
+	ldr r3,=1D4Ah
+	add r4,r4,r3
 	
 .org 0x806E64C
 	.pool
@@ -2670,6 +2750,67 @@ ReturnYCC:
 	strb r0,[r1]
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Fix bottom part of the screen gets garbled when crossing the goal while beeing to high on the screen (FVM)
+.org 0x8070C50
+	ldr r2,=3002340h
+	ldr r3,=1C5Ch
+	
+.org 0x8070C60
+	bl FreeSpaceFVM
+	ldr r0,=1C65h
+	add r1,r2,r0
+	mov r0,1h
+	strb r0,[r1]
+	ldr r3,=0854h
+	add r1,r2,r3
+	mov r0,10h
+	strh r0,[r1]
+	ldr r1,=1C61h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownVictoryMarch1
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=06C4h
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownVictoryMarch1
+	add r1,3h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownVictoryMarch2
+DownVictoryMarch1:
+	ldr r1,=0856h
+	add r0,r2,r1
+	ldrh r0,[r0]
+	cmp r0,1h
+	bne 8070D44h
+DownVictoryMarch2:
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=06C4h
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,2h
+	bne 8070D04h
+	ldr r0,[r2,20h]
+	add r0,0DCh
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 8070CF0h
+	ldr r0,=1C69h
+	add r1,r2,r0
+	mov r0,6h
+	strb r0,[r1]
+	ldr r3,=1C68h
+	add r1,r2,r3
+	b 8070D1Ch
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix Mario gets pushed inside the wall in roy boss fight (FRW)
 .org 0x807163E

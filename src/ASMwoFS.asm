@@ -1681,7 +1681,7 @@ DownNotMaxLifes:
 	beq EndOfFctMessage
 	ldr r1,=3007A48h
 	ldr r1,[r1]
-	ldr r0,=174h
+	ldr r0,=0560h
 	add r5,r0,r1
 	mov r1,0h
 	mov r0,17h
@@ -1783,7 +1783,7 @@ FreeSpaceFGO:
 	add r2,r1,r3
 	mov r0,0FFh
 	strb r0,[r2]
-	ldr r1,=886h
+	ldr r1,=0886h
 	add r1,r4,r1
 	mov r0,26h
 	strb r0,[r1]
@@ -1801,7 +1801,7 @@ FreeSpaceFMO:
 	push r14
 	ldr r1,=3007A48h
 	ldr r1,[r1]
-	ldr r0,=0174h
+	ldr r0,=0560h
 	add r0,r1,r0
 	ldrb r1,[r0,14h]
 	cmp r1,17h
@@ -3179,6 +3179,12 @@ Down16Bit3:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
+
+;Prevent cape spin routine from executing while the game is frozen
+.org 0x803D5DE
+	cmp r0,0h
+	bne 803D658h
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent Bravo Mario/Luigi message OAM from overwriting reward pop-ups on screen
 .org 0x803DBE6
@@ -5831,6 +5837,57 @@ SpriteTableStatus:
 .org 0x80E66FA
 	.byte 0x53
 	
+.org 0x80E67C3	;Fix palette of Morton in enemy roll credits
+	.byte 0x4A
+
+.org 0x80E67C7
+	.byte 0x4A
+
+.org 0x80E67CB
+	.byte 0x4A
+	
+.org 0x80E67CF
+	.byte 0x4A
+	
+.org 0x80E67D3
+	.byte 0x4A
+	
+.org 0x80E67D7
+	.byte 0x4A
+	
+.org 0x80E67DB
+	.byte 0x4A
+	
+.org 0x80E67DF
+	.byte 0x4A
+	
+.org 0x80E67E3
+	.byte 0x4A
+	
+.org 0x80E67E7	;Fix palette of Roy in enemy roll credits
+	.byte 0x06
+
+.org 0x80E67EB
+	.byte 0x06
+
+.org 0x80E67EF
+	.byte 0x06
+	
+.org 0x80E67F3
+	.byte 0x06
+	
+.org 0x80E67F7
+	.byte 0x06
+	
+.org 0x80E67FB
+	.byte 0x06
+	
+.org 0x80E67FF
+	.byte 0x06
+	
+.org 0x80E6803
+	.byte 0x06
+		
 .org 0x80E680B	;Fix palette of Lemmy's/Wendy's pipe in enemy roll credits
 	.byte 0x15
 	
@@ -5842,6 +5899,54 @@ SpriteTableStatus:
 	
 .org 0x80E682B
 	.byte 0x15
+
+.org 0x80E6857	;Fix palette of Ludwig in enemy roll credits
+	.byte 0x04
+
+.org 0x80E685B
+	.byte 0x04
+	
+.org 0x80E685F
+	.byte 0x44
+
+.org 0x80E6863
+	.byte 0x44
+
+.org 0x80E6867
+	.byte 0x04
+
+.org 0x80E686B
+	.byte 0x04
+	
+.org 0x80E686F
+	.byte 0x44
+
+.org 0x80E6873
+	.byte 0x44
+	
+.org 0x80E6877
+	.byte 0x04
+
+.org 0x80E687B
+	.byte 0x04
+	
+.org 0x80E687F
+	.byte 0x44
+
+.org 0x80E6883
+	.byte 0x44
+	
+.org 0x80E6887
+	.byte 0x04
+
+.org 0x80E688B
+	.byte 0x04
+	
+.org 0x80E688F
+	.byte 0x44
+
+.org 0x80E6893
+	.byte 0x44
 	
 .org 0x80E7AE6	;Restored Bill Blaster's unused right bottom tile (Credits: Mister Man)
 	.byte	0x1B ,0x40	

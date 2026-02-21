@@ -54,7 +54,7 @@
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
-- Fixed a bug, that causes the smoke that comes out of yoshis house during the beginning of the intro become garbeld when pressing A or Start to skip the intro.
+- Fixed a bug, that causes the smoke that comes out of yoshis house during the beginning of the intro become garbled when pressing A or Start to skip the intro.
 - Fixed a tiling error in the intro level.
 - Fixed a bug that causes the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
 - Fixed Yoshis bongos play in bonus room music even when Yoshi is not present.
@@ -133,7 +133,7 @@
 - Fixed the palette of spat out Volcano Lotus/Lakitu in a pipe getting partially overwritten (Credits: Mister Man).
 - Fixed Lakitu / Fishin' Lakitu's head being incorrect positioned (Credits: Mister Man).
 - Fixed first room in Donut ghosthouse uses the wrong background color.
-- Fixed Reznor platform and Lemmy's/Wendy's pipe use the wrong palette in the enemy roll credits.
+- Fixed Reznor platform, Morton, Roy, Ludwig and Lemmy's/Wendy's pipe use the wrong palette in the enemy roll credits.
 - Fixed a bug that causes some solid sprites to behave strangley when touching them from below because their status has been changed erroneously.
 - Fixed a bug that causes the Player to climb on thin air when getting pushed away by a solid block when climbing on a rope mechanism.
 - Fixed a bug that causes Player and Yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh.
@@ -147,7 +147,7 @@
 - Fixed directional coin uses the block palette even if blue P-Switch isn't active.
 - Fixed directional coin is drawn 1 pixel too high when P-Switch isn't active.
 - Fixed a bug that caused the starman timer, the p-ballon timer and the yoshi swallow timer to sometimes get decremented even if the game is frozen and even faster than normal.
-- Fixed a bug that caused the Player to cycle through colors when dying while having a star (e.g. fall in lava or in a pit).
+- Fixed a bug that caused the Player to cycle through colors during the dying animation when dying while having a star (e.g. fall in lava or in a pit).
 - Fixed a bug that caused the Bravo Mario/Luigi message sometimes appear after the Player died, even though it's not supposed to.
 - Fixed a bug that caused the Bravo Mario/Luigi message to show a glitched number if the Player gets exactly 1000 lifes in a row.
 - Fixed a bug that caused the game in certain cases to check the button input while the game freeze flag is set.
@@ -159,3 +159,4 @@
 - Fixed a bug that caused Yoshi to run in the air for a few frames when he's running on a line-guided checkered platform before he falls downwards.
 - Fixed a bug that caused the Player to slide up slopes when riding a Yoshi.
 - Fixed a bug that caused skull rafts to have small gaps between the skulls when moving depending on which skull the Player touched first.
+- Fixed a bug that caused the bottom part of the screen to be garbled during the circle animation after crossing the goal when the Player's position is too high on screen.

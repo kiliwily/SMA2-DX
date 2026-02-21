@@ -781,27 +781,29 @@ FreeSpaceCSC:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne SkipCapeSpinCode
-	ldr r1,[r2,20h]
-	add r1,0E0h
-	ldrb r0,[r1]
-	cmp r0,2h
-	bne ResetCapeSpin
 	ldr r0,[r3]
 	ldr r1,=10FAh
 	add r0,r0,r1
 	ldrb r0,[r0]
 	cmp r0,0h
+	bne ResetCapeSpin
+	ldr r1,[r2,20h]
+	add r1,0E0h
+	ldrb r0,[r1]
+	cmp r0,2h
 	beq HandleCapeSpin
+	ldr r1,=1CF4h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne HandleCapeSpin
 ResetCapeSpin:
 	ldr r2,=3007A48h
 	ldr r0,[r2]
 	ldr r1,=0EE1h
 	add r0,r0,r1
-	ldrb r1,[r0]
-	cmp r1,0h
-	beq HandleCapeSpin
-	mov r1,0h
-	strb r1,[r0]
+	mov r3,0h
+	strb r3,[r0]
 HandleCapeSpin:
 	bl 803D5BCh
 SkipCapeSpinCode:
@@ -1024,6 +1026,8 @@ NotDiedInLava:
 	
 FreeSpaceGHP1:
 	push r14
+	lsl r0,r0,10h
+	asr r0,r0,10h
 	bl 803BBA0h
 	ldr r0,[r6]
 	ldr r2,=06A3h
@@ -1085,7 +1089,7 @@ FreeSpaceSNS:
 	bl 805D518h
 ReturnNoSwallow1:
 	pop r0
-	add r0,0E4h
+	add r0,0E2h
 	bx r0
 	.pool
 	
@@ -1468,14 +1472,6 @@ FreeSpaceGHP2:
 	pop r0
 	bx r0
 	.pool
-
-FreeSpaceGHP3:
-	push r14
-	mov r2,0h
-	ldsh r0,[r0,r2]
-	bl 803BBA0h
-	pop r0
-	bx r0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1599,6 +1595,67 @@ FreeSpaceYCC2:
 	ldrb r1,[r0]
 	mov r2,20h
 	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFVM:
+	mov r4,r0
+	ldr r1,=1C61h
+	add r0,r2,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne PlayerInTheAir
+	ldr r3,=3007A48h
+	ldr r0,[r3]
+	ldr r1,=06BAh
+	add r0,r0,r1
+	ldrh r0,[r0]
+	cmp r0,0h
+	beq ScrollingNotUsed
+	ldr r0,[r3]
+	sub r1,1h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne PlayerInTheAir
+	ldr r0,[r3]
+	add r1,1h
+	add r0,r0,r1
+	mov r1,0h
+	strh r1,[r0]
+ScrollingNotUsed:
+	ldr r1,=1C74h
+	add r0,r2,r1
+	ldrh r0,[r0]
+	cmp r0,56h
+	bhi StopScrolling
+	cmp r4,28h
+	beq StopScrolling
+	add r1,70h
+	add r0,r2,r1
+	ldrb r1,[r0]
+	mov r4,0FDh
+	and r1,r4
+	strb r1,[r0]
+	ldr r0,[r3]
+	mov r1,0D7h
+	lsl r1,r1,3h
+	add r0,r0,r1
+	mov r1,1h
+	strb r1,[r0]
+	mov r4,0FEh
+	b SetScrolling
+	.pool
+StopScrolling:
+	mov r4,0h
+SetScrolling:
+	ldr r0,[r3]
+	ldr r1,=06B9h
+	add r0,r0,r1
+	strb r4,[r0]
+PlayerInTheAir:
+	bx r14
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
