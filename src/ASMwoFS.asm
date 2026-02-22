@@ -4940,6 +4940,23 @@ DownReznorInit:
 .org 0x80696C2	;Fix p-switch run out sfx plays in certain cases when p-switch timer is 1
 	ldrb r3,[r0]
 	cmp r3,0h
+
+.org 0x8069978	;Fix camera during goal walk
+	ldr r0,=3002340h
+
+.org 0x8069988
+	bl 8006970h
+	ldr r0,=3002340h
+	ldr r5,=1C5Ch
+	add r0,r0,r5
+	ldr r0,[r0]
+	add r0,5Ch
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 80699ACh
+	bl 8070B88h
+	b 8069A14h
+	.pool
 	
 .org 0x806B452	;Fix star timer gets either never or every frame decremented when game freeze flag is set and gets not reset when the Player dies instandly  
 	add r4,r0,r4

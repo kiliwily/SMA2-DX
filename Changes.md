@@ -160,3 +160,4 @@
 - Fixed a bug that caused the Player to slide up slopes when riding a Yoshi.
 - Fixed a bug that caused skull rafts to have small gaps between the skulls when moving depending on which skull the Player touched first.
 - Fixed a bug that caused the bottom part of the screen to be garbled during the circle animation after crossing the goal when the Player's position is too high on screen.
+- Fixed the screen doesn't properly scroll to the left/right during the goal walk and when entering a horizontal pipe after scrolling the screen via L + directional button.

@@ -1361,6 +1361,23 @@ HandleCape:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceHPC:
+	push r14
+	bl 806A304h
+	bl 8006970h
+	ldr r1,=1C58h
+	add r0,r4,r1
+	ldr r0,[r0]
+	ldr r2,=1190h
+	add r0,r0,r2
+	mov r1,1h
+	strb r1,[r0]
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFTL:
 	ldr r0,=80F9EF8h
 	add r3,r0,r1
@@ -1600,6 +1617,12 @@ FreeSpaceYCC2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFVM:
 	mov r4,r0
+	ldr r1,=1CE4h
+	add r1,r2,r1
+	ldrb r0,[r1]
+	mov r3,0FDh
+	and r0,r3
+	strb r0,[r1]
 	ldr r1,=1C61h
 	add r0,r2,r1
 	ldrb r0,[r0]
@@ -1624,26 +1647,24 @@ FreeSpaceFVM:
 	mov r1,0h
 	strh r1,[r0]
 ScrollingNotUsed:
+	cmp r4,28h
+	beq StopScrolling
 	ldr r1,=1C74h
 	add r0,r2,r1
 	ldrh r0,[r0]
 	cmp r0,56h
 	bhi StopScrolling
-	cmp r4,28h
-	beq StopScrolling
-	add r1,70h
-	add r0,r2,r1
-	ldrb r1,[r0]
-	mov r4,0FDh
-	and r1,r4
-	strb r1,[r0]
+	mov r4,0FEh
+	cmp r0,55h
+	bls TooBigDifference
+	mov r4,0FFh
+TooBigDifference:
 	ldr r0,[r3]
 	mov r1,0D7h
 	lsl r1,r1,3h
 	add r0,r0,r1
 	mov r1,1h
 	strb r1,[r0]
-	mov r4,0FEh
 	b SetScrolling
 	.pool
 StopScrolling:

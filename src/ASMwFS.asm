@@ -2462,7 +2462,10 @@ DownGIM:
 .org 0x8069F14
 	bl FreeSpaceFWC
 	
-.org 0x806A698
+.org 0x806A13E	;Fixes camera scrolling when entering a horizontal pipe after pressing L+directional button to scroll
+	bl FreeSpaceHPC
+	
+.org 0x806A698	;Fixes an issue that causes Mario/Luigi to fly without a cape and glide while riding a yoshi (2)
 	bl FreeSpaceFWC
 	
 .org 0x806A7CC	;Fix showing time up when dying in a level without time limit and time up not showing when game over
@@ -2507,7 +2510,7 @@ CheckTimeLimit:
 	b NoTimeLimit
 	.pool
 
-.org 0x806AF9C	;Fixes an issue that causes Mario/Luigi to fly without a cape and glide while riding a yoshi (2)
+.org 0x806AF9C	;Fixes an issue that causes Mario/Luigi to fly without a cape and glide while riding a yoshi (3)
 	bl FreeSpaceFWC
 
 .org 0x806AFB4	;Save Yoshicolor when entering castle/ghost house while riding a Yoshi
@@ -2547,7 +2550,7 @@ DownOthers1:
 	bx r0
 	.pool
 
-.org 0x806B370	;Fixes an issue that causes Mario/Luigi to fly without a cape and glide while riding a yoshi (3)
+.org 0x806B370	;Fixes an issue that causes Mario/Luigi to fly without a cape and glide while riding a yoshi (4)
 	bl FreeSpaceFWC
 ;;;;;;;;
 
