@@ -4020,6 +4020,80 @@ DownSumoBrother:
 .org 0x804DA64
 	lsl r0,r5,18h
 	
+.org 0x804EDB8	;Fix 5th enemy eaten by baby yoshi doesn't give points and a coin
+	push r4-r7,r14
+
+.org 0x804EDC0
+	ldr r2,=3007A48h
+
+.org 0x804EDC6
+	ldr r1,=06CCh
+
+.org 0x804EDD2
+	ldr r2,=3002340h
+	ldr r6,=08C4h
+	add r1,r2,r6
+	ldrh r0,[r5,10h]
+	ldrh r1,[r1]
+	sub r7,r0,r1
+	sub r6,9Ch
+	add r1,r2,r6
+	strh r7,[r1]
+
+.org 0x804EDF2
+	bne DownBabyYoshi2
+	ldrb r0,[r4,1Ah]
+	cmp r0,81h
+	bne DownBabyYoshi1
+	ldr r1,=3002340h
+	add r6,6Ch
+	add r0,r1,r6
+	ldrb r0,[r0]
+	lsr r0,r0,4h
+	mov r1,3h
+	and r0,r1
+	ldr r1,=810D994h
+	add r0,r0,r1
+	ldrb r0,[r0]
+DownBabyYoshi1:	
+	sub r0,74h
+	lsl r0,r0,18h
+	lsr r0,r0,18h
+	cmp r0,4h
+	bls DownBabyYoshi3
+DownBabyYoshi2:
+	mov r6,r5
+	add r6,29h
+	ldrb r0,[r6]
+	add r0,1h
+	strb r0,[r6]
+	lsl r0,r7,10h
+	asr r0,r0,10h
+	bl 803BBA0h
+	mov r0,r5
+	mov r1,1h
+	bl 803E430h
+	ldrb r0,[r6]
+	cmp r0,5h
+	beq DownBabyYoshi4
+	mov r0,0h
+	b DownBabyYoshi5
+	.pool
+DownBabyYoshi3:
+	add r4,21h
+	ldrb r0,[r4]
+	cmp r0,0h
+	bne DownBabyYoshi4
+	mov r0,r5
+	mov r1,4h
+	bl 803E430h
+DownBabyYoshi4:
+	mov r0,r5
+	bl 804EBB0h
+	mov r0,1h
+DownBabyYoshi5:
+	pop r4-r7
+	
 .org 0x804FEA8	;Adjust draw height of magikoopa
 	ldr r0,=3007A48h
 	ldr r6,[r0]
@@ -4313,6 +4387,12 @@ DownSnakeBlock6:
 .org 0x8055A6A	;Fix priority of smasher
 	mov r0,0Ch
 	
+.org 0x8057212	;Fix player position on top of wall springboard
+	mov r0,30h
+
+.org 0x8057238
+	mov r0,20h
+
 .org 0x8058838	;Prevent wiggler stomp counter from overflowing
 	ldrh r2,[r0]
 	sub r3,r2,7h
@@ -4421,6 +4501,96 @@ DownMovingCastleBlock:
 	
 .org 0x805CCC4	;Reset Yoshicolor when reseting Yoshi
 	strh r1,[r0]
+	
+.org 0x805CEA8	;Gives 100p when yoshi eats a red/pink berry and 200p when yoshi eats an enemy and gives a coin and restores the coin sound
+	ldr r1,=3002340h
+	ldr r3,=08C4h
+	add r4,r1,r3
+
+.org 0x805CEB4
+	sub r3,9Ch
+
+.org 0x805CEC2
+	ldrh r0,[r5,10h]
+	ldrh r1,[r4]
+	sub r0,r0,r1
+	lsl r0,r0,10h
+	asr r0,r0,10h
+	bl 803BBA0h
+	ldr r6,=3007A48h
+	ldr r0,[r6]
+	ldr r2,=06A3h
+	add r4,r0,r2
+	ldrb r2,[r4]
+	cmp r2,2h
+	bhi NoPoints
+	mov r1,6h
+	cmp r2,0h
+	beq GivePointsEaten
+	mov r1,5h
+GivePointsEaten:
+	mov r0,r5
+	bl 803E340h
+NoPoints:
+	ldrb r2,[r4]
+	cmp r2,0h
+	beq 805CFD2h
+	strb r7,[r0]
+	cmp r2,1h
+	bne DownYoshiEat
+	ldr r1,[r6]
+	ldr r3,=06A1h
+	add r1,r1,r3
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	ldr r0,[r6]
+	add r1,r0,r3
+	ldrb r0,[r1]
+	cmp r0,0Ah
+	bne 805CFD2h
+	strb r7,[r1]
+	ldr r1,=810FCCCh
+	mov r0,r5
+	add r0,35h
+	ldrb r0,[r0]
+	lsr r0,r0,1h
+	sub r0,2h
+	cmp r0,3h
+	bls DownGoodYoshiColor
+	mov r0,3h
+DownGoodYoshiColor:
+	add r0,r0,r1
+	ldrb r2,[r0]
+	b 805CFBEh
+	.pool
+DownYoshiEat:
+	cmp r2,3h
+	bne 805CFA0h
+	mov r0,r5
+	mov r1,16h
+	bl 803E340h
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+	add r1,r0,r2
+	ldr r0,[r1]
+	ldr r3,=116Bh
+	add r2,r0,r3
+	mov r0,0h
+	ldsb r0,[r2,r0]
+	cmp r0,7h
+	ble 805CF80h
+	ldrb r0,[r2]
+	sub r0,8h
+	strb r0,[r2]
+	ldr r1,[r1]
+	sub r3,1h
+	add r1,r1,r3
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	b 805CFD2h
+	.pool
 	
 .org 0x805D124	;Make silver coins give up to 5ups per coin (when eaten by yoshi)
 	ldr r1,=3002340h

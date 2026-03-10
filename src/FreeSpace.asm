@@ -164,6 +164,18 @@ NoPeachCoinsCYC2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceICC:
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0F24h
+	add r0,r0,r1
+	mov r1,0h
+	strb r1,[r0]
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceCPG:
 	push r14
 	bl 800E8ECh
@@ -1024,31 +1036,6 @@ NotDiedInLava:
 	bx r14
 	.pool
 	
-FreeSpaceGHP1:
-	push r14
-	lsl r0,r0,10h
-	asr r0,r0,10h
-	bl 803BBA0h
-	ldr r0,[r6]
-	ldr r2,=06A3h
-	add r0,r0,r2
-	ldrb r1,[r0]
-	cmp r1,0h
-	beq EnemyEaten
-	cmp r1,3h
-	beq NoPoints
-	mov r1,5h
-	b GivePointsEaten
-	.pool
-EnemyEaten:
-	mov r1,6h
-GivePointsEaten:
-	add r0,r5,0h
-	bl 803E340h
-NoPoints:
-	pop r0
-	bx r0
-	
 FreeSpacePIA:
 	cmp r0,1h
 	bls BadYoshiShell
@@ -1463,7 +1450,7 @@ FreeSpaceFLB:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceGHP2:
+FreeSpaceGHP:
 	push r14
 	ldr r5,=1C90h
 	add r5,r4,r5

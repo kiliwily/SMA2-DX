@@ -33,7 +33,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 
 2BC3 if 1 then open pause menu in level
 
-2BC6 Event
+2BC6 Current game state
 2BC7 Current Overworld Action
 	00	Nothing. Set in 0E, 11, 12.
 	01	Activate overworld events.
@@ -94,6 +94,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	21h if powerup then itembox drop flag
 	22h if bob-omb then exploding flag
 	24h lava death timer
+	29h if baby yoshi then enemy eaten counter
 	2Ah Horizontal direction of sprite
 	2Bh blocked status. Sprite is blocked in direction:
      (x8h=up, x4h=down, x2h=left, x1h = right, 2x=Sprite touching layer 2 from below, 4x=Sprite touching layer 2 from the side, 8x=Sprite touches layer 2 from above)

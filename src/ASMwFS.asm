@@ -75,7 +75,7 @@ DownVRAMUpdate:
 	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Resets Checkpointflags when reloading the savefile or getting a game over (RCP)
+;Resets Checkpointflags when reloading the savefile or getting a game over (RCS)
 ;Also contains a expansion of the level default value table to make it possible;
 ;to save+back from yoshis house and top secret area (LDT);;;;;;;;;;;;;;;;;;;;;;;
 .org 0x8007F36
@@ -161,6 +161,42 @@ NotFirstTime:
 .org 0x800D004
 	.halfword 0x0000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Restore coin sound when yoshi eats something during the intro cutscene
+.org 0x800D5DC
+	b DownIntroCutscene
+
+.org 0x800D608
+	b DownIntroCutscene
+
+.org 0x800D678
+	b DownIntroCutscene
+
+.org 0x800D6E4
+	ldr r0,=3002340h
+	ldr r3,=0854h
+	add r1,r0,r3
+	add r3,2h
+	add r0,r0,r3
+	ldrh r1,[r1]
+	strh r1,[r0]
+	ldr r4,=3002340h
+
+.org 0x800D700
+	bl FreeSpaceICC
+	ldr r0,=0886h
+	add r4,r4,r0
+	ldrb r0,[r4]
+	cmp r0,14h
+	beq DownIntroCutscene
+	mov r0,0Fh
+	strb r0,[r4]
+DownIntroCutscene:
+	pop r4,r5
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix the graphic of the checkpoint after taking it (CPG)
 .org 0x800E872
@@ -1965,47 +2001,6 @@ DownSkull4:
 .org 0x805CCD2
 	.pool
 	
-.org 0x805CED4	;Gives 100p when yoshi eats a red/pink berry and 200p when yoshi eats an enemy and gives a coin
-	bl FreeSpaceGHP1
-	ldr r0,[r6]
-	ldr r2,=06A3h
-	add r0,r0,r2
-	ldrb r1,[r0]
-	cmp r1,0h
-	beq 805CFD2h
-	mov r2,r1
-	strb r7,[r0]
-	cmp r2,1h
-	bne 805CF3Ch
-	ldr r1,[r6]
-	ldr r3,=06A1h
-	add r1,r1,r3
-	ldrb r0,[r1]
-	add r0,1h
-	strb r0,[r1]
-	ldr r0,[r6]
-	add r1,r0,r3
-	ldrb r0,[r1]
-	cmp r0,0Ah
-	bne 805CFD2h
-	strb r7,[r1]
-	ldr r1,=810FCCCh
-	mov r0,r5
-	add r0,35h
-	ldrb r0,[r0]
-	lsr r0,r0,1h
-	sub r0,2h
-	cmp r0,3h
-	bls DownGoodYoshiColor
-	mov r0,3h
-DownGoodYoshiColor:
-	add r0,r0,r1
-	ldrb r2,[r0]
-	b 805CFBEh
-
-.org 0x805CF30
-	.pool
-	
 .org 0x805D204	;Fix 0-time glitch (yoshi eats upgrade)
 	bl FreeSpacePII
 	cmp r7,13h
@@ -2669,7 +2664,7 @@ DownOthers1:
 	.word 0x00000000
 DownGiveCoin:
 	ldr r4,=3002340h
-	bl FreeSpaceGHP2
+	bl FreeSpaceGHP
 	ldr r1,=1C70h
 	add r0,r4,r1
 	mov r2,0h
