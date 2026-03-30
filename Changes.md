@@ -52,6 +52,7 @@
 - Made the growing/shrinking pipe sprite look more like the normal pipe.
 - Removed the white line in the grass tiles in yoshi's house to make them look like the grass tiles in other levels.
 - Restored the coin sound when yoshi eats something and the Player gets a coin.
+- Added a fail save for the message box routine to prevent the game from showing a garbled message if the message box routine fails to find the correct message.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
@@ -162,4 +163,6 @@
 - Fixed a bug that caused skull rafts to have small gaps between the skulls when moving depending on which skull the Player touched first.
 - Fixed a bug that caused the bottom part of the screen to be garbled during the circle animation after crossing the goal when the Player's position is too high on screen.
 - Fixed the screen doesn't properly scroll to the left/right during the goal walk and when entering a horizontal pipe after scrolling the screen via L + directional button.
-- Fixed an oversight that caused the 5th enemy eaten by a baby yoshi to not give any points or a coin. Also made items that make baby yoshi instantly grow also give points. 
+- Fixed an oversight that caused the 5th enemy eaten by a baby yoshi to not give any points or a coin. Also made items that make baby yoshi instantly grow also give points.
+- Fixed a bug that caused keyholes only accepting the key on the highest spriteslot if multiple keys are in the level.
+- Fixed a bug that caused yoshi to stick out his tongue twice, despite the button was only pressed once.

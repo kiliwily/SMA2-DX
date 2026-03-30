@@ -496,6 +496,41 @@ ReturnPSS2:
 
 .org 0x80093D2	;Fix palette used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: Mister Man)
 	mov	r3,0h
+	
+.org 0x8009C24	;Add fail save for message box routine, prevents showing garbled message box
+	blt MessageLoopEnd
+
+.org 0x8009C3E
+	ldr r1,=1C58h
+
+.org 0x8009C44
+	ldr r1,=1157h
+
+.org 0x8009C5C
+MessageLoopEnd:
+	cmp r5,0h
+	bge MessageNotFail
+	mov r5,4h
+MessageNotFail:
+	cmp r3,25h
+	bne 8009C8Ch
+	mov r0,r4
+	ldr r2,=1C58h
+	add r0,r0,r2
+	ldr r0,[r0]
+	ldr r3,=08EEh
+	add r0,r0,r3
+	ldrh r1,[r0]
+	mov r0,0FEh
+	lsl r0,r0,1h
+	cmp r1,r0
+	bne 8009D38h
+	mov r5,22h
+	b 8009D38h
+	.pool
+
+.org 0x8009D02
+	bhi 8009D24h
 
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
 	bne 800A6B8h
@@ -1663,7 +1698,7 @@ FreeSpaceRBT:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.org 0x8030D98	;Prevent Bravo Mario/luigi Message from overwritting a reward pop-up
+.org 0x8030D98	;Prevent Bravo Mario/luigi message from overwritting a reward pop-up
 	bls EndOfFctMessage
 	mov r0,0FAh
 	lsl r0,r0,2h
@@ -2629,7 +2664,7 @@ SkipPlaySound:
 .org 0x8037AEE
 	.pool
 	
-.org 0x8037B64	;Part of Fix Bravo Mario/Luigi Message from overwritng a reward pop-up
+.org 0x8037B64	;Part of Fix Bravo Mario/Luigi message from overwritng a reward pop-up
 	bl FreeSpaceFMO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -3364,6 +3399,7 @@ No1upSound:
 ;Also contains a fix for thwomps always falling when vertically offscreen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Fixes a bug that causes kamek's magic to turn stone into a sprite;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also makes it so you can get up to a 5up when defeating wiggler with a star;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Also contains code to prevent the Player from activating a secret exit with a key after dying (FSD);;;;;;;;;;;;;
 ;Also contains a fix for the priority of the smasher;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .org 0x803E6FC	;Fix bug that causes Player and yoshi fireballs to not interact with sprites in slot 0Ah and 0Bh
 	mov r2,0Bh
@@ -4393,6 +4429,90 @@ DownSnakeBlock6:
 .org 0x8057238
 	mov r0,20h
 
+.org 0x80573E4	;Prevent the Player from activating a secret exit with a key after dying (FSD)
+	ldr r2,=3002340h
+	mov r1,0E6h
+	lsl r1,r1,5h
+	add r0,r2,r1
+	mov r3,7Fh
+	ldrb r0,[r0]
+	cmp r0,2h
+	bne DownKeyhole1
+	mov r3,73h
+DownKeyhole1:
+	mov r1,r6
+	add r1,34h
+	strb r3,[r1]
+	ldr r1,=1C58h
+	add r0,r2,r1
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 80574FAh
+	mov r2,0Bh
+	ldr r0,=3007A48h
+	mov r5,64h
+	ldr r4,=06CCh
+	ldr r3,[r0]
+DownKeyhole2:
+	mov r0,r2
+	mul r0,r5
+	add r0,r0,r4
+	add r1,r0,r3
+	ldrb r0,[r1,1Ch]
+	cmp r0,0Bh
+	bne DownKeyhole3
+	ldrb r0,[r1,1Ah]
+	cmp r0,80h
+	beq DownKeyhole4
+DownKeyhole3:
+	sub r0,r2,1
+	lsl r0,r0,18h
+	lsr r2,r0,18h
+	cmp r2,0FFh
+	bne DownKeyhole2
+DownKeyhole4:
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r0,[r0]
+	ldr r1,=10FAh
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownKeyhole5
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0F26h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownKeyhole6
+DownKeyhole5:
+	strb r2,[r6,1Fh]
+	lsl r0,r2,18h
+	cmp r0,0h
+	blt 80574FAh
+	b DownKeyhole7
+	.pool
+	
+DownKeyhole6:
+	bl 80349DCh
+	b 8057494h
+DownKeyhole7:
+	ldr r1,=3007A48h
+	mov r0,64h
+	mul r0,r2
+	ldr r2,=06CCh
+	add r0,r0,r2
+	ldr r1,[r1]
+	add r0,r0,r1
+
+.org 0x805759C
+	.pool
+
 .org 0x8058838	;Prevent wiggler stomp counter from overflowing
 	ldrh r2,[r0]
 	sub r3,r2,7h
@@ -4535,7 +4655,7 @@ NoPoints:
 	ldrb r2,[r4]
 	cmp r2,0h
 	beq 805CFD2h
-	strb r7,[r0]
+	strb r7,[r4]
 	cmp r2,1h
 	bne DownYoshiEat
 	ldr r1,[r6]
@@ -4659,6 +4779,10 @@ StartLoopCoinsEaten:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
+	
+.org 0x805D5A6	;Prevent yoshi from spitting out invalid sprites
+	cmp r0,0Bh
+	bls 805D5ACh
 	
 .org 0x805DBC8	;Fix mushrooms in bubbles don't give points when eaten by yoshi
 	bl FreeSpaceRBT

@@ -59,10 +59,6 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 30F4 Start of Reward pop-ups Ram
 3696 Screen shake timer (?)
 369E P-Balloon timer
-36BE Skull platform x speed
-36CD Number of red berries eaten by Yoshi, resets when 10 are consumed
-36CE Number of pink berries eaten by Yoshi, resets when 2 are consumed
-36CF Type of sprite in Yoshis Mouth (0=enemy, 1=red berry, 2=pink berry, 3=green berry)
 36A6 Timer for Sprite in Yoshis Mouth (Value in 7A48h + 67Ah)
 36A8 Timer for when Yoshi got punched (Value in 7A48h + 67Ch)
 36AA Yoshi ypos
@@ -72,7 +68,11 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 36B2 Yoshis Spriteslot - 1 (temporary)
 36B4 Generator related (if 9 then super koopas spawn)
 36B5 Yoshis Spriteslot - 1
+36BE Skull platform x speed
 36CB Star kill counter
+36CD Number of red berries eaten by Yoshi, resets when 10 are consumed
+36CE Number of pink berries eaten by Yoshi, resets when 2 are consumed
+36CF Type of sprite in Yoshis Mouth (0=enemy, 1=red berry, 2=pink berry, 3=green berry)
 36D1 Yoshi growing animation timer
 36D5 if 9 then rip van fish wakes up (set by whistlin chuck)
 36E3 Directional coin timer

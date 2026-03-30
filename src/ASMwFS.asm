@@ -1197,7 +1197,6 @@ PlayerIsNotRidingAYoshi:
 ;Also contains code to prevent itembox item drops from turning into a coin at the goal (DIC);;;;;;;;;
 ;Also contains a fix for the palette of the reminders of a block destroyed by a chuck (FRB);;;;;;;;;;
 ;Also contains part 2 of fix item carry (FIC);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Also contains code to prevent the Player from activating a secret exit with a key after dying (FSD);
 ;Also contains part 2 of fix skull bug (FSB);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to enable sprite interaction with the lightswitch (SLS);;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to prevent yoshi from eating sparks;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1796,30 +1795,6 @@ ItemNotCarried:
 
 .org 0x8056C8A
 	pop r4-r6
-	
-.org 0x80573E4	;Prevent the Player from activating a secret exit with a key after dying (FSD)
-	ldr r2,=3002340h
-	mov r1,0E6h
-	lsl r1,r1,5h
-	add r0,r2,r1
-	mov r1,r6
-	add r1,34h
-	ldrb r0,[r0]
-	cmp r0,2h
-	bne DownFSD1
-	mov r0,73h
-	b DownFSD2
-DownFSD1:
-	mov r0,7Fh
-DownFSD2:
-	strb r0,[r1]
-	ldr r1,=1C58h
-	bl FreeSpaceFSD
-	cmp r0,0h
-	bne 80574FAh
-
-.org 0x8057464
-	.pool
 
 .org 0x805785C	;Part of fix skull bug (FSB)
 	b DownSkull4
@@ -2056,7 +2031,7 @@ DownYoshiSwallow2:
 	ldr r6,=3002340h
 	bl FreeSpaceSNS
 	cmp r0,0h
-	bne 805D9B8h
+	bne 805DA42h
 	ldr r0,=0894h
 	add r0,r6,r0
 	ldrb r0,[r0]

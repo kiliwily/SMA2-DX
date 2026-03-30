@@ -979,15 +979,6 @@ FreeSpaceDCF:
 	bx r0
 	.pool
 	
-FreeSpaceFSD:
-	add r0,r2,r1
-	ldr r0,[r0]
-	ldr r1,=1190h
-	add r0,r0,r1
-	ldrb r0,[r0]
-	bx r14
-	.pool
-	
 FreeSpaceFSB:
 	sub r4,4h
 	add r0,r2,r4
@@ -1049,7 +1040,6 @@ GoodYoshiShell:
 	bx r14
 	
 FreeSpaceSNS:
-	push r14
 	ldr r0,=3007A48h
 	ldr r0,[r0]
 	ldr r2,=067Ah
@@ -1060,40 +1050,25 @@ FreeSpaceSNS:
 	mov r2,r12
 	add r2,37h
 	ldrb r0,[r2]
-	cmp r0,0FFh
-	bne ReturnNoSwallow2
+	cmp r0,0Bh
+	bls ReturnNoSwallow
 	mov r0,0h
 	strb r0,[r1]
-	mov r2,r12
-	ldrb r0,[r2,1Ch]
-	cmp r0,8h
-	bne ReturnNoSwallow1
-	mov r0,r12
-	bl 805DA7Ch
-	mov r0,r12
-	bl 805CEA4h
-	mov r0,r12
-	bl 805D518h
-ReturnNoSwallow1:
-	pop r0
-	add r0,0E2h
-	bx r0
-	.pool
-	
 NoSpriteInMouth:
 	mov r2,r12
 	add r2,37h
 	mov r0,0FFh
 	strb r0,[r2]
-ReturnNoSwallow2:
+	add r2,1h
+	strb r0,[r2]
+ReturnNoSwallow:
 	ldr r2,=1C58h
 	add r0,r6,r2
 	ldr r0,[r0]
 	ldr r1,=1190h
 	add r0,r0,r1
 	ldrb r0,[r0]
-	pop r1
-	bx r1
+	bx r14
 	.pool
 	
 FreeSpaceF0T1:
