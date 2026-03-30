@@ -1999,7 +1999,7 @@ DownSkull4:
 .org 0x805D26C
 	.pool
 	
-.org 0x805D86E	;Makes Yoshi swallow a null sprite immediately
+.org 0x805D86E	;Makes Yoshi swallow a null sprite immediately and fix double tongue glitch
 	beq DownYoshiSwallow2
 
 .org 0x805D884
@@ -2011,7 +2011,7 @@ DownSkull4:
 .org 0x805D8BC	;Prevent invalid Koopa shell giving glitched abilities
 	bl FreeSpacePIA
 
-.org 0x805D8F4	;Makes Yoshi swallow a null sprite immediately
+.org 0x805D8F4	;Makes Yoshi swallow a null sprite immediately and fix double tongue glitch
 	beq DownYoshiSwallow2
 	
 .org 0x805D900
