@@ -18,7 +18,7 @@ WaitEnd:
 .org 0x8000560
 	.pool
 	
-.org 0x80024D4	;Reset the directional coin flag when entering a door/pipe and check for Bravo Mario/Luigi message when reset star timer and silver p-switch timer
+.org 0x80024D4	;Reset the directional coin flag when entering a door/pipe
 	ldr r2,=3002340h
 	ldr r0,[r2,20h]
 	mov r4,r0
