@@ -53,6 +53,9 @@
 - Removed the white line in the grass tiles in yoshi's house to make them look like the grass tiles in other levels.
 - Restored the coin sound when yoshi eats something and the Player gets a coin.
 - Added a fail save for the message box routine to prevent the game from showing a garbled message if the message box routine fails to find the correct message.
+- Added checks for showing the Bravo Mario/Luigi message on several spots where a life chain breaks an the game didn't check for it.
+- The red berry and pink berry counter for yoshi now gets reset every time a new yoshi spawns.
+- Teleportation between levels is now unlocked from the start of the game.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
@@ -165,4 +168,7 @@
 - Fixed the screen doesn't properly scroll to the left/right during the goal walk and when entering a horizontal pipe after scrolling the screen via L + directional button.
 - Fixed an oversight that caused the 5th enemy eaten by a baby yoshi to not give any points or a coin. Also made items that make baby yoshi instantly grow also give points.
 - Fixed a bug that caused keyholes only accepting the key on the highest spriteslot if multiple keys are in the level.
-- Fixed a bug that caused yoshi to stick out his tongue twice, despite the button was only pressed once.
+- Fixed a bug that caused Yoshi to stick out his tongue twice, despite the button was only pressed once.
+- Fixed a bug that caused the Player let go of a carried sprite when getting shoot out of a diagonal pipe.
+- Fixed fire Mario has the wrong outline color.
+- Made amazing flying hammer bro only throw hammer if he's alive.

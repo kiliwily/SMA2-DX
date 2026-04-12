@@ -76,7 +76,9 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 36D1 Yoshi growing animation timer
 36D5 if 9 then rip van fish wakes up (set by whistlin chuck)
 36E3 Directional coin timer
+36EA Stomp on enemies 1up counter
 36EC Star kill 1up counter
+36EE Goal 1up/silver coins counter
 36F2 Yoshis Spriteslot
 36F4 solid sprite related
 36F8 Start of Enemy Ram (Adress in 3007A48 + 6CC), 64h bytes per enemy 
@@ -104,6 +106,9 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	36h Animation frame
 	37h if yoshi then slot of enemy in mouth
 	39h if = FFh then sprite won't respawn
+	3Ah if kickable sprite then counter for how many sprites were killed with this sprite
+	5Ch counter for how many lifes gotten with the cape spin trick with this sprite
+	5Eh if kickable sprite then counter for how many lefes gotten by killing other sprites with this sprite
 	Slot 0: 36F8
 	Slot 1: 375C
 	Slot 2: 37C0
@@ -189,6 +194,7 @@ Format: n--sifhb
 3FF5 What kind of slope the Player is on (0=not on slope)
 3FF6 Player is on the ground flag
 3FFA P-Balloon flag (if > 1 then also P-Balloon inflation/deflation timer)
+4000 Graphical layer priority of the Player (0=default value, 1=only behind objects, 2=behind objects and sprites, 3=only behind sprites)
 4008 Timer for how long to press L + directional button until the screen scrolls
 400D if = 80h, the player bounces off of a pink triangle
 400E current cape flying phase
@@ -209,6 +215,7 @@ Format: n--sifhb
 4058 Amount of tiles for the Player GFX to load (6h in overworld, 0Ah in levels)
 408A
 408E Yoshi ducking flag
+40C8 if =60h: teleporting is enabled
 
 4100 Intro state
 4140 if != 0 then A or Start was pressed during the Intro
@@ -264,6 +271,7 @@ Format: n--sifhb
 54BB Flag that determines if Mario/Luigi dies or the level ends when they fall below the ground
 54C2 Vertical scrolling enable/disable flag?
 54C3 Horizontal scrolling enable/disable flag?
+54C6 Sprites enters pipe with the Player (0=not in pipe, 1=horizontal pipe, 2=vertical pipe, 0FFh=shoot from diagonal pipe)
 54D3 Message box flag
 54D4 Star Timer
 54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
@@ -407,7 +415,7 @@ DD1C
 08039418 Add remaining lifes in life chain when level ends
 0804D754 Something with the New Enemy Sprites
 0804EBB0 Handle yoshi hatching (set growing animation timer)
-08069810 Handle player animaions
+08069810 Handle player animations
 08071428 Kill the player
 080729D0 Load New Enemy Sprites
 08022570 Timer "R" in Overworld

@@ -1,8 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceLDT:
-	.byte 0x28, 0x83, 0x03, 0x80, 0x4D, 0x01, 0x52, 0x01
-	.byte 0x53, 0x01, 0x5B, 0x04, 0x5C, 0x02, 0x57, 0x08
-	.byte 0x30, 0x01
+	.byte 0x28, 0x83, 0x29, 0x01, 0x2A, 0x02, 0x03, 0x80
+	.byte 0x4D, 0x01, 0x52, 0x01, 0x53, 0x01, 0x5B, 0x04
+	.byte 0x5C, 0x02, 0x57, 0x08, 0x30, 0x01
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -119,11 +119,26 @@ DownCYC1:
 FreeSpaceMPM2:
 	push r14
 	bl 800923Ch
+	ldr r1,=1D18h
+	add r0,r4,r1
+	mov r2,0Ah
+	strb r2,[r0]
+	pop r0
+	bx r0
+	.pool
+	
+FreeSpaceMPM3:
+	push r14
+	bl 800923Ch
 	ldr r0,=0276h
 	ldr r1,=0191h
 	mov r2,6h
 	mov r3,0h
 	bl 800923Ch
+	ldr r1,=1D18h
+	add r0,r4,r1
+	mov r2,6h
+	strb r2,[r0]
 	pop r0
 	bx r0
 	.pool
@@ -295,7 +310,7 @@ ContinueLevelCheck3:
 	beq SetLevelStar4
 	cmp r3,35h
 	bne ReturnWithChecks
-SetLevelStar4:	
+SetLevelStar4:
 	ldr r2,[r4,20h]
 	add r2,5Fh
 	ldrb r0,[r2]
@@ -383,7 +398,7 @@ FreeSpaceEUT:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceDSL:
-	add r3,r0,0h
+	mov r3,r0
 	ldr r2,=3007A48h
 	ldr r2,[r2]
 	ldr r1,=0F27h
@@ -396,7 +411,7 @@ FreeSpaceDSL:
 	beq SpriteIsInYoshisMouth
 	mov r1,0h
 	strb r1,[r3,1Ch]
-SpriteIsInYoshisMouth:	
+SpriteIsInYoshisMouth:
 	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -511,6 +526,8 @@ FreeSpaceUYE:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFIC2:
+	ldr r6,=10FAh
+	add r0,r0,r6
 	ldrb r1,[r1]
 	ldrb r0,[r0]
 	orr r1,r0
@@ -950,6 +967,18 @@ YoshiInTheLevel:
 NoYoshiEgg:
 	ldrb r0,[r4,1Fh]
 	strb r0,[r4,1Ah]
+	bx r14
+	
+FreeSpaceRYS:
+	add r1,2h
+	add r0,r3,r1
+	strb r2,[r0]
+	add r1,25h
+	add r0,r3,r1
+	strb r2,[r0]
+	add r1,1h
+	add r0,r3,r1
+	strb r2,[r0]
 	bx r14
 	
 FreeSpaceDCBF:
@@ -1454,7 +1483,7 @@ FreeSpaceGHP:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceMPM3:
+FreeSpaceMPM4:
 	push r14
 	ldr r3,=1D18h
 	add r1,r5,r3
@@ -1471,7 +1500,7 @@ NotInOverworld2:
 	bx r3
 	.pool
 	
-FreeSpaceMPM4:
+FreeSpaceMPM5:
 	push r14
 	mov r1,0Fh
 	and r0,r1

@@ -18,7 +18,7 @@ WaitEnd:
 .org 0x8000560
 	.pool
 	
-.org 0x80024D4	;Reset the directional coin flag when entering a door/pipe
+.org 0x80024D4	;Reset the directional coin flag when entering a door/pipe and check for Bravo Mario/Luigi message when reset star timer and silver p-switch timer
 	ldr r2,=3002340h
 	ldr r0,[r2,20h]
 	mov r4,r0
@@ -105,7 +105,7 @@ MusicFlagIsPositive2:
 	strb r2,[r7]
 	
 .org 0x800265A
-	.pool
+	.pool	
 	
 .org 0x8002E6C	;Prevents the button combo from showing build date
 	beq 8002EBCh
@@ -286,8 +286,13 @@ FreeSpacePSS2:
 	.word 0x00000000
 	.halfword 0x0000
 	
-.org 0x800377E
+.org 0x800377C
+	beq DownPSS1
+	mov r0,3h
 	bl FreeSpacePSS3
+DownPSS1:
+	pop r0
+	bx r0
 	
 .org 0x8003D0E	;Makes Mario/Luigi Start! not appear on Top Secret Area (like Yoshis House)
 	beq 8003D50h
@@ -302,6 +307,9 @@ FreeSpacePSS2:
 	strh r0,[r1]
 	b 8003D3Eh
 	.pool
+
+.org 0x8003F9A	;Fix ram value is used before initializing and the game doesn't check if it needs to display the Bravo Mario message
+	bl InitializeValueAndCheckForBravoMessage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix time up not showing when game over
@@ -481,7 +489,7 @@ ReturnPSS2:
 	.pool
 	
 .org 0x8008368
-	bl FreeSpacePSS5
+	bl FreeSpacePSS4
 	cmp r0,r2
 	bne 8008396h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -572,8 +580,19 @@ NoPointOverflow:
 .org 0x800D5F8
 	mov r1,6h
 
-.org 0x800D604	;(PSS)
-	bl FreeSpacePSS4
+.org 0x800D5F0	;(PSS)
+	ldr r2,=3002340h
+	ldr r5,=0854h
+	
+.org 0x800D600
+	add r5,32h
+	add r1,r2,r5
+	mov r0,6h
+	bl FreeSpacePSS3
+
+.org 0x800D60C
+	.pool
+	.word 0x00000000
 
 .org 0x800D920
 	mov r1,80h
@@ -631,7 +650,7 @@ NoPointOverflow:
 	add r0,r5,r2
 	strh r4,[r0]
 	mov r0,0h
-	bl  809BE9Ch
+	bl 809BE9Ch
 	ldr r0,=886h
 	add r1,r5,r0
 	mov r0,15h
@@ -651,11 +670,20 @@ FreeSpaceFIN:
 	.halfword 0x0000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.org 0x800E2D2	;(FBI)
-	mov r1,6h
+.org 0x800E2CA	
+	ldr r2,=3002340h
+	ldr r3,=0856h
+	add r0,r2,r3
+	ldrh r0,[r0]
+	mov r1,6h		;(FBI)
 
-.org 0x800E2DE
-	bl FreeSpacePSS4
+.org 0x800E2DA
+	add r3,30h
+	add r1,r2,r3
+	mov r0,6h
+	bl FreeSpacePSS3
+	b 800E4D4h
+	.pool
 
 .org 0x800E2F8	;(FBI)
 	mov r1,80h
@@ -1003,8 +1031,217 @@ ContinueOther:
 .org 0x802898C
 	b 80289C0h
 	.halfword 0x0000
+	
+.org 0x80289A0	;Make teleportation possible wthout having found all 96 exits (1)
+	ldr r0,=3002340h
 
-.org 0x8028EA4
+.org 0x80289D6
+	ldr r1,=3002340h
+
+.org 0x80289EC
+	ldr r2,=1D89h
+	add r1,r1,r2
+	strb r0,[r1]
+	ldr r5,=3002340h
+
+.org 0x8028A16
+	ldr r1,=813C550h
+
+.org 0x8028A22
+	ldr r3,=1D6Ch
+
+.org 0x8028A4A
+	ldr r3,=3002340h
+	ldr r7,=1D54h
+	add r0,r3,r7
+	add r7,1h
+	add r1,r3,r7
+
+.org 0x8028AA2
+	add r7,8h
+	add r0,r3,r7
+	strb r2,[r0]
+	ldr r2,=3002340h
+
+.org 0x8028AB8
+	ldr r3,=1D5Eh
+	add r0,r2,r3
+	strb r1,[r0]
+	ldr r0,=3002340h
+
+.org 0x8028AD0
+	ldr r5,=3004096h
+	ldr r3,=30040ACh
+	ldr r2,=81054C8h
+
+.org 0x8028AF0
+	ldr r0,=3002340h
+	ldr r7,=1D54h
+
+.org 0x8028B00
+	ldr r5,=3007A48h
+
+.org 0x8028B08
+	ldr r0,=3002340h
+
+.org 0x8028B10
+	ldr r7,=0EE7h
+	add r0,r0,r7
+
+.org 0x8028B1A
+	ldr r3,=1D92h
+
+.org 0x8028B22
+	add r7,1h
+
+.org 0x8028B2E
+	add r3,1h
+	add r2,r2,r3
+
+.org 0x8028B3E
+	ldr r3,=3002340h
+	ldr r2,=0CE8h
+
+.org 0x8028B48
+	ldr r7,=089Ch
+
+.org 0x8028B50
+	sub r7,16h
+	add r1,r3,r7
+
+.org 0x8028B5A
+	mov r0,1Fh
+	bl 809BF40h
+	add sp,0Ch
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	
+.org 0x8028BC4
+	push r4,r5,r14
+	ldr r4,=3002340h
+	ldr r5,=1D50h
+	add r1,r4,r5
+
+.org 0x8028BE4
+	add r5,1h
+	add r0,r4,r5
+
+.org 0x8028BEC
+	bne DownLevelListRoutine1
+	ldr r2,=0856h
+	add r0,r4,r2
+	
+.org 0x8028BFA
+	beq DownLevelListRoutine1
+	add r2,30h
+	add r1,r4,r2
+
+.org 0x8028C04
+	b DownLevelListRoutine3
+	.pool
+DownLevelListRoutine1:
+	ldr r0,[r4,20h]
+	add r0,0B2h
+	ldr r1,=8101AE8h
+	ldrb r0,[r0]
+	ldrb r1,[r1,6h]
+	and r0,r1
+	cmp r0,0h
+	beq DownLevelListRoutine2
+	bl 8028C40h
+DownLevelListRoutine2:
+	add r0,r4,r5
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownLevelListRoutine3
+	bl 802A4ECh
+DownLevelListRoutine3:
+	pop r4,r5
+	pop r0
+	bx r0
+	.pool
+
+.org 0x8028C5E
+	b 8028E92h
+
+.org 0x8028CF8
+	cmp r0,8h
+	bls 8028CFEh
+
+.org 0x8028D2E
+	b 8028E92h
+
+.org 0x8028D74
+	ldr r2,=3002340h
+	ldr r1,=0856h
+
+.org 0x8028D84
+	bne LevelListButtonPressed
+	b 8028E92h
+LevelListButtonPressed:
+	ldr r3,=1D51h
+	add r1,r2,r3
+	mov r0,2h
+	strb r0,[r1]
+	ldr r1,=3004095h
+	mov r3,8h
+	ldr r2,=3004096h
+LevelListLoopStart:
+	ldrb r0,[r1]
+	sub r0,1h
+	strb r0,[r1]
+	ldrb r0,[r1]
+	cmp r0,8h
+	bls LevelListLoopDown
+	strb r3,[r1]
+LevelListLoopDown:
+	ldrb r0,[r1]
+	add r0,r0,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq LevelListLoopStart
+	ldr r4,=3002340h
+	ldr r1,=1D54h
+	add r0,r4,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	bl 8029D74h
+	ldr r2,=08CCh
+	add r0,r4,r2
+	mov r1,0F0h
+	strh r1,[r0]
+	ldr r0,=4000014h
+	strh r1,[r0]
+	ldr r3,=1D55h
+	add r0,r4,r3
+	ldrb r0,[r0]
+	mov r1,0h
+	bl 8029D74h
+	ldr r0,=0828h
+	add r4,r4,r0
+	mov r0,6Ch
+	mov r1,r4
+	bl 809C1C4h
+	b 8028E92h
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x8028EA4	;Make both brother's name fat and colorful when both of them have found the same amount of exits
 	ldr r2,=6008000h
 	mov r0,89h
 	lsl r0,r0,1h
@@ -1422,6 +1659,279 @@ DownLLT11:
 	
 .org 0x80297CE
 	mov r1,10h
+	
+.org 0x802A4EE	;Make teleportation possible wthout having found all 96 exits (2)
+	ldr r4,=3002340h
+	ldr r1,=0856h
+	add r0,r4,r1
+	ldrh r1,[r0]
+	mov r0,9h
+	and r0,r1
+	cmp r0,0h
+	beq LevelListTeleportRoutineCheckDirectionalButtons1
+	mov r6,0h
+	ldr r3,=3002340h
+	ldr r2,=8105DA8h
+	ldr r1,=1D54h
+	add r0,r3,r1
+	ldrb r1,[r0]
+	lsl r1,r1,2h
+	add r2,r1,r2
+	ldr r2,[r2]
+	ldr r0,=8105DCCh
+	add r0,r1,r0
+	ldr r7,[r0]
+	ldr r0,=8105DF0h
+	add r1,r1,r0
+	ldr r4,[r1]
+	ldr r1,[r3,20h]
+	ldr r0,=1D89h
+	add r3,r3,r0
+	ldrb r0,[r3]
+	add r2,r2,r0
+	add r1,0DEh
+	ldrb r0,[r2]
+	ldrb r5,[r1]
+	cmp r5,r0
+	beq LevelListTeleportRoutineDownNotEqual1
+	add r6,1h
+LevelListTeleportRoutineDownNotEqual1:
+	strb r0,[r1]
+	ldrb r0,[r3]
+	lsl r0,r0,1Ah
+	mov r3,0h
+	lsr r0,r0,17h
+	add r4,r0,r4
+	add r7,r0,r7
+LevelListTeleportRoutineLoop1Start:
+	ldr r0,=3002340h
+	ldr r1,[r0,20h]
+	lsl r2,r3,1h
+	add r1,8Ch
+	add r1,r1,r2
+	add r0,r2,r7
+	ldrh r0,[r0]
+	ldrh r5,[r1]
+	cmp r5,r0
+	beq LevelListTeleportRoutineDownNotEqual2
+	add r6,1h
+LevelListTeleportRoutineDownNotEqual2:
+	strh r0,[r1]
+	ldr r0,=3002340h
+	ldr r1,[r0,20h]
+	add r1,94h
+	add r1,r1,r2
+	add r2,r2,r4
+	ldrh r0,[r2]
+	ldrh r5,[r1]
+	cmp r5,r0
+	beq LevelListTeleportRoutineDownNotEqual3
+	add r6,1h
+LevelListTeleportRoutineDownNotEqual3:
+	strh r0,[r1]
+	add r0,r3,1
+	lsl r0,r0,18h
+	lsr r3,r0,18h
+	cmp r3,3h
+	bls LevelListTeleportRoutineLoop1Start
+	ldr r1,=3002340h
+	ldr r2,=1C5Ch
+	add r3,r1,r2
+	ldr r0,[r3]
+	add r0,2Eh
+	mov r2,0h
+	strb r2,[r0]
+	ldr r0,[r3]
+	add r0,30h
+	mov r2,14h
+	strb r2,[r0]
+	ldr r3,=0886h
+	add r2,r1,r3
+	mov r0,1Bh
+	strb r0,[r2]
+	cmp r6,0h
+	bne LevelListTeleportRoutineDownNotEqual4
+	b LevelListTeleportRoutineReturn
+	.pool
+LevelListTeleportRoutineDownNotEqual4:
+	add r3,5Eh
+	add r1,r1,r3
+	mov r0,94h
+	bl 809C1C4h
+	b LevelListTeleportRoutineReturn
+LevelListTeleportRoutineCheckDirectionalButtons1:
+	ldr r4,=3002340h
+	ldr r2,=81057B4h
+	ldr r1,=1D54h
+	add r0,r4,r1
+	ldrb r0,[r0]
+	add r7,r2,r0
+	lsl r5,r0,1h
+	add r1,18h
+	add r0,r4,r1
+	add r5,r0,r5
+	mov r6,0h
+	mov r3,0h
+LevelListTeleportRoutineLoop2Start:
+	ldrh r0,[r5]
+	asr r0,r6
+	mov r2,1h
+	and r0,r2
+	cmp r0,0h
+	beq LevelListTeleportRoutineLoop2Continue
+	add r3,1h
+LevelListTeleportRoutineLoop2Continue:
+	ldrb r0,[r7]
+	add r6,1h
+	cmp r6,r0
+	bcc LevelListTeleportRoutineLoop2Start
+	mov r7,0h
+	cmp r3,1h
+	bls LevelListTeleportRoutineContinue2
+	ldr r1,=0856h
+	add r0,r4,r1
+	ldrh r1,[r0]
+	mov r0,40h
+	and r0,r1
+	cmp r0,0h
+	beq LevelListTeleportRoutineCheckDirectionalButtons2
+	mov r7,1h
+	neg r7,r7
+	b LevelListTeleportRoutineContinue1
+	.pool
+LevelListTeleportRoutineCheckDirectionalButtons2:
+	mov r0,80h
+	and r0,r1
+	cmp r0,0h
+	beq LevelListTeleportRoutineContinue2
+	mov r7,1h
+LevelListTeleportRoutineContinue1:
+	ldr r2,=0828h
+	add r1,r4,r2
+	mov r0,93h
+	bl 809C1C4h
+LevelListTeleportRoutineContinue2:
+	ldr r4,=3002340h
+	ldr r2,=81057B4h
+	ldr r1,=1D54h
+	add r3,r4,r1
+	ldrb r0,[r3]
+	add r6,r2,r0
+	lsl r5,r0,1h
+	add r1,18h
+	add r0,r4,r1
+	add r5,r0,r5
+	add r1,1Dh
+	add r2,r4,r1
+	mov r4,r7
+	cmp r4,0h
+	bne LevelListTeleportRoutineLoop3Start
+	mov r7,1h
+	b LevelListTeleportRoutineLoop3Continue5
+	.pool
+LevelListTeleportRoutineLoop3Start:
+	ldrb r1,[r2]
+	cmp r1,0h
+	bne LevelListTeleportRoutineLoop3Continue1
+	cmp r7,0h
+	bgt LevelListTeleportRoutineLoop3Continue3
+	cmp r4,0h
+	beq LevelListTeleportRoutineLoop3Continue2
+	ldrb r0,[r6]
+	sub r0,1h
+	b LevelListTeleportRoutineLoop3Continue4
+LevelListTeleportRoutineLoop3Continue1:
+	ldrb r0,[r6]
+	sub r0,1h
+	cmp r1,r0
+	bls LevelListTeleportRoutineLoop3Continue3
+	cmp r7,0h
+	blt LevelListTeleportRoutineLoop3Continue3
+	cmp r4,0h
+	beq LevelListTeleportRoutineLoop3Continue2
+	mov r0,0h
+	b LevelListTeleportRoutineLoop3Continue4
+LevelListTeleportRoutineLoop3Continue2:
+	neg r7,r7
+LevelListTeleportRoutineLoop3Continue3:
+	ldrb r0,[r2]
+	add r0,r0,r7
+LevelListTeleportRoutineLoop3Continue4:
+	strb r0,[r2]
+LevelListTeleportRoutineLoop3Continue5:
+	ldrh r0,[r5]
+	ldrb r1,[r2]
+	asr r0,r1
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	beq LevelListTeleportRoutineLoop3Start
+	ldrb r0,[r3]
+	cmp r0,7h
+	bne LevelListTeleportRoutineLoop3End
+	ldrb r1,[r2]
+	ldrb r0,[r6]
+	sub r0,2h
+	cmp r1,r0
+	bcs LevelListTeleportRoutineLoop3End
+	ldrh r0,[r5]
+	add r1,1h
+	asr r0,r1
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	beq LevelListTeleportRoutineLoop3Start
+LevelListTeleportRoutineLoop3End:
+	ldr r4,=3002340h
+	ldr r3,=1D50h
+	add r0,r4,r3
+	ldrb r1,[r0]
+	lsl r1,r1,3h
+	ldr r2,=08E8h
+	add r0,r4,r2
+	add r1,r1,r0
+	ldrh r0,[r1,2h]
+	mov r2,0FEh
+	lsl r2,r2,8h
+	and r0,r2
+	mov r2,21h
+	orr r0,r2
+	strh r0,[r1,2h]
+	add r3,39h
+	add r3,r4,r3
+	ldrb r2,[r3]
+	lsl r0,r2,3h
+	add r0,r0,r2
+	add r0,2Dh
+	strb r0,[r1]
+	ldrb r0,[r1,1h]
+	mov r2,3Fh
+	and r0,r2
+	strb r0,[r1,1h]
+	ldrb r0,[r1,3h]
+	and r0,r2
+	strb r0,[r1,3h]
+	ldrb r0,[r1,5h]
+	mov r2,0Fh
+	and r0,r2
+	strb r0,[r1,5h]
+	ldrh r0,[r1,4h]
+	mov r2,0FCh
+	lsl r2,r2,8h
+	and r0,r2
+	mov r2,89h
+	lsl r2,r2,1h
+	orr r0,r2
+	strh r0,[r1,4h]
+LevelListTeleportRoutineReturn:
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of LevelList Tweaks (LLT)
@@ -1457,6 +1967,9 @@ DownLLT11:
 	bls DownDiscoShell
 	mov r0,4h
 DownDiscoShell:
+
+.org 0x802C1A4	;;Fixes a bug that causes Mario/Luigi to drop a sprite carried through a pipe when getting shoot from a diagonal pipe (1)
+	bls 802C1D8h
 
 .org 0x802DD0C	;Fixes a bug that caused several sprites not sinking before despawn in lava
 	ldrb r0,[r5]
@@ -1716,8 +2229,9 @@ DownNotMaxLifes:
 	beq EndOfFctMessage
 	ldr r1,=3007A48h
 	ldr r1,[r1]
-	ldr r0,=0560h
-	add r5,r0,r1
+	mov r0,0ACh
+	lsl r0,r0,3h
+	add r5,r1,r0
 	mov r1,0h
 	mov r0,17h
 	strb r0,[r5,14h]
@@ -1836,7 +2350,8 @@ FreeSpaceFMO:
 	push r14
 	ldr r1,=3007A48h
 	ldr r1,[r1]
-	ldr r0,=0560h
+	mov r0,0ACh
+	lsl r0,r0,3h
 	add r0,r1,r0
 	ldrb r1,[r0,14h]
 	cmp r1,17h
@@ -1862,6 +2377,7 @@ FreeSpaceRDF:
 	add r3,r0,r1
 	strb r2,[r3]
 	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x80316D0	;Fix ducking flag is not considered when touching ghosts
@@ -2602,21 +3118,383 @@ DownFBL:
 	bhi 80369A0h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Remove reseting of ram offsets (1)
+.org 0x80374E4
+	push r4-r7,r14
+	mov r7,r8
+	push r7
+	mov r4,0h
+	ldr r5,=3007A48h
+	ldr r0,[r5]
+	ldr r1,=06C6h
+	add r0,r0,r1
+	mov r1,0FFh
+	strb r1,[r0]
+	ldr r1,=3002340h
+	ldr r2,=1C58h
+	add r1,r1,r2
+	ldr r0,[r1]
+	ldr r7,=10F5h
+	add r0,r0,r7
+	strb r4,[r0]
+	ldr r0,[r1]
+	ldr r2,=10F7h
+	add r0,r0,r2
+	strb r4,[r0]
+	ldr r0,[r1]
+	add r7,1h
+	add r0,r0,r7
+	strb r4,[r0]
+	ldr r0,[r1]
+	add r2,2h
+	add r0,r0,r2
+	strb r4,[r0]
+	ldr r0,[r1]
+	add r7,2h
+	add r0,r0,r7
+	strb r4,[r0]
+	ldr r0,[r1]
+	ldr r1,=10FAh
+	add r0,r0,r1
+	ldrb r2,[r0]
+	mov r8,r2
+	strb r4,[r0]
+	mov r4,0h
+	ldr r6,=3007A48h
+	mov r5,0h
+	ldr r7,=3003F98h
+	mov r12,r7
+ResetRoutineLoop1Start:
+	ldr r1,[r6]
+	mov r0,64h
+	mov r3,r4
+	mul r3,r0
+	add r1,r1,r3
+	ldr r0,=06FBh
+	add r1,r1,r0
+	strb r5,[r1]
+	ldr r0,[r6]
+	add r0,r0,r3
+	ldr r1,=0711h
+	add r0,r0,r1
+	strb r5,[r0]
+	ldr r1,[r6]
+	add r2,r1,r3
+	ldr r7,=06E4h
+	add r0,r2,r7
+	strh r5,[r0]
+	mov r0,0E3h
+	lsl r0,r0,3h
+	add r1,r1,r0
+	add r1,r1,r3
+	str r5,[r1]
+	ldr r1,=071Ch
+	add r2,r2,r1
+	strb r5,[r2]
+	ldr r0,[r6]
+	add r0,r0,r3
+	mov r2,0DFh
+	lsl r2,r2,3h
+	add r0,r0,r2
+	strb r5,[r0]
+	ldr r0,[r6]
+	add r0,r0,r3
+	add r7,2h
+	add r0,r0,r7
+	ldrb r0,[r0]
+	cmp r0,35h
+	bne ResetRoutineLoop1Continue
+	mov r0,r8
+	cmp r0,0h
+	beq ResetRoutineLoop1Continue
+	mov r1,r12
+	ldr r0,[r1]
+	ldr r2,=10FAh
+	add r0,r0,r2
+	mov r1,1h
+	strb r1,[r0]
+ResetRoutineLoop1Continue:
+	add r4,1h
+	cmp r4,0Bh
+	ble ResetRoutineLoop1Start
+	mov r4,0h
+	ldr r5,=3007A48h
+	ldr r3,=0B94h
+	mov r2,0h
+ResetRoutineLoop2Start:
+	ldr r0,[r5]
+	lsl r1,r4,5h
+	add r0,r0,r1
+	add r0,r0,r3
+	strb r2,[r0]
+	add r4,1h
+	cmp r4,13h
+	ble ResetRoutineLoop2Start
+	ldr r3,=3002340h
+	ldr r7,=1D4Bh
+	add r0,r3,r7
+	mov r4,0h
+	strb r4,[r0]
+	ldr r1,=1D10h
+	add r0,r3,r1
+	strb r4,[r0]
+	sub r1,1h
+	add r0,r3,r1
+	strb r4,[r0]
+	sub r7,0F3h
+	add r1,r3,r7
+	ldr r0,[r1]
+	ldr r2,=1198h
+	add r0,r0,r2
+	strb r4,[r0]
+	ldr r0,[r1]
+	ldr r7,=10F0h
+	add r0,r0,r7
+	mov r2,0h
+	strh r4,[r0]
+	ldr r0,[r1]
+	ldr r1,=10F2h
+	add r0,r0,r1
+	strb r2,[r0]
+	ldr r7,=1D4Eh
+	add r0,r3,r7
+	strb r2,[r0]
+	sub r7,6h
+	add r0,r3,r7
+	strb r2,[r0]
+	sub r7,1h
+	add r0,r3,r7
+	strb r2,[r0]
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r0,=0F38h
+	add r2,r1,r0
+	mov r0,1h
+	str r0,[r2]
+	ldr r2,=0F27h
+	add r1,r1,r2
+	mov r0,0FFh
+	strb r0,[r1]
+	add r7,4h
+	add r3,r3,r7
+	strh r4,[r3]
+	pop r3
+	mov r8,r3
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetSpriteStatusAndCheckMessageR4:
+	push r14
+	strb r0,[r4,1Ch]
+	mov r0,r4
+	bl CheckBravoMessageSprite
+	pop r0
+	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetSpriteStatusAndCheckMessageR5:
+	push r14
+	strb r0,[r5,1Ch]
+	mov r0,r5
+	bl CheckBravoMessageSprite
+	pop r0
+	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Fix several glitches whith sprites carried through a pipe
 .org 0x8037696
 	mov r2,7Fh
-
-.org 0x80376FE
+	ldr r4,=3007A48h
+	ldr r3,=0E34h
+	
+.org 0x80376AC
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r1,=0EB4h
+	add r0,r0,r1
+	ldr r1,=0FFFFh
+	strh r1,[r0]
+	mov r5,0Bh
+	ldr r6,=3007A48h
+	mov r0,64h
+	mul r0,r5
+	ldr r4,=06CCh
+	add r0,r0,r4
+	ldr r1,[r6]
+	
+.org 0x80376CE
+	ldr r2,=0EB4h
+	add r0,r1,r2
+	strh r5,[r0]
+	b ContinueLoop
+	.pool
+	mov r0,0h
+	bl SetSpriteStatusAndCheckMessageR4
+	mov r1,r4
+	add r1,39h
+	mov r0,0FFh
+	strb r0,[r1]
+ContinueLoop:
+	sub r5,1h
+	cmp r5,0h
+	bge 80376BCh
 	ldr r3,=3007A48h
 	ldr r1,[r3]
 	ldr r2,=0EB4h
 	add r0,r1,r2
 	mov r4,0h
 	ldsh r2,[r0,r4]
-	b 80377B0h
+	cmp r2,0h
+	bne DownPipeDoorRoutine
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r4,=0705h
+	add r1,r0,r4
+	ldrb r1,[r1]
+	ldr r6,=0E34h
+	add r0,r0,r6
+	add r0,r0,r1
+	mov r1,1h
+	strb r1,[r0]
+DownPipeDoorRoutine:
+	bl 80374E4h
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r0,[r0]
+	add r0,0A4h
+	mov r1,0h
+	strh r1,[r0]
+	pop r4-r6
+	pop r0
+	bx r0
 	.pool
-	.fill 0x9C
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CheckBravoMessageSprite:
+	push r4,r14
+	mov r4,r0
+	add r0,5Eh
+	ldrh r0,[r0]
+	cmp r0,7h
+	bls DownNoCapeTrickLifes
+	mov r1,r4
+	add r1,5Ch
+	ldrh r1,[r1]
+	add r0,r0,r1
+	sub r0,7h
+	lsl r0,r0,10h
+	lsr r0,r0,10h
+	bl 8030D90h
+	b ResetLifeChainCounter
+DownNoCapeTrickLifes:
+	mov r0,r4
+	add r0,5Ch
+	ldrh r0,[r0]
+	bl 8030D90h
+ResetLifeChainCounter:
+	mov r0,0h
+	strh r0,[r4,3Ah]
+	mov r1,r4
+	add r1,5Ch
+	strh r0,[r1]
+	add r1,2h
+	strh r0,[r1]
+	pop r4
+	pop r0
+	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+InitializeValueAndCheckForBravoMessage:
+	push r4,r14
+	add sp,-4h
+	ldr r0,=3007A48h
+	ldr r1,=300302Ch
+	str r1,[r0]
+	bl 80024D0h
+	mov r4,0h
+	ldr r1,=3007A48h
+	ldr r1,[r1]
+	ldr r2,=06BEh
+	add r0,r1,r2
+	ldrh r4,[r0]
+	add r2,2h
+	add r0,r1,r2
+	ldrh r0,[r0]
+	cmp r0,r4
+	bls NoLifeChain1
+	mov r4,r0
+NoLifeChain1:
+	add r2,2h
+	add r0,r1,r2
+	ldrh r0,[r0]
+	cmp r0,r4
+	bls NoLifeChain2
+	mov r4,r0
+NoLifeChain2:
+	mov r0,r13
+	mov r3,0h
+	strh r3,[r0]
+	ldr r2,=1000366h
+	bl 809EBB8h
+	mov r0,r4
+	bl 8030D90h
+	add sp,4h
+	pop r4
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Remove reseting of ram offsets (2)
+.org 0x80379EC
+	push r14
+	bl 8037694h
+	bl 80377F4h
+	ldr r2,=3003028h
+	mov r0,0h
+	ldsb r0,[r2,r0]
+	mov r1,80h
+	and r0,r1
+	cmp r0,0h
+	bne DownResetFunction1
+	bl  802C52Ch
+DownResetFunction1:
+	ldr r1,=3002340h
+	ldr r0,[r1,20h]
+	add r0,0E2h
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq EndOfResetFunction
+	ldr r2,=1C5Ch
+	add r0,r1,r2
+	ldr r0,[r0]
+	mov r1,r0
+	add r1,55h
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq DownResetFunction2
+	ldrb r0,[r1]
+	mov r1,0Fh
+	and r0,r1
+	cmp r0,2h
+	bne EndOfResetFunction
+DownResetFunction2:
+	bl  80378E0h
+EndOfResetFunction:
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Decrease time between life counter updates if you get multiple 1ups at once;;;;;;;;;;;
 ;Also contains part of the fix for Bravo Mario/Luigi message overwrites a reward pop-up
@@ -3551,6 +4429,10 @@ HammerBroGameNotFrozen:
 	lsr r6,r0,18h
 	cmp r6,4h
 	bge 804176Eh
+
+.org 0x80417D6	;Make amazing flying hammer bro only throw hammer when he's alive
+	cmp r0,8h
+	beq 80417E2h
 	
 .org 0x80418B4	;Make amazing flying hammer bro use the freezable frame counter because there is a check for the game freeze flag right before this code
 	.halfword 0x0894
@@ -5231,6 +6113,43 @@ DownReznorInit:
 .org 0x8067E92
 	strh r4,[r1]
 	
+.org 0x8067EA8	;Check for Bravo Mario/Luigi message when changing a sprite into a coin at the goal
+	bls ContinueGoalLoop
+
+.org 0x8067EB4
+	b ContinueGoalLoop
+
+.org 0x8067EE6
+	bne DownGoalLoop
+
+.org 0x8067EF4
+	bne DownGoalLoop
+
+.org 0x8067EFE
+	mov r1,6h
+	b SetSpriteStatusGoalLoop
+DownGoalLoop:
+	mov r0,r4
+	add r0,43h
+	ldrb r0,[r0]
+	mov r1,2h
+	and r0,r1
+	lsl r0,r0,18h
+	lsr r1,r0,18h
+	cmp r1,0h
+	bne ContinueGoalLoop
+	ldrb r0,[r4,1Ah]
+	cmp r0,0F8h
+	bhi ContinueGoalLoop
+SetSpriteStatusGoalLoop:
+	strb r1,[r4,1Ch]
+	mov r0,r4
+	bl CheckBravoMessageSprite
+ContinueGoalLoop:
+	sub r4,64h
+	sub r0,r5,1h
+	lsl r0,r0,18h
+	
 .org 0x80696C2	;Fix p-switch run out sfx plays in certain cases when p-switch timer is 1
 	ldrb r3,[r0]
 	cmp r3,0h
@@ -5250,6 +6169,96 @@ DownReznorInit:
 	beq 80699ACh
 	bl 8070B88h
 	b 8069A14h
+	.pool
+	
+.org 0x806A54E	;Fixes a bug that causes Mario/Luigi to drop a sprite carried through a pipe when getting shoot from a diagonal pipe (2)
+	ldr r4,=3002340h
+	
+.org 0x806A55A
+	ldr r2,=1C61h
+	
+.org 0x806A566	
+	ldr r3,=1C58h
+	add r4,r4,r3
+	ldr r0,[r4]
+	ldr r4,=10FAh
+	
+.org 0x806A57A
+	ldr r3,=3002340h
+	ldr r1,=0854h
+	add r0,r3,r1
+	mov r2,2h
+	strh r2,[r0]
+	ldr r0,=1C82h
+	add r1,r3,r0
+	ldrb r0,[r1]
+	sub r0,1h
+	strb r0,[r1]
+	ldrb r2,[r1]
+	cmp r2,0h
+	bne DownDiagonalPipeShoot1
+	mov r1,0E6h
+	lsl r1,r1,5h
+	add r0,r3,r1
+	mov r2,0h
+	strb r2,[r0]
+	ldr r4,=1C58h
+	add r1,r3,r4
+	ldr r0,[r1]
+	ldr r4,=114Ah
+	add r0,r0,r4
+	strb r2,[r0]
+	mov r4,0E3h
+	lsl r4,r4,5h
+	add r0,r3,r4
+	strb r2,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	strb r2,[r0]
+	b 806A66Eh
+	.pool
+DownDiagonalPipeShoot1:
+	cmp r2,18h
+	bhi DownDiagonalPipeShoot3
+	cmp r2,18h
+	bne DownDiagonalPipeShoot2
+	ldr r2,=1C70h
+	add r0,r3,r2
+	ldr r4,=0828h
+	add r1,r3,r4
+	ldrh r0,[r0]
+	strh r0,[r1]
+	mov r0,33h
+	bl 809C1C4h
+DownDiagonalPipeShoot2:
+	ldr r1,=3002340h
+	mov r2,0E6h
+	lsl r2,r2,5h
+	add r0,r1,r2
+	mov r2,0h
+	strb r2,[r0]
+	ldr r3,=1C58h
+	add r1,r1,r3
+	ldr r0,[r1]
+	ldr r4,=114Ah
+	add r0,r0,r4
+	strb r2,[r0]
+	ldr r0,[r1]
+	ldr r1,=1190h
+	add r0,r0,r1
+	strb r2,[r0]
+DownDiagonalPipeShoot3:
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+	add r0,r0,r2
+	ldr r0,[r0]
+	ldr r3,=10FAh
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 806A648h
+	mov r3,0h
+	b 806A650h
 	.pool
 	
 .org 0x806B452	;Fix star timer gets either never or every frame decremented when game freeze flag is set and gets not reset when the Player dies instandly  
@@ -5755,24 +6764,25 @@ DownHST4:	;7A0E2
 ;Part 2 of FixButtonInputs (FBI);;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains parts of Perma SaveSlot (PSS) and others
 .org 0x807A444
-	.word 0x00000000
-	.halfword 0x0000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpacePSS3:
-	push r14
-	mov r0,3h
-	strb r0,[r1]
+	push r4,r5,r14
+	mov r5,r0
+	strb r5,[r1]
+	ldr r0,=3002340h
+	ldr r4,[r0,20h]
 	bl 8008308h
+	cmp r5,6h
+	beq NoReInitializationNeeded
+NoReInitializationNeeded:
+	ldr r0,=3002340h
+	str r4,[r0,20h]
+	pop r4,r5
 	pop r0
 	bx r0
+	.pool
+	
 FreeSpacePSS4:
-	push r14
-	mov r0,6h
-	strb r0,[r1]
-	bl 8008308h
-	pop r0
-	bx r0
-FreeSpacePSS5:
 	push r14
 	ldrb r1,[r5]
 	strb r1,[r0]
@@ -5894,6 +6904,9 @@ SpriteTableStatus:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
+
+.org 0x80D67EC	;Fix outline of fire Mario having the wrong color
+	.halfword 0x18D3
 	
 .org 0x80D6A7A	;Fixes color of yellow yoshi in ow
 	.halfword 0x197D, 0x1AFF

@@ -88,7 +88,7 @@ DownVRAMUpdate:
 	bl FreeSpaceRCS1	;800555Ch Orig.
 	
 .org 0x8008210	;(LDT)
-	mov r3,10h
+	mov r3,14h
 
 .org 0x8008214
 	ldr r4,=FreeSpaceLDT
@@ -123,8 +123,11 @@ DownVRAMUpdate:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of Mario Palette Move (MPM)
-.org 0x80094C6
+.org 0x80092FE
 	bl FreeSpaceMPM2
+
+.org 0x80094C6
+	bl FreeSpaceMPM3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent peach coin graphics from getting loaded when entering the overworld,
@@ -166,7 +169,7 @@ NotFirstTime:
 .org 0x800D5DC
 	b DownIntroCutscene
 
-.org 0x800D608
+.org 0x800D60A	;800D60Ah Orig.
 	b DownIntroCutscene
 
 .org 0x800D678
@@ -287,7 +290,7 @@ DownEnemyRollCredits3:
 	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Make star road level show up on the level table after beeing unlocked like other levels (SRL)
+;Make star road level show up on the level list after beeing unlocked like other levels (SRL)
 .org 0x801EB7C
 	ldr r1,=20144E4h
 
@@ -920,6 +923,9 @@ DownUYE2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent the Player carrying an item while gliding, climbing, riding a yoshi or sliding (FIC)
+.org 0x802C6FC
+	push r4-r6,r14
+
 .org 0x802C750
 	ldr r3,=3002340h
 	ldr r5,=0854h
@@ -941,8 +947,6 @@ DownUYE2:
 	orr r1,r0
 	cmp r1,0h
 	bne 802C7BCh
-	mov r0,0Bh
-	strb r0,[r4,1Ch]
 	ldr r5,=0EDAh
 	add r0,r2,r5
 	mov r1,1h
@@ -954,8 +958,13 @@ DownUYE2:
 	add r1,r3,r5
 	mov r0,8h
 	strb r0,[r1]
+	mov r0,0Bh
+	bl SetSpriteStatusAndCheckMessageR4
 	b 802CA14h
 	.pool
+	
+.org 0x802CA14
+	pop r4-r6
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Adjust draw height of power ups and prevents out of bounds access of some item tables (ITA)
@@ -1583,6 +1592,76 @@ DownChucks1:
 	
 .org 0x804EB44	;Prevent a (baby) yoshi from hatching from an egg if another (adult) yoshi is in the level
 	bl FreeSpaceFMY
+	
+.org 0x804EBB4	;Reset several more values when a new yoshi spawns
+	ldr r5,=3007A48h
+	ldr r3,[r5]
+	ldr r1,=067Ah
+	add r0,r3,r1
+	mov r2,0h
+	strb r2,[r0]
+	bl FreeSpaceRYS
+	ldr r1,=3002340h
+	ldr r3,=1C58h
+	add r0,r1,r3
+	ldr r0,[r0]
+	ldr r3,=114Fh
+	add r0,r0,r3
+	strb r2,[r0]
+	ldr r0,[r5]
+	ldr r3,=0ED5h
+	add r2,r0,r3
+	ldr r3,=06C6h
+	add r0,r0,r3
+	ldrb r2,[r2]
+	strb r2,[r0]
+	mov r0,35h
+	strb r0,[r6,1Ah]
+	mov r0,8h
+	strb r0,[r6,1Ch]
+	ldr r3,=08C4h
+	add r2,r1,r3
+	ldrh r0,[r6,10h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	sub r3,9Ch
+	add r1,r1,r3
+	strh r0,[r1]
+	mov r0,0Bh
+	bl 809C1C4h
+	ldrh r0,[r6,12h]
+	sub r0,10h
+	strh r0,[r6,12h]
+	ldr r0,[r6,4h]
+	ldr r3,=0FFF00000h
+	add r0,r0,r3
+	str r0,[r6,4h]
+	mov r7,r6
+	add r7,35h
+	ldrb r4,[r7]
+	mov r0,r6
+	bl 802F54Ch
+	mov r0,0FEh
+	and r4,r0
+	strb r4,[r7]
+	mov r1,r6
+	add r1,36h
+	mov r0,0Ch
+	strb r0,[r1]
+	add r1,1h
+	mov r0,0FFh
+	strb r0,[r1]
+	add r1,1h
+	strb r0,[r1]
+	ldr r0,[r5]
+	ldr r1,=06A5h
+	add r0,r0,r1
+	mov r1,40h
+	strb r1,[r0]
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
 
 .org 0x804FB9E	;Prevent the inputs to control lakitu's cloud from updating when the game is frozen
 	bl CheckFreezeFlagController
@@ -1765,14 +1844,10 @@ DownDCB:
 	ldr r5,=1C58h
 	add r0,r3,r5
 	ldr r0,[r0]
-	ldr r6,=10FAh
-	add r0,r0,r6
 	bl FreeSpaceFIC2
 	orr r1,r0
 	cmp r1,0h
 	bne ItemNotCarried
-	mov r0,0Bh
-	strb r0,[r4,1Ch]
 	mov r0,r4
 	add r0,36h
 	strb r1,[r0]
@@ -1787,11 +1862,15 @@ DownDCB:
 	add r1,r3,r5
 	mov r0,8h
 	strb r0,[r1]
+	mov r0,0Bh
+	bl SetSpriteStatusAndCheckMessageR4
+	b 8056C8Ah
+	.pool
 ItemNotCarried:
 	mov r0,r4
 	bl 802CA2Ch
 	b 8056C6Ch
-	.pool
+	.word 0x00000000
 
 .org 0x8056C8A
 	pop r4-r6
@@ -2054,6 +2133,45 @@ DownYoshiSwallow2:
 .org 0x805D9A8
 	.pool
 	
+.org 0x805DB48	;Check for life chain for swallowed sprite
+	b DownDespawnSpriteYoshi
+
+.org 0x805DB68
+	cmp r0,0Bh
+	bls DownCheckSpriteInYoshisMouth
+	b DownDespawnSpriteYoshi
+DownCheckSpriteInYoshisMouth:
+	ldr r4,=3007A48h
+	mov r0,r6
+	add r0,37h
+	ldrb r1,[r0]
+	mov r0,64h
+	mul r0,r1
+	ldr r1,=06CCh
+	add r0,r0,r1
+	ldr r1,[r4]
+	add r5,r0,r1
+	ldrb r7,[r5,1Ch]
+	mov r0,r5
+	add r0,42h
+	ldrb r0,[r0]
+	mov r1,2h
+	and r0,r1
+	cmp r0,0h
+	beq 805DBB8h
+	mov r0,7h
+	bl SetSpriteStatusAndCheckMessageR5
+	ldr r0,[r4]
+
+.org 0x805DBAC
+	.pool
+	
+.org 0x805DBA8
+	b DownDespawnSpriteYoshi
+	
+.org 0x805DC20
+	b DownDespawnSpriteYoshi
+	
 .org 0x805DC38	;Fix 0-time glitch (yoshi eats wings)
 	ldrb r4,[r5,1Bh]
 	cmp r4,0h
@@ -2082,8 +2200,41 @@ DownYoshiSwallow2:
 DownYoshiWings1:
 	mov r0,r5
 	bl 805CCD8h
-	b 805DCA2h
+	b DownDespawnSpriteYoshi
 	.pool
+	
+.org 0x805DC92	;Check for life chain for swallowed sprite
+	mov r0,0h
+	bl SetSpriteStatusAndCheckMessageR5
+	mov r0,r6
+	bl 805DA7Ch
+	mov r0,r6
+	bl 805CEA4h
+DownDespawnSpriteYoshi:	
+	mov r0,r6
+	bl 805D518h
+	b 805DD40h
+
+.org 0x805DCB0
+	mov r0,7h
+	bl SetSpriteStatusAndCheckMessageR5
+	ldr r0,=3002340h
+	ldr r0,[r0,20h]
+	add r0,0DCh
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 805DCD8h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=067Ah
+	mov r1,40h
+	b DownSetSwallowTimer
+	.pool
+
+.org 0x805DCDE
+	mov r1,0FFh
+DownSetSwallowTimer:
+	add r0,r0,r2
 
 .org 0x805DE0C	;Give the Player the correct amount of points when yoshi eats them
 	bl FreeSpaceRAP
@@ -2526,14 +2677,14 @@ DownOthers1:
 
 ;Part 3 of Mario palette move (MPM)
 .org 0x806B5A8
-	bl FreeSpaceMPM3
+	bl FreeSpaceMPM4
 
 .org 0x806B5B2
-	bl FreeSpaceMPM3
+	bl FreeSpaceMPM4
 	
 .org 0x806BCE6
 	ldrb r0,[r4,5h]
-	bl FreeSpaceMPM4
+	bl FreeSpaceMPM5
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of Fix 0-time glitch (F0T)
