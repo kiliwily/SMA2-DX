@@ -105,7 +105,7 @@ MusicFlagIsPositive2:
 	strb r2,[r7]
 	
 .org 0x800265A
-	.pool	
+	.pool
 	
 .org 0x8002E6C	;Prevents the button combo from showing build date
 	beq 8002EBCh
@@ -2377,7 +2377,6 @@ FreeSpaceRDF:
 	add r3,r0,r1
 	strb r2,[r3]
 	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x80316D0	;Fix ducking flag is not considered when touching ghosts
