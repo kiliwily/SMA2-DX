@@ -1026,7 +1026,7 @@ ContinueOther:
 	
 .org 0x802897E
 	add r0,r0,r3
-	bl FreeSpaceLLT1
+	bl FreeSpaceLLT3
 	
 .org 0x802898C
 	b 80289C0h
@@ -1067,49 +1067,80 @@ ContinueOther:
 	ldr r3,=1D5Eh
 	add r0,r2,r3
 	strb r1,[r0]
-	ldr r0,=3002340h
-
-.org 0x8028AD0
+	mov r4,0h
 	ldr r5,=3004096h
-	ldr r3,=30040ACh
-	ldr r2,=81054C8h
-
-.org 0x8028AF0
-	ldr r0,=3002340h
-	ldr r7,=1D54h
-
-.org 0x8028B00
+	mov r6,0h
+LevelListInitializationLoop1Start:
+	add r1,r4,r5
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq LevelListInitializationLoop1Continue
+	add r6,1h
+LevelListInitializationLoop1Continue:
+	add r0,r4,1
+	lsl r0,r0,18h
+	lsr r4,r0,18h
+	cmp r4,8h
+	bls LevelListInitializationLoop1Start
+	ldr r2,=3002340h
+	ldr r7,=1D88h
+	add r0,r2,r7
+	strb r6,[r0]
+	sub r7,34h
+	add r0,r2,r7
+	ldrb r0,[r0]
+	mov r1,0h
+	bl 8029D74h
+	mov r4,0h
 	ldr r5,=3007A48h
-
-.org 0x8028B08
+	mov r6,17h
+LevelListInitializationLoop2Start:
+	bl 802FA80h
 	ldr r0,=3002340h
-
-.org 0x8028B10
+	lsl r2,r4,2h
+	add r2,r2,r0
+	ldr r0,[r5]
 	ldr r7,=0EE7h
 	add r0,r0,r7
-
-.org 0x8028B1A
+	ldrb r0,[r0]
+	and r0,r6
+	add r0,0CCh
 	ldr r3,=1D92h
-
-.org 0x8028B22
+	add r1,r2,r3
+	strb r0,[r1]
+	ldr r0,[r5]
 	add r7,1h
-
-.org 0x8028B2E
+	add r0,r0,r7
+	ldrb r1,[r0]
+	mov r0,17h
+	and r1,r0
+	add r1,8h
 	add r3,1h
 	add r2,r2,r3
-
-.org 0x8028B3E
+	strb r1,[r2]
+	add r0,r4,1
+	lsl r0,r0,18h
+	lsr r4,r0,18h
+	cmp r4,2h
+	bls LevelListInitializationLoop2Start
 	ldr r3,=3002340h
 	ldr r2,=0CE8h
-
-.org 0x8028B48
+	add r1,r3,r2
+	mov r0,0FFh
+	strb r0,[r1]
 	ldr r7,=089Ch
-
-.org 0x8028B50
+	add r1,r3,r7
+	mov r0,1h
+	strb r0,[r1]
 	sub r7,16h
 	add r1,r3,r7
-
-.org 0x8028B5A
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	sub r7,2h
+	add r1,r3,r7
+	mov r0,0h
+	strb r0,[r1]
 	mov r0,1Fh
 	bl 809BF40h
 	add sp,0Ch
@@ -1117,103 +1148,204 @@ ContinueOther:
 	pop r0
 	bx r0
 	.pool
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	
-.org 0x8028BC4
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpacePUP:
+	mov r0,8h
+	strb r0,[r1]
+	mov r1,0E5h
+	lsl r1,r1,5h
+	add r0,r2,r1
+	mov r1,0h
+	strb r1,[r0]
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+LevelListMainFunction:
 	push r4,r5,r14
 	ldr r4,=3002340h
 	ldr r5,=1D50h
 	add r1,r4,r5
-
-.org 0x8028BE4
+	mov r0,0h
+	strb r0,[r1]
+	bl 80014F4h
+	bl 802A228h
+	bl 802A3B4h
+	bl 8029234h
+	bl 8029F7Ch
 	add r5,1h
 	add r0,r4,r5
-
-.org 0x8028BEC
-	bne DownLevelListRoutine1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownLevelListMainRoutine2
 	ldr r2,=0856h
 	add r0,r4,r2
-	
-.org 0x8028BFA
-	beq DownLevelListRoutine1
-	add r2,30h
-	add r1,r4,r2
-
-.org 0x8028C04
-	b DownLevelListRoutine3
-	.pool
-DownLevelListRoutine1:
-	ldr r0,[r4,20h]
-	add r0,0B2h
-	ldr r1,=8101AE8h
-	ldrb r0,[r0]
-	ldrb r1,[r1,6h]
+	ldrh r0,[r0]
+	mov r1,6h
 	and r0,r1
 	cmp r0,0h
-	beq DownLevelListRoutine2
-	bl 8028C40h
-DownLevelListRoutine2:
+	beq DownLevelListMainRoutine1
+	add r2,30h
+	add r1,r4,r2
+	mov r0,1Bh
+	strb r0,[r1]
+	b DownLevelListMainRoutine4
+	.pool
+DownLevelListMainRoutine1:
+	add r5,5h
 	add r0,r4,r5
+	sub r5,2h
+	add r1,r4,r5
+	ldrb r1,[r1]
+	add r0,r0,r1
 	ldrb r0,[r0]
 	cmp r0,0h
-	bne DownLevelListRoutine3
+	beq DownLevelListMainRoutine2
 	bl 802A4ECh
-DownLevelListRoutine3:
+	ldr r2,=0886h
+	add r0,r4,r2
+	ldrb r0,[r0]
+	cmp r0,3Dh
+	bne DownLevelListMainRoutine4
+DownLevelListMainRoutine2:
+	ldr r0,[r4,20h]
+	add r0,37h
+	mov r1,80h
+	ldrb r0,[r0]
+	and r0,r1
+	cmp r0,0h
+	bne DownLevelListMainRoutine3
+	ldr r1,=1D88h
+	add r0,r4,r1
+	ldrb r0,[r0]
+	cmp r0,1h
+	bls DownLevelListMainRoutine4
+DownLevelListMainRoutine3:
+	bl 8028C40h
+DownLevelListMainRoutine4:
 	pop r4,r5
 	pop r0
 	bx r0
 	.pool
 
+.org 0x8028C46
+	ldr r1,=3002340h
+	ldr r2,=1D51h
+
+.org 0x8028C54
+	ldr r3,=1D8Ah
+
 .org 0x8028C5E
 	b 8028E92h
+	ldr r2,=0893h
 
-.org 0x8028CF8
+.org 0x8028C70
+	ldr r7,=3002340h
+	ldr r4,=3004090h
+	ldr r3,=3002C28h
+	mov r12,r3
+	ldr r6,=813BE78h
+
+.org 0x8028C92
+	ldr r0,=08EAh
+
+.org 0x8028CB2
+	ldr r1,=08E8h
+
+.org 0x8028CCA
+	ldr r0,=0FFFFh
+
+.org 0x8028CD0
+	ldr r2,=3002340h
+	ldr r3,=0856h
+
+.org 0x8028CE0
+	beq LevelListButtonPressed1
+	ldr r0,=1D51h
+	add r1,r2,r0
+	mov r0,1h
+	strb r0,[r1]
+	ldr r4,=3004095h
+	mov r3,0h
+	ldr r5,=3004096h
+LevelListLoop1Start:
+	ldrb r0,[r4]
+	add r0,1h
+	strb r0,[r4]
+	ldrb r0,[r4]
 	cmp r0,8h
-	bls 8028CFEh
-
-.org 0x8028D2E
-	b 8028E92h
-
-.org 0x8028D74
+	bls LevelListLoop1Down
+	strb r3,[r4]
+LevelListLoop1Down:
+	ldr r0,[r2,20h]
+	add r0,37h
+	mov r1,80h
+	ldrb r0,[r0]
+	and r0,r1
+	cmp r0,0h
+	bne LevelListLoop1End
+	ldrb r0,[r4]
+	add r0,r0,r5
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq LevelListLoop1Start
+LevelListLoop1End:
+	ldr r4,=3002340h
+	ldr r5,=1D55h
+	add r0,r4,r5
+	ldrb r0,[r0]
+	mov r1,1h
+	bl 8029D74h
+	ldr r2,=08CCh
+	add r0,r4,r2
+	mov r1,0h
+	strh r1,[r0]
+	ldr r0,=4000014h
+	strh r1,[r0]
+	b LevelListPlaySound
+	.pool
+LevelListButtonPressed1:
 	ldr r2,=3002340h
 	ldr r1,=0856h
-
-.org 0x8028D84
-	bne LevelListButtonPressed
+	add r0,r2,r1
+	ldrh r0,[r0]
+	mov r1,88h
+	lsl r1,r1,2h
+	and r0,r1
+	cmp r0,0h
+	bne LevelListButtonPressed2
 	b 8028E92h
-LevelListButtonPressed:
+LevelListButtonPressed2:
 	ldr r3,=1D51h
 	add r1,r2,r3
 	mov r0,2h
 	strb r0,[r1]
-	ldr r1,=3004095h
+	ldr r4,=3004095h
 	mov r3,8h
-	ldr r2,=3004096h
-LevelListLoopStart:
-	ldrb r0,[r1]
+	ldr r5,=3004096h
+LevelListLoop2Start:
+	ldrb r0,[r4]
 	sub r0,1h
-	strb r0,[r1]
-	ldrb r0,[r1]
+	strb r0,[r4]
+	ldrb r0,[r4]
 	cmp r0,8h
-	bls LevelListLoopDown
-	strb r3,[r1]
-LevelListLoopDown:
-	ldrb r0,[r1]
-	add r0,r0,r2
+	bls LevelListLoop2Down
+	strb r3,[r4]
+LevelListLoop2Down:
+	ldr r0,[r2,20h]
+	add r0,37h
+	mov r1,80h
+	ldrb r0,[r0]
+	and r0,r1
+	cmp r0,0h
+	bne LevelListLoop2End
+	ldrb r0,[r4]
+	add r0,r0,r5
 	ldrb r0,[r0]
 	cmp r0,0h
-	beq LevelListLoopStart
+	beq LevelListLoop2Start
+LevelListLoop2End:
 	ldr r4,=3002340h
-	ldr r1,=1D54h
-	add r0,r4,r1
+	ldr r5,=1D54h
+	add r0,r4,r5
 	ldrb r0,[r0]
 	mov r1,1h
 	bl 8029D74h
@@ -1223,25 +1355,26 @@ LevelListLoopDown:
 	strh r1,[r0]
 	ldr r0,=4000014h
 	strh r1,[r0]
-	ldr r3,=1D55h
-	add r0,r4,r3
+	add r5,1h
+	add r0,r4,r5
 	ldrb r0,[r0]
 	mov r1,0h
 	bl 8029D74h
-	ldr r0,=0828h
-	add r4,r4,r0
+LevelListPlaySound:
+	ldr r2,=0884h
+	add r1,r4,r2
+	mov r0,0h
+	strb r0,[r1]
+	sub r2,5Ch
+	add r4,r4,r2
 	mov r0,6Ch
 	mov r1,r4
 	bl 809C1C4h
 	b 8028E92h
 	.pool
 	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
 
-.org 0x8028EA4	;Make both brother's name fat and colorful when both of them have found the same amount of exits
+.org 0x8028EA4	;Make both brothers names fat and colorful when both of them have found the same amount of exits
 	ldr r2,=6008000h
 	mov r0,89h
 	lsl r0,r0,1h
@@ -1345,8 +1478,32 @@ Luigi:
 DownLLT0:
 	bx r14
 	.pool
-	
+
 FreeSpaceLLT1:
+	push r14
+LLTLoopAStart:
+	add r0,r4,0
+	bl 8029898h
+	add r4,8h
+	ldrh r0,[r4,6h]
+	cmp r0,r5
+	bne LLTLoopAStart
+	pop r0
+	bx r0
+
+FreeSpaceLLT2:
+	push r14
+LLTLoopBStart:
+	add r0,r4,0
+	bl 8029974h
+	add r4,8h
+	ldrh r0,[r4,6h]
+	cmp r0,r5
+	bne LLTLoopBStart
+	pop r0
+	bx r0
+	
+FreeSpaceLLT3:
 	ldrb r0,[r0,6h]
 	ldrb r2,[r2,1h]
 	mov r1,60h
@@ -1361,41 +1518,16 @@ FreeSpaceLLT1:
 ReturnLLT:
 	bx r14
 	
-FreeSpaceLLT2:
-	mov r2,0EBh
-	lsl r2,r2,5h
-	add r0,r7,r2
-	add r1,r1,r0
+FreeSpaceLLT4:
+	mov r2,r6
 	mov r0,1Fh
-	add r2,r6,0
 	and r2,r0
 	mov r0,1h
 	lsl r0,r2
 	ldr r1,[r1]
 	and r0,r1
 	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceMRS:
-	ldr r0,[r2]
-	strh r6,[r0,16h]
-	ldr r0,[r4,20h]
-	mov r3,87h
-	lsl r3,r3,1h
-	add r1,r0,r3
-	mov r0,0h
-	strb r0,[r1]
-	add r1,1h
-	strb r0,[r1]
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceSBR:
-	mov r4,8Eh
-	lsl r4,r4,1h
-	add r1,r0,r4
-	ldrb r0,[r1]
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 	.word 0x00000000
 	
 .org 0x8029234
@@ -1411,6 +1543,13 @@ FreeSpaceSBR:
 	ldr r2,=1D54h
 	add r0,r1,r2
 	ldrb r3,[r0]
+	ldr r0,[r1,20h]
+	add r0,37h
+	mov r2,80h
+	ldrb r0,[r0]
+	and r0,r2
+	cmp r0,0h
+	bne DownLLTA1
 	lsl r2,r3,1h
 	ldr r4,=1D6Ch
 	add r1,r1,r4
@@ -1420,7 +1559,8 @@ FreeSpaceSBR:
 	ldrh r0,[r1]
 	ldrh r2,[r2]
 	cmp r0,r2
-	bne BelowLLT2
+	bne DownLLTA2
+DownLLTA1:
 	ldr r1,=813C6C4h
 	lsl r0,r3,2h
 	add r0,r0,r1
@@ -1428,20 +1568,15 @@ FreeSpaceSBR:
 	ldrh r1,[r4,6h]
 	ldr r0,=0FFFFh
 	cmp r1,r0
-	beq BelowLLT2
-	add r5,r0,0
-BelowLLT1:
-	add r0,r4,0
-	bl 8029898h
-	add r4,8h
-	ldrh r0,[r4,6h]
-	cmp r0,r5
-	bne BelowLLT1
-BelowLLT2:
+	beq DownLLTA2
+	mov r5,r0
+	bl FreeSpaceLLT1
+DownLLTA2:
 	mov r6,0h
 	ldr r7,=3002340h
 	ldr r0,=30040CBh
 	mov r8,r0
+DownLLTA3:
 	ldr r3,=1D54h
 	add r1,r7,r3
 	ldr r0,=813C550h
@@ -1454,7 +1589,7 @@ BelowLLT2:
 	cmp r1,r0
 	bne 802938Ah
 	ldr r1,=813C540h
-	ldr r4,=889h
+	ldr r4,=0889h
 	add r0,r7,r4
 	ldrb r0,[r0]
 	lsl r0,r0,18h
@@ -1468,28 +1603,74 @@ BelowLLT2:
 	beq 8029392h
 	asr r1,r6,5h
 	lsl r1,r1,2h
-	bl FreeSpaceLLT2
+	mov r2,0EBh
+	lsl r2,r2,5h
+	add r0,r7,r2
+	add r1,r1,r0
+	bl FreeSpaceLLT4
 	cmp r0,0h
-	bne BelowLLT3
-	ldr r2,[r7,20h]
-	add r0,r2,r0
+	bne DownLLTA4
+	ldr r0,[r7,20h]
 	add r0,37h
 	mov r1,80h
 	ldrb r0,[r0]
 	and r0,r1
 	cmp r0,0h
-	bne 80292FCh
+	bne DownLLTA6
 	b 802938Ah
-BelowLLT3:
-	
-.org 0x80292E4
+DownLLTA4:
+	ldr r0,[r7,20h]
+	add r0,0A0h
+	ldrh r0,[r0]
+	cmp r6,r0
+	bne DownLLTA5
+	mov r1,r8
+	ldrb r0,[r1]
 	mov r1,10h
-	
-.org 0x802930C
+	and r0,r1
+	cmp r0,0h
+	bne DownLLTA6
+DownLLTA5:
+	ldr r5,=0FFFFh
+	bl FreeSpaceLLT1
+DownLLTA6:
+	ldr r0,=3002340h
+	ldr r0,[r0,20h]
+	add r0,0A0h
+	ldrh r0,[r0]
+	cmp r6,r0
+	bne DownLLTA7
+	mov r2,r8
+	ldrb r0,[r2]
 	mov r1,10h
-
-.org 0x8029340
+	and r0,r1
+	cmp r0,0h
+	bne 802938Ah
+DownLLTA7:
+	mov r0,r6
+	bl 8029A60h
+	ldr r3,=1D50h
+	add r1,r7,r3
+	ldrb r0,[r1]
+	lsl r0,r0,3h
+	add r0,r0,r7
+	ldr r4,=08EAh
+	add r0,r0,r4
+	ldrh r0,[r0]
+	lsl r0,r0,17h
+	lsr r0,r0,17h
+	ldr r2,=0FFFFFF00h
+	add r0,r0,r2
+	cmp r0,0DFh
+	bls 8029378h
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	b 802938Ah
 	.pool
+
+.org 0x8029390
+	b DownLLTA3
 
 .org 0x80293CC
 	mov r1,10h
@@ -1503,26 +1684,33 @@ BelowLLT3:
 	ldrb r0,[r0]
 	lsl r0,r0,3h
 	add r0,r0,r5
-	ldr r4,=8E8h
+	ldr r4,=08E8h
 	add r0,r0,r4
 	mov r1,0A0h
 	strb r1,[r0]
 	add r6,1h
 	cmp r6,73h
-	bgt DownLLT01
+	bgt DownLLTB1
 	b 8029398h
-DownLLT01:
+DownLLTB1:
 	ldr r1,=3002340h
 	ldr r2,=1D51h
 	add r0,r1,r2
 	ldrb r0,[r0]
 	cmp r0,0h
-	bne DownLLT02
+	bne DownLLTB2
 	b 802988Ah
-DownLLT02:
+DownLLTB2:
 	ldr r3,=1D55h
 	add r0,r1,r3
 	ldrb r3,[r0]
+	ldr r0,[r1,20h]
+	add r0,37h
+	mov r2,80h
+	ldrb r0,[r0]
+	and r0,r2
+	cmp r0,0h
+	bne DownLLTB3
 	lsl r2,r3,1h
 	ldr r4,=1D6Ch
 	add r0,r1,r4
@@ -1532,7 +1720,8 @@ DownLLT02:
 	ldrh r0,[r0]
 	ldrh r2,[r2]
 	cmp r0,r2
-	bne DownLLT04
+	bne DownLLTB4
+DownLLTB3:
 	ldr r1,=813C6C4h
 	lsl r0,r3,2h
 	add r0,r0,r1
@@ -1540,20 +1729,15 @@ DownLLT02:
 	ldrh r1,[r4,6h]
 	ldr r0,=0FFFFh
 	cmp r1,r0
-	beq DownLLT04
-	add r5,r0,0
-DownLLT03:
-	add r0,r4,0
-	bl 8029974h
-	add r4,8h
-	ldrh r0,[r4,6h]
-	cmp r0,r5
-	bne DownLLT03
-DownLLT04:
+	beq DownLLTB4
+	mov r5,r0
+	bl FreeSpaceLLT2
+DownLLTB4:
 	mov r6,0h
 	ldr r7,=3002340h
 	ldr r0,=30040CBh
 	mov r8,r0
+DownLLTB5:
 	ldr r3,=1D55h
 	add r1,r7,r3
 	ldr r0,=813C550h
@@ -1564,11 +1748,11 @@ DownLLT04:
 	ldrb r1,[r1]
 	lsr r0,r0,1Ch
 	cmp r1,r0
-	beq DownLLT05
+	beq DownLLTB6
 	b 802968Eh
-DownLLT05:
+DownLLTB6:
 	ldr r1,=813C540h
-	ldr r4,=889h
+	ldr r4,=0889h
 	add r0,r7,r4
 	ldrb r0,[r0]
 	lsl r0,r0,18h
@@ -1579,59 +1763,56 @@ DownLLT05:
 	add r0,r2,r0
 	ldr r4,[r0]
 	cmp r4,0h
-	bne DownLLT06
+	bne DownLLTB7
 	b 8029696h
-DownLLT06:
+DownLLTB7:
 	asr r1,r6,5h
 	lsl r1,r1,2h
-	bl FreeSpaceLLT2
+	mov r2,0EBh
+	lsl r2,r2,5h
+	add r0,r7,r2
+	add r1,r1,r0
+	bl FreeSpaceLLT4
 	cmp r0,0h
-	bne DownLLT07
-	ldr r2,[r7,20h]
-	add r0,r2,r0
+	bne DownLLTB8
+	ldr r0,[r7,20h]
 	add r0,37h
 	mov r1,80h
 	ldrb r0,[r0]
 	and r0,r1
 	cmp r0,0h
-	bne DownLLT10
+	bne DownLLTB10
 	b 802968Eh
-DownLLT07:
+DownLLTB8:
 	ldr r0,[r7,20h]
 	add r0,0A0h
 	ldrh r0,[r0]
 	cmp r6,r0
-	bne DownLLT08
+	bne DownLLTB9
 	mov r1,r8
 	ldrb r0,[r1]
 	mov r1,10h
 	and r0,r1
 	cmp r0,0h
-	bne DownLLT10
-DownLLT08:
+	bne DownLLTB10
+DownLLTB9:
 	ldr r5,=0FFFFh
-DownLLT09:
-	add r0,r4,0
-	bl 8029974h
-	add r4,8h
-	ldrh r0,[r4,6h]
-	cmp r0,r5
-	bne DownLLT09
-DownLLT10:
+	bl FreeSpaceLLT2
+DownLLTB10:
 	ldr r0,=3002340h
 	ldr r0,[r0,20h]
 	add r0,0A0h
 	ldrh r0,[r0]
 	cmp r6,r0
-	bne DownLLT11
+	bne DownLLTB11
 	mov r2,r8
 	ldrb r0,[r2]
 	mov r1,10h
 	and r0,r1
 	cmp r0,0h
 	bne 802968Eh
-DownLLT11:
-	add r0,r6,0
+DownLLTB11:
+	mov r0,r6
 	bl 8029A60h
 	ldr r1,=3002340h
 	ldr r3,=1D51h
@@ -1644,7 +1825,7 @@ DownLLT11:
 	ldrb r2,[r0]
 	lsl r2,r2,3h
 	add r2,r2,r1
-	ldr r0,=8EAh
+	ldr r0,=08EAh
 	add r2,r2,r0
 	ldrh r3,[r2]
 	lsl r1,r3,17h
@@ -1653,7 +1834,10 @@ DownLLT11:
 	add r1,r1,r4
 	b 8029638h
 	.pool
-	
+
+.org 0x8029694
+	b DownLLTB5
+
 .org 0x80296D6
 	mov r1,10h
 	
@@ -1735,16 +1919,6 @@ LevelListTeleportRoutineDownNotEqual3:
 	cmp r3,3h
 	bls LevelListTeleportRoutineLoop1Start
 	ldr r1,=3002340h
-	ldr r2,=1C5Ch
-	add r3,r1,r2
-	ldr r0,[r3]
-	add r0,2Eh
-	mov r2,0h
-	strb r2,[r0]
-	ldr r0,[r3]
-	add r0,30h
-	mov r2,14h
-	strb r2,[r0]
 	ldr r3,=0886h
 	add r2,r1,r3
 	mov r0,1Bh
@@ -1754,39 +1928,33 @@ LevelListTeleportRoutineDownNotEqual3:
 	b LevelListTeleportRoutineReturn
 	.pool
 LevelListTeleportRoutineDownNotEqual4:
+	ldr r2,=1C5Ch
+	add r4,r1,r2
+	ldr r0,[r4]
+	add r0,2Eh
+	mov r2,0h
+	strb r2,[r0]
+	ldr r0,[r4]
+	add r0,30h
+	mov r2,14h
+	strb r2,[r0]
 	add r3,5Eh
 	add r1,r1,r3
 	mov r0,94h
 	bl 809C1C4h
 	b LevelListTeleportRoutineReturn
+	.pool
 LevelListTeleportRoutineCheckDirectionalButtons1:
-	ldr r4,=3002340h
-	ldr r2,=81057B4h
-	ldr r1,=1D54h
-	add r0,r4,r1
-	ldrb r0,[r0]
-	add r7,r2,r0
-	lsl r5,r0,1h
-	add r1,18h
-	add r0,r4,r1
-	add r5,r0,r5
-	mov r6,0h
-	mov r3,0h
-LevelListTeleportRoutineLoop2Start:
-	ldrh r0,[r5]
-	asr r0,r6
-	mov r2,1h
-	and r0,r2
-	cmp r0,0h
-	beq LevelListTeleportRoutineLoop2Continue
-	add r3,1h
-LevelListTeleportRoutineLoop2Continue:
-	ldrb r0,[r7]
-	add r6,1h
-	cmp r6,r0
-	bcc LevelListTeleportRoutineLoop2Start
 	mov r7,0h
-	cmp r3,1h
+	ldr r4,=3002340h
+	ldr r2,=1D56h
+	add r0,r4,r2
+	sub r2,2h
+	add r1,r4,r2
+	ldrb r1,[r1]
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,1h
 	bls LevelListTeleportRoutineContinue2
 	ldr r1,=0856h
 	add r0,r4,r1
@@ -1806,7 +1974,11 @@ LevelListTeleportRoutineCheckDirectionalButtons2:
 	beq LevelListTeleportRoutineContinue2
 	mov r7,1h
 LevelListTeleportRoutineContinue1:
-	ldr r2,=0828h
+	ldr r2,=0884h
+	add r1,r4,r2
+	mov r0,0h
+	strb r0,[r1]
+	sub r2,5Ch
 	add r1,r4,r2
 	mov r0,93h
 	bl 809C1C4h
@@ -1883,11 +2055,20 @@ LevelListTeleportRoutineLoop3Continue5:
 	beq LevelListTeleportRoutineLoop3Start
 LevelListTeleportRoutineLoop3End:
 	ldr r4,=3002340h
+	ldr r2,=0884h
+	add r1,r4,r2
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	mov r1,10h
+	and r0,r1
+	cmp r0,0h
+	bne LevelListTeleportRoutineReturn
 	ldr r3,=1D50h
 	add r0,r4,r3
 	ldrb r1,[r0]
 	lsl r1,r1,3h
-	ldr r2,=08E8h
+	add r2,64h
 	add r0,r4,r2
 	add r1,r1,r0
 	ldrh r0,[r1,2h]
@@ -1923,12 +2104,16 @@ LevelListTeleportRoutineLoop3End:
 	lsl r2,r2,1h
 	orr r0,r2
 	strh r0,[r1,4h]
+	ldr r3,=1D50h
+	add r4,r4,r3
+	ldrb r0,[r4]
+	add r0,1h
+	strb r0,[r4]
 LevelListTeleportRoutineReturn:
 	pop r4-r7
 	pop r0
 	bx r0
 	.pool
-	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
@@ -4229,18 +4414,20 @@ EndOfAllLoopsMessageOAM:
 	bx r0
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpacePUP:
-	mov r0,8h
+FreeSpaceMRS:
+	ldr r0,[r2]
+	strh r6,[r0,16h]
+	ldr r0,[r4,20h]
+	mov r3,87h
+	lsl r3,r3,1h
+	add r1,r0,r3
+	mov r0,0h
 	strb r0,[r1]
-	mov r1,0E5h
-	lsl r1,r1,5h
-	add r0,r2,r1
-	mov r1,0h
-	strb r1,[r0]
+	add r1,1h
+	strb r0,[r1]
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	.word 0x00000000
-	.word 0x00000000
+	.halfword 0x0000
 	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -6517,8 +6704,37 @@ SkipCounterResetSliding:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part of StarBlockRespawn (SBR)
+.org 0x806E026
+	ldr r1,=8119FA3h
+	add r1,r4,r1
+	ldr r0,=8119F5Bh
+
+.org 0x806E03A
+	ldr r5,=3002340h
+	ldr r0,=1C58h
+	add r2,r5,r0
+	ldr r0,[r2]
+	ldr r1,=116Fh
+
+.org 0x806E04A
+	ldr r0,=8119F7Fh
+	add r0,r3,r0
+	ldr r4,=1170h
+	
+.org 0x806E058
+	ldr r0,=8119F10h
+	add r0,r3,r0
+	sub r4,3h
+	add r1,r1,r4
+	
+.org 0x806E064
+	ldr r0,=8119F37h
+
 .org 0x806E07C
-	bl FreeSpaceSBR
+	mov r4,8Eh
+	lsl r4,r4,1h
+	add r1,r0,r4
+	ldrb r0,[r1]
 	lsl r0,r0,18h
 	asr r0,r0,18h
 	cmp r0,0h
@@ -6526,6 +6742,7 @@ SkipCounterResetSliding:
 	mov r0,1Eh
 	strb r0,[r1]
 	b 806E114h
+	.pool
 
 .org 0x806E420	;Prevent the Player from getting a mushroom from a midpoint that doesn't work
 	beq 806E43Ch
@@ -6896,6 +7113,9 @@ ButtonCheck2:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
+	
+.org 0x80D5848	;Make teleportation possible wthout having found all 96 exits (3)
+	.word LevelListMainFunction+1
 	
 .org 0x80D5C14	;Replace old level default value table with a sprite table
 SpriteTableStatus:
@@ -7756,6 +7976,312 @@ SpriteTableStatus:
 .org 0x81054F0	;Fix tiling error in level list
 	.halfword 0x0087
 
+.org 0x8105C10	;Fix errors in teleportation data
+	.halfword 0x0006 
+
+.org 0x8105C14
+	.halfword 0x0007
+	
+.org 0x8105C18
+	.halfword 0x0006
+
+.org 0x8105C1C
+	.halfword 0x0007
+
+.org 0x8105C20
+	.halfword 0x0006 
+
+.org 0x8105C24
+	.halfword 0x0007
+	
+.org 0x8105C28
+	.halfword 0x0006
+
+.org 0x8105C2C
+	.halfword 0x0007
+
+.org 0x8105C30
+	.halfword 0x0006 
+
+.org 0x8105C34
+	.halfword 0x0007
+	
+.org 0x8105C38
+	.halfword 0x0006
+
+.org 0x8105C3C
+	.halfword 0x0007
+
+.org 0x8105C40
+	.halfword 0x0006 
+
+.org 0x8105C44
+	.halfword 0x0007
+	
+.org 0x8105C48
+	.halfword 0x0006
+
+.org 0x8105C4C
+	.halfword 0x0007
+	
+.org 0x8105C50
+	.halfword 0x0006 
+
+.org 0x8105C54
+	.halfword 0x0007
+	
+.org 0x8105C58
+	.halfword 0x0006
+
+.org 0x8105C5C
+	.halfword 0x0007
+	
+.org 0x8105C60
+	.halfword 0x0006 
+
+.org 0x8105C64
+	.halfword 0x0007
+	
+.org 0x8105C68
+	.halfword 0x0006
+
+.org 0x8105C6C
+	.halfword 0x0007
+	
+.org 0x8105C70
+	.halfword 0x0006 
+
+.org 0x8105C74
+	.halfword 0x0007
+	
+.org 0x8105C78
+	.halfword 0x0006
+
+.org 0x8105C7C
+	.halfword 0x0007
+	
+.org 0x8105C80
+	.halfword 0x0006 
+
+.org 0x8105C84
+	.halfword 0x0007
+	
+.org 0x8105C88
+	.halfword 0x0006
+
+.org 0x8105C8C
+	.halfword 0x0007
+	
+.org 0x8105C90
+	.halfword 0x0006 
+
+.org 0x8105C94
+	.halfword 0x0007
+	
+.org 0x8105C98
+	.halfword 0x0006
+
+.org 0x8105C9C
+	.halfword 0x0007
+	
+.org 0x8105CA0
+	.halfword 0x0006 
+
+.org 0x8105CA4
+	.halfword 0x0007
+	
+.org 0x8105CA8
+	.halfword 0x0006
+
+.org 0x8105CAC
+	.halfword 0x0007
+	
+.org 0x8105CB0
+	.halfword 0x0006 
+
+.org 0x8105CB4
+	.halfword 0x0007
+	
+.org 0x8105CB8
+	.halfword 0x0006
+
+.org 0x8105CBC
+	.halfword 0x0007
+	
+.org 0x8105CC0
+	.halfword 0x0006 
+
+.org 0x8105CC4
+	.halfword 0x0007
+	
+.org 0x8105CC8
+	.halfword 0x0006
+
+.org 0x8105CCC
+	.halfword 0x0007
+	
+.org 0x8105CD0
+	.halfword 0x0006 
+
+.org 0x8105CD4
+	.halfword 0x0007
+	
+.org 0x8105CD8
+	.halfword 0x0006
+
+.org 0x8105CDC
+	.halfword 0x0007
+	
+.org 0x8105CE0
+	.halfword 0x0006 
+
+.org 0x8105CE4
+	.halfword 0x0007
+	
+.org 0x8105CE8
+	.halfword 0x0006
+
+.org 0x8105CEC
+	.halfword 0x0007
+	
+.org 0x8105CF0
+	.halfword 0x0006 
+
+.org 0x8105CF4
+	.halfword 0x0007
+	
+.org 0x8105CF8
+	.halfword 0x0006
+
+.org 0x8105CFC
+	.halfword 0x0007
+	
+.org 0x8105D00
+	.halfword 0x0006 
+
+.org 0x8105D04
+	.halfword 0x0007
+	
+.org 0x8105D08
+	.halfword 0x0006
+
+.org 0x8105D0C
+	.halfword 0x0007
+	
+.org 0x8105D10
+	.halfword 0x0006 
+
+.org 0x8105D14
+	.halfword 0x0007
+	
+.org 0x8105D18
+	.halfword 0x0006
+
+.org 0x8105D1C
+	.halfword 0x0007
+	
+.org 0x8105D20
+	.halfword 0x0006 
+
+.org 0x8105D24
+	.halfword 0x0007
+	
+.org 0x8105D28
+	.halfword 0x0006
+
+.org 0x8105D2C
+	.halfword 0x0007
+	
+.org 0x8105D30
+	.halfword 0x0006 
+
+.org 0x8105D34
+	.halfword 0x0007
+	
+.org 0x8105D38
+	.halfword 0x0006
+
+.org 0x8105D3C
+	.halfword 0x0007
+	
+.org 0x8105D40
+	.halfword 0x0006 
+
+.org 0x8105D44
+	.halfword 0x0007
+	
+.org 0x8105D48
+	.halfword 0x0006
+
+.org 0x8105D4C
+	.halfword 0x0007
+	
+.org 0x8105D50
+	.halfword 0x0006 
+
+.org 0x8105D54
+	.halfword 0x0007
+	
+.org 0x8105D58
+	.halfword 0x0006
+
+.org 0x8105D5C
+	.halfword 0x0007
+	
+.org 0x8105D60
+	.halfword 0x0006 
+
+.org 0x8105D64
+	.halfword 0x0007
+	
+.org 0x8105D68
+	.halfword 0x0006
+
+.org 0x8105D6C
+	.halfword 0x0007
+	
+.org 0x8105D70
+	.halfword 0x0006 
+
+.org 0x8105D74
+	.halfword 0x0007
+	
+.org 0x8105D78
+	.halfword 0x0006
+
+.org 0x8105D7C
+	.halfword 0x0007
+	
+.org 0x8105D80
+	.halfword 0x0006 
+
+.org 0x8105D84
+	.halfword 0x0007
+	
+.org 0x8105D88
+	.halfword 0x0006
+
+.org 0x8105D8C
+	.halfword 0x0007
+	
+.org 0x8105D90
+	.halfword 0x0006 
+
+.org 0x8105D94
+	.halfword 0x0007
+	
+.org 0x8105D98
+	.halfword 0x0006
+
+.org 0x8105D9C
+	.halfword 0x0007
+
+.org 0x8105DA0
+	.halfword 0x0006 
+
+.org 0x8105DA4
+	.halfword 0x0007
+	
 ;several sprite property fixes;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .org 0x8109C00 +34h	;Fix boss flame death animation
 	.byte 0x80
