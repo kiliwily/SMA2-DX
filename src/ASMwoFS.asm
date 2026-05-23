@@ -2456,7 +2456,7 @@ DownDiscoShell:
 .org 0x802DD0C	;Fixes a bug that caused several sprites not sinking before despawn in lava
 	ldrb r0,[r5]
 
-.org 0x802EC3C	;Adjust draw height of power ups and fix star man is blinking even if the game freeze flag is set (1)
+.org 0x802EC3C	;Adjust draw height of power ups and fix star man is blinking even if the game freeze flag is set (2)
 	ldr r4,=3002340h
 	ldr r1,=08C4h
 
@@ -8493,7 +8493,7 @@ IggySecondRoomMessageSpanish:
 	.word 0x00000000
 	.word 0x00000000
 
-.org 0x8101C08	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3 (1)
+.org 0x8101C08	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3 (2)
 	.halfword 0x0000, 0x0000
 
 .org 0x8101C60
