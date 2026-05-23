@@ -93,6 +93,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	1Bh if yoshi then current state (0=normal, 1=riding, 2= running), if lakitus cloud then Mario in the cloud flag
 	1Ch (=8) != 0 then sprite is alive
 	1Fh if yoshi then length of tongue else if yoshi egg then sprite id of sprite inside
+	20h number of hits taken (only used by sprites that take 5 fireballs to kill)
 	21h if powerup then itembox drop flag
 	22h if bob-omb then exploding flag
 	24h lava death timer
@@ -212,6 +213,7 @@ Format: n--sifhb
 4045 On/Off-Switch active
 404E Directional coin active flag
 404F Player can climb on air flag (used by rope mechanism)
+4054 Player palette offset
 4058 Amount of tiles for the Player GFX to load (6h in overworld, 0Ah in levels)
 408A
 408E Yoshi ducking flag
@@ -272,6 +274,7 @@ Format: n--sifhb
 54C2 Vertical scrolling enable/disable flag?
 54C3 Horizontal scrolling enable/disable flag?
 54C6 Sprites enters pipe with the Player (0=not in pipe, 1=horizontal pipe, 2=vertical pipe, 0FFh=shoot from diagonal pipe)
+54C9 Which exit was triggered (if = 0 then normal exit, else if = 4 secret exit)
 54D3 Message box flag
 54D4 Star Timer
 54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
@@ -284,9 +287,10 @@ Format: n--sifhb
 5578 Overworld path animation related
 558E Overworld path animation related (if = 1 the don't trigger animation), screen number in enemy roll credits
 558F Current Overworld unlock event
-559B Current exit triggered (0=none, 1=normal, 2=secret, 80=exit already triggered or level ended before the exit)
+559B Current exit triggered (0=none, 1=normal, 2=secret, 80 or E0 =exit already triggered or level ended before the exit)
 559F
 55A2
+55BE Related to Overworld stuff
 55C4 if != 0 then no layer 2 autoscroll, else layer 2 autoscroll speed
 55C9 Timer for screen shake and music change during the rise bowser skull cutscene
 55CC Timer for how long Mario/Luigi walks after crossing the goal (if < 28 then Mario/Luigi stops for victory pose)
@@ -504,7 +508,7 @@ Format: wcdj5sDp
 	c=Don't turn into a coin with silver POW
 	d=Death frame 2 tiles high
 	j=Can be jumped on with upward Y speed
-	5=Takes 5 fireballs to kill. If not set, the sprite is killed with a single fireball. The counter for hits is controlled by $1528.
+	5=Takes 5 fireballs to kill. If not set, the sprite is killed with a single fireball. The counter for hits is controlled by byte 20h of the Enemy Ram.
 	s=Can't be killed by sliding
 	D=Don't erase when goal passed
 	p=Make platform passable from below

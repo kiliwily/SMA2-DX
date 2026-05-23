@@ -504,8 +504,68 @@ ReturnPSS2:
 
 .org 0x80093D2	;Fix palette used by spat out Volcano Lotus/Lakitu in the pipe getting partially overwritten (Credits: Mister Man)
 	mov	r3,0h
+
+.org 0x8009A38	;Make alternative message of message box in second room in Iggy's castle show up after Iggy was defeated
+	ldr r1,=3002340h
+	ldr r2,[r1,20h]
+	ldr r1,=80D6F2Ch
+	add r0,r0,r1
+	ldrb r0,[r0]
+	sub r0,1h
+	cmp r0,4h
+	bhi AlternativeMessage7
+	cmp r0,0h
+	bne AlternativeMessage2
+	add r2,37h
+AlternativeMessage1:
+	ldrb r0,[r2]
+	mov r1,80h
+	and r0,r1
+	cmp r0,0h
+	beq AlternativeMessage7
+	b AlternativeMessage3
+AlternativeMessage2:
+	cmp r0,1h
+	bne AlternativeMessage4
+	add r2,0D5h
+	ldrb r0,[r2]
+	cmp r0,60h
+	bne AlternativeMessage7
+AlternativeMessage3:
+	mov r0,1h
+	b AlternativeMessage8
+AlternativeMessage4:
+	cmp r0,2h
+	bne AlternativeMessage5
+	add r2,4Fh
+	b AlternativeMessage1
+AlternativeMessage5:
+	cmp r0,3h
+	bne AlternativeMessage6
+	add r2,0D6h
+	ldrb r0,[r2]
+	cmp r0,44h
+	bne AlternativeMessage7
+	b AlternativeMessage3
+AlternativeMessage6:
+	cmp r0,4h
+	bne AlternativeMessage7
+	add r2,2Bh
+	b AlternativeMessage1
+AlternativeMessage7:
+	mov r0,0h
+AlternativeMessage8:
+	bx r14
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
 	
-.org 0x8009C24	;Add fail save for message box routine, prevents showing garbled message box
+.org 0x8009BFE	;Add fail save for message box routine, prevents showing garbled message box
+	mov r5,23h
+
+.org 0x8009C24
 	blt MessageLoopEnd
 
 .org 0x8009C3E
@@ -518,7 +578,7 @@ ReturnPSS2:
 MessageLoopEnd:
 	cmp r5,0h
 	bge MessageNotFail
-	mov r5,4h
+	b StoreEmptyMessage
 MessageNotFail:
 	cmp r3,25h
 	bne 8009C8Ch
@@ -540,6 +600,108 @@ MessageNotFail:
 .org 0x8009D02
 	bhi 8009D24h
 
+.org 0x8009D28
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=0689h
+
+.org 0x8009D42
+	beq DownAlternativeMessage1
+	ldr r3,=80DBE60h
+	b DownAlternativeMessage2
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+DownAlternativeMessage1:
+	ldr r3,=80DBC20h
+DownAlternativeMessage2:
+	lsl r2,r5,2h
+	add r2,r2,r3
+	ldr r0,=3002340h
+	ldr r1,=0889h
+	add r0,r0,r1
+	ldrb r1,[r0]
+	mov r0,3h
+	and r1,r0
+	lsl r0,r1,3h
+	add r0,r0,r1
+	lsl r0,r0,4h
+	add r2,r2,r0
+	ldr r7,[r2]
+	cmp r7,0h
+	bne DownProcessMessage1
+StoreEmptyMessage:
+	ldr r7,=EmptyMessage
+DownProcessMessage1:
+	mov r5,0h
+	mov r6,7h
+	ldr r0,=3002340h
+	ldr r0,[r0,20h]
+	add r0,0A0h
+	ldrh r0,[r0]
+	cmp r0,0h
+	bne DownProcessMessage2
+	mov r6,0Fh
+DownProcessMessage2:
+	mov r2,7h
+	mov r12,r2
+	ldr r3,=3003F98h
+	mov r9,r3
+	ldr r4,=3002BA4h
+	mov r8,r4
+DownProcessMessage3:
+	lsl r3,r5,1h
+	ldr r0,=2000402h
+	add r4,r3,r0
+	mov r2,r9
+	ldr r1,[r2]
+	ldr r0,=08ECh
+	add r1,r1,r0
+	ldr r2,=80D6FACh
+	lsl r0,r6,1h
+	add r0,r0,r2
+	ldrh r0,[r0]
+	ldrh r1,[r1]
+	add r0,r0,r1
+	strh r0,[r4]
+	ldr r1,=2000404h
+	add r3,r3,r1
+	mov r0,18h
+	strh r0,[r3]
+	mov r0,18h
+	mov r2,r8
+	strh r0,[r2]
+	mov r3,0h
+DownProcessMessage4:
+	mov r0,80h
+	and r0,r3
+	cmp r0,0h
+	bne 8009E18h
+	ldrb r1,[r7]
+	mov r3,r1
+	lsl r2,r5,1h
+	ldr r4,=2000406h
+	add r2,r2,r4
+	mov r0,7Fh
+	and r0,r1
+	mov r4,88h
+	lsl r4,r4,5h
+	mov r1,r4
+	orr r0,r1
+	strh r0,[r2]
+	add r7,1h
+	b 8009E24h
+	.pool
+	
+.org 0x8009E34
+	bne DownProcessMessage4
+
+.org 0x8009E44
+	bge DownProcessMessage3
+	
+.org 0x800A2A4	;Fix star man is blinking even if the game freeze flag is set (1)
+	.word 0x00000894
+	
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
 	bne 800A6B8h
 
@@ -561,6 +723,9 @@ NoPointOverflow:
 	ldr r0,[r1]
 	strh r2,[r0,3Ch]
 
+.org 0x800A900
+	.word 0x000F423F
+
 .org 0x800A92C
 	strh r0,[r3,3Ch]
 
@@ -569,9 +734,6 @@ NoPointOverflow:
 	ldr r1,[r2]
 	mov r0,0FCh
 	strh r0,[r1,3Ah]
-	
-.org 0x800A900
-	.word 0x000F423F
 ;;;;;;;
 
 .org 0x800D5C2
@@ -943,7 +1105,7 @@ CheckpointSetStatus:
 .org 0x8020BFE	;Part of fix bug when pressing select + A, Start or a directional button at the same frame on the overworld
 	mov r1,0h
 
-.org 0x8020E04	;makes sure, that the Player id is valid when changing the Player
+.org 0x8020E04	;Make sure, that the Player id is valid when changing the Player
 	ldrb r0,[r1]
 	mov r2,1h
 	and r0,r2
@@ -1011,8 +1173,144 @@ ContinueOther:
 .org 0x80225A0
 	.word 0x00000000
 	
-.org 0x8022E38	;shortens loop for overworld actions to prevent star world warps from appering after takeing normal exits of star world 2+3
+.org 0x8022E38	;Shortens loop for overworld actions to prevent star world warps from appering after takeing normal exits of star world 2+3
 	mov r4,29h
+	ldr r7,=3002340h
+
+.org 0x8022E40	;Prevents castles and fortresses from collapsing on the overworld when Bowser wasn't defeated yet to make them reenterable (1)
+	ldr r1,=3003F9Ch
+	mov r9,r1
+	ldr r0,=8101B04h
+
+.org 0x8022E52
+	ldr r1,=8101C0Ch
+	lsl r0,r4,18h
+	asr r0,r0,17h
+	add r0,r0,r1
+	ldrh r3,[r0]
+	ldr r2,=8101B5Ch
+	lsl r1,r4,18h
+	asr r1,r1,18h
+	lsl r0,r1,1h
+	add r0,r0,r2
+	ldrh r2,[r0]
+	ldr r0,=8101B30h
+	add r1,r1,r0
+	ldrb r0,[r1]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	beq 8022EB4h
+	mov r0,r3
+	mov r1,r2
+	bl 80234B8h
+	b 8022EBAh
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	
+.org 0x8022F9E
+	ldr r7,=3002340h
+	ldr r6,=3003F9Ch
+	ldr r0,=8101CC4h
+
+.org 0x8022FBA
+	ldr r1,=8101CA4h
+
+.org 0x8022FC4
+	ldr r0,=8101C94h
+	mov r12,r0
+	ldr r6,=3002340h
+	ldr r7,=3003F9Ch
+	ldr r1,=2002800h
+
+.org 0x8022FE2
+	ldr r1,=0117h
+
+.org 0x8022FE8
+	lsl r0,r4,18h
+	asr r2,r0,18h
+	cmp r2,2h
+	ble CastleCollapse1
+	ldr r1,=2002800h
+	add r0,r5,r1
+	ldr r1,=8101CD4h
+	add r1,r2,r1
+	ldrb r1,[r1]
+	strb r1,[r0]
+	add r5,10h
+CastleCollapse1:
+	ldr r0,=2002800h
+	add r2,r5,r0
+	ldr r1,=8101CD9h
+	lsl r0,r4,18h
+	asr r0,r0,18h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	strb r0,[r2]
+	b 8023090h
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x8024616
+	mov r1,85h
+	lsl r1,r1,1h
+	add r0,r0,r1
+	ldrh r0,[r0]
+	cmp r0,58h
+
+.org 0x8024648
+	.word 0x8103270
+	
+.org 0x80246B6
+	ldr r0,=3002340h
+	ldr r0,[r0,20h]
+	mov r1,85h
+	lsl r1,r1,1h
+	add r0,r0,r1
+	ldrh r0,[r0]
+	cmp r0,58h
+	beq CastleCollapse2
+	ldr r2,=8103240h
+	mov r0,r6
+	mov r1,r3
+	bl 802448Ch
+	b CastleCollapse3
+	.pool
+CastleCollapse2:	
+	ldr r2,=8103270h
+	mov r0,r6
+	mov r1,r3
+	bl 802448Ch
+CastleCollapse3:
+	pop r4-r6
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
 
 .org 0x802724C	;Reduces max speed of fast bg scrolling in forrest secret and cheese bridge yoshi wings area
 	lsl r0,r0,1h
@@ -1527,7 +1825,6 @@ FreeSpaceLLT4:
 	ldr r1,[r1]
 	and r0,r1
 	bx r14
-
 	.word 0x00000000
 	
 .org 0x8029234
@@ -2159,6 +2456,69 @@ DownDiscoShell:
 .org 0x802DD0C	;Fixes a bug that caused several sprites not sinking before despawn in lava
 	ldrb r0,[r5]
 
+.org 0x802EC3C	;Adjust draw height of power ups and fix star man is blinking even if the game freeze flag is set (1)
+	ldr r4,=3002340h
+	ldr r1,=08C4h
+
+.org 0x802EC4C
+	ldr r3,=08C8h
+
+.org 0x802EC64
+	ldr r0,=012F0000h
+
+.org 0x802EC7E
+	ldr r0,=3007A48h
+	ldr r2,[r0]
+	ldrb r0,[r3,1Ah]
+	cmp r0,76h
+	bne DownPowerUp1
+	ldr r3,=810968Ah
+	ldr r1,=0894h
+
+.org 0x802EC98
+	b DownPowerUp2
+	.pool
+
+DownPowerUp1:
+	ldr r1,=810968Eh
+	mov r3,r12
+	ldrb r0,[r3,1Ah]
+	sub r0,74h
+	add r0,r0,r1
+DownPowerUp2:
+	ldr r1,=0EC8h
+	add r2,r2,r1
+	ldrb r0,[r0]
+	strb r0,[r2]
+	mov r0,r12
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	ldr r1,=3002C28h
+	add r5,r0,r1
+	lsl r2,r7,17h
+	lsr r2,r2,17h
+	ldrh r0,[r5,2h]
+	mov r1,0FEh
+	lsl r1,r1,8h
+	and r0,r1
+	orr r0,r2
+	strh r0,[r5,2h]
+	mov r1,r12
+	ldrb r0,[r1,1Fh]
+	cmp r0,0h
+	beq DownPowerUp3
+	ldrb r0,[r1,1Bh]
+	cmp r0,0h
+	bne DownPowerUp4
+DownPowerUp3:
+	add r6,1h
+DownPowerUp4:
+	strb r6,[r5]
+	
+.org 0x802EDAC
+	.pool
+	
 .org 0x802EDD0	;Adjust draw height of moving coin
 	ldr r3,=3002340h
 	ldr r1,=08C4h
@@ -2602,6 +2962,95 @@ SetPlayerHeightGhosts:
 	strh r1,[r0]
 	
 .org 0x803176C
+	.pool
+	
+.org 0x8031D70	;Fix ghost in sunken ghostship disappear and reappear if the game is frozen
+	ldr r1,=3002340h
+	ldr r0,=08C4h
+
+.org 0x8031D9E
+	ldr r0,=3002340h
+	ldr r1,=08C4h
+
+.org 0x8031DB2
+	ldr r3,=3007A48h
+	ldr r0,[r3]
+	ldr r4,=06B5h
+	add r1,r0,r4
+	ldr r6,=065Bh
+	add r0,r0,r6
+	ldrb r1,[r1]
+	strb r1,[r0]
+	ldr r1,[r3]
+	ldr r2,=0ED5h
+	add r0,r1,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne SunkenGhostShipGhosts4
+	ldr r2,=0693h
+	
+.org 0x8031DD6
+	beq SunkenGhostShipGhosts2
+	add r2,r1,r4
+	ldrb r0,[r2]
+	cmp r0,40h
+	bls SunkenGhostShipGhosts2
+	cmp r0,0DFh
+	bls SunkenGhostShipGhosts1
+
+.org 0x8031DEC
+	b SunkenGhostShipGhosts2
+	.pool
+SunkenGhostShipGhosts1:
+	ldr r0,[r3]
+	add r0,r0,r4
+	mov r1,40h
+	strb r1,[r0]
+SunkenGhostShipGhosts2:
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne SunkenGhostShipGhosts3
+	ldr r1,[r3]
+	add r1,r1,r4
+	ldrb r0,[r1]
+	sub r0,1h
+	strb r0,[r1]
+SunkenGhostShipGhosts3:
+	ldr r1,[r3]
+	add r0,r1,r6
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 8031EEAh
+	ldr r0,=0691h
+	add r2,r1,r0
+	ldrb r0,[r2]
+	add r0,1h
+	strb r0,[r2]
+	add r0,r1,r4
+	mov r1,0FFh
+	strb r1,[r0]
+SunkenGhostShipGhosts4:
+	ldr r2,[r3]
+	add r0,r2,r6
+	ldrb r1,[r0]
+	cmp r1,0h
+	bne 8031EEAh
+	ldr r4,=0693h
+	add r0,r2,r4
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 8031E7Ch
+	strb r1,[r5,18h]
+	ldr r6,=0691h
+	add r0,r2,r6
+	strb r1,[r0]
+	b 8031FE2h
 	.pool
 
 .org 0x803229C	;Fix block check routine doesn't handle 16bit values properly (1)
@@ -5106,6 +5555,101 @@ DownMegaMole:
 	add r0,r10
 	add r0,1h
 	strb r0,[r3]
+	
+.org 0x804C864	;Prevent changing item from changing if the game is frozen
+	push r4,r5,r14
+	mov r4,r0
+	mov r0,1h
+	strb r0,[r4,1Fh]
+	ldr r5,=3002340h
+	ldr r1,=1C58h
+	add r0,r5,r1
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownChangingItem1
+	mov r2,r4
+	add r2,32h
+	ldrb r0,[r2]
+	cmp r0,0h
+	bne DownChangingItem1
+	add r2,13h
+	ldrb r0,[r2]
+	lsr r0,r0,6h
+	ldrb r1,[r2]
+	add r1,1h
+	strb r1,[r2]
+	ldrb r1,[r2]
+	lsr r1,r1,6h
+	cmp r0,r1
+	beq DownChangingItem1
+	ldr r3,=08C4h
+	add r1,r5,r3
+	ldrh r0,[r4,10h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	ldr r2,=0828h
+	add r1,r5,r2
+	strh r0,[r1]
+	add r3,4h
+	add r1,r5,r3
+	ldrh r0,[r4,12h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	add r2,2h
+	add r1,r5,r2
+	strh r0,[r1]
+	mov r0,5Bh
+	bl 809C1C4h
+DownChangingItem1:
+	ldr r1,=810D994h
+	mov r0,r4
+	add r0,45h
+	ldrb r0,[r0]
+	lsr r0,r0,6h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	strb r0,[r4,1Ah]
+	ldrh r0,[r4,12h]
+	add r0,1h
+	strh r0,[r4,12h]
+	mov r1,12h
+	ldsh r0,[r4,r1]
+	lsl r0,r0,10h
+	str r0,[r4,4h]
+	mov r0,r4
+	bl 8048138h
+	ldrh r0,[r4,12h]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	beq DownChangingItem2
+	mov r0,r4
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	add r0,r0,r5
+	ldr r2,=08E8h
+	add r0,r0,r2
+	ldrb r1,[r0]
+	sub r1,1h
+	strb r1,[r0]
+DownChangingItem2:
+	mov r0,81h
+	strb r0,[r4,1Ah]
+	ldrh r0,[r4,12h]
+	sub r0,1h
+	strh r0,[r4,12h]
+	mov r1,12h
+	ldsh r0,[r4,r1]
+	lsl r0,r0,10h
+	str r0,[r4,4h]
+	pop r4,r5
+	pop r0
+	bx r0
+	.pool
 
 .org 0x804D990	;Adjust draw height of sumo brother
 	b DownSumoBrother
@@ -6195,6 +6739,32 @@ DownScalingMushrooms2:
 
 .org 0x8064FFE
 	cmp r0,0Bh
+	
+.org 0x80632AA	;Fix line-guided fuzzy sprite interaction
+	cmp r0,63h
+	bls 80632E6h
+	mov r0,r4
+	bl 803515Ch
+	ldrb r0,[r4,1Ah]
+	cmp r0,68h
+	bne NotFuzzys
+	mov r0,r4
+	bl 8034964h
+	mov r0,r4
+	bl 806249Ch
+	b ContinueLineGuidedAI
+NotFuzzys:
+	cmp r0,67h
+	bne NotGrinders
+	mov r0,r4
+	bl 8062528h
+	b ContinueLineGuidedAI
+NotGrinders:
+	cmp r0,66h
+	bhi 8063356h
+	mov r0,r4
+	bl 8062800h
+ContinueLineGuidedAI:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
@@ -6284,6 +6854,132 @@ DownReznorInit:
 	mov r0,1h
 	strb r0,[r4]
 	pop r4
+	pop r0
+	bx r0
+	.pool
+
+.org 0x8067CF8	;Makes goal item a 1-up if Player is big and has feather or flower in stock
+	push r4-r6,r14
+	mov r4,r0
+	ldr r6,=3002340h
+	ldr r0,[r6,20h]
+	add r0,0E0h
+	ldrb r5,[r0]
+	cmp r5,3h
+	bls DownGIM1
+	mov r5,0h
+DownGIM1:
+	add r2,r5,0h
+	ldr r0,=1C58h
+	add r3,r6,r0
+	ldr r0,[r3]
+	ldr r1,=1158h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownGIM2
+	mov r2,4h
+DownGIM2:
+	ldr r0,[r3]
+	ldr r1,=10FAh
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownGIM3
+	mov r2,5h
+DownGIM3:
+	mov r3,0h
+	ldrb r0,[r4,1Ah]
+	cmp r0,2Fh
+	beq DownGIM4
+	cmp r0,3Eh
+	bne DownGIM5
+DownGIM4:
+	mov r3,7h
+DownGIM5:
+	cmp r0,80h
+	bne DownGIM6
+	mov r3,0Eh
+DownGIM6:
+	cmp r0,2Dh
+	bne DownGIM7
+	mov r3,15h
+DownGIM7:
+	add r0,r2,r3
+	lsl r0,r0,18h
+	lsr r2,r0,18h
+	ldr r0,=8117766h
+	add r0,r2,r0
+	ldrb r2,[r0]
+	ldr r1,=8117782h
+	ldr r3,[r6,20h]
+	add r3,0E1h
+	ldrb r0,[r3]
+	cmp r0,4h
+	bls DownGIM8
+	mov r0,0h
+DownGIM8:
+	cmp r5,0h
+	bne CheckBigMario
+	cmp r0,3h
+	bne Make1Up
+	b DownGIM9
+CheckBigMario:
+	cmp r5,1h
+	bne DownGIM9
+	cmp r0,2h
+	beq Make1Up
+	cmp r0,4h
+	bne DownGIM9
+Make1Up:
+	mov r0,r5
+DownGIM9:
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r2,r0
+	bne DownGIMA
+	mov r2,78h
+DownGIMA:
+	cmp r2,0DFh
+	bls DownGIMB
+	mov r3,r2
+	mov r0,3h
+	and r3,r0
+	mov r2,78h
+	b DownGIMC
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	
+DownGIMB:
+	mov r3,0h
+DownGIMC:
+	ldr r5,=3007A48h
+	ldr r0,[r5]
+	ldr r1,=0ECDh
+	add r6,r0,r1
+	strb r3,[r6]
+	strb r2,[r4,1Ah]
+	cmp r2,76h
+	bne DownGIMD
+	ldr r1,=3002340h
+	ldr r2,=1D46h
+	add r1,r1,r2
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+DownGIMD:
+	mov r0,r4
+	bl 802F54Ch
+	mov r2,r4
+	add r2,2Dh
+	ldrb r0,[r6]
+	
+.org 0x8067DF2
+	ldr r0,[r5]
+	
+.org 0x8067E48
+	pop r4-r6
 	pop r0
 	bx r0
 	.pool
@@ -6556,6 +7252,9 @@ DifferentColorFlashing:
 	.word 0x00000000
 	.word 0x00000000
 	
+.org 0x806D286	;Reduce level end timer to prevent the player from jumping over the message box when doing a yump on a switch palace switch
+	mov r1,1h
+
 .org 0x806D3D6	;Fix Player floating if they fell from Iggy's/Larry's tilting platform while sliding (Credits: Mister Man)
 	blt DownNotAirborne
 	
@@ -6862,6 +7561,39 @@ Checkpoint5:
 	bx  r0
 .pool
 
+.org 0x8071232	;Add fail save in the Player hurt routine in case the Player has an inalid power-up status
+	ldr r4,=3002340h
+	mov r1,0E3h
+	lsl r1,r1,5h
+	add r0,r4,r1
+
+.org 0x8071242
+	ldr r3,=1CEDh
+	add r1,r4,r3
+	ldr r2,=1C58h
+	add r0,r4,r2
+
+.org 0x8071256
+	add r2,4h
+	add r0,r4,r2
+
+.org 0x8071272
+	add r2,49h
+	add r0,r4,r2
+
+.org 0x8071280
+	ldr r0,[r4,20h]
+	add r0,0E0h
+	ldrb r0,[r0]
+	cmp r0,3h
+	bhi DownPHR
+	cmp r0,0h
+	bne 80712ACh
+DownPHR:
+	bl 807140Ch
+	b 80713ECh
+	.pool
+
 .org 0x807135C	;Reserve item drops only if select was pressed
 	bhi 80713B0h
 	
@@ -7117,21 +7849,235 @@ ButtonCheck2:
 .org 0x80D5848	;Make teleportation possible wthout having found all 96 exits (3)
 	.word LevelListMainFunction+1
 	
-.org 0x80D5C14	;Replace old level default value table with a sprite table
+.org 0x80D5C14	;Replace old level default value table with a sprite table and an empty message for the message box
 SpriteTableStatus:
 	.byte 0x09, 0x08, 0x08, 0x09
-	.word 0x00000000
-	.word 0x00000000
+EmptyMessage:
+	.byte 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F
 	.word 0x00000000
 
 .org 0x80D67EC	;Fix outline of fire Mario having the wrong color
 	.halfword 0x18D3
+
+.org 0x80D67F6	;Fix color of lines in bonus game
+	.halfword 0x4BFF
+	
+.org 0x80D680A
+	.halfword 0x4BFF
 	
 .org 0x80D6A7A	;Fixes color of yellow yoshi in ow
 	.halfword 0x197D, 0x1AFF
 
 .org 0x80D6A82	;Fixes color of blue yoshi in ow
 	.halfword 0x7DCE
+	
+.org 0x80D6F4E	;Change condition for the alternaitve message of the message box in the second room of Iggy's castle
+	.byte 0x05
+
+.org 0x80D7685	;Adjust message of message box in the first room of Iggy's castle (english)
+	.byte 0x13, 0x4E, 0x1F, 0x43, 0x44, 0x45, 0x44, 0x40
+	.byte 0x53, 0x1F, 0x08, 0x46, 0x46, 0x58, 0x1F, 0x0A
+	.byte 0x4E, 0x4E, 0x4F, 0x40, 0x9D, 0x4F, 0x54, 0x52
+	.byte 0x47, 0x1F, 0x47, 0x48, 0x4C, 0x1F, 0x48, 0x4D
+	.byte 0x53, 0x4E, 0x1F, 0x53, 0x47, 0x44, 0x1F, 0x4B
+	.byte 0x40, 0x55, 0xC0, 0x4F, 0x4E, 0x4E, 0x4B, 0x9B
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F	;Length: 0x6A
+
+.org 0x80D7FBF	;Adjust alternative message of message box in the second room of Iggy's castle (english)
+IggySecondRoomMessageEnglish:
+	.byte 0x18, 0x4E, 0x54, 0x1F, 0x42, 0x40, 0x4D, 0x1F
+	.byte 0x51, 0x44, 0x55, 0x48, 0x52, 0x48, 0x53, 0x1F
+	.byte 0x42, 0x40, 0x52, 0x53, 0x4B, 0x44, 0xD2, 0x40
+	.byte 0x4D, 0x43, 0x1F, 0x40, 0x51, 0x44, 0x40, 0x52
+	.byte 0x1F, 0x53, 0x47, 0x40, 0x53, 0x1F, 0x58, 0x4E
+	.byte 0x54, 0x1F, 0x47, 0x40, 0x55, 0xC4, 0x40, 0x4B
+	.byte 0x51, 0x44, 0x40, 0x43, 0x58, 0x1F, 0x42, 0x4B
+	.byte 0x44, 0x40, 0x51, 0x44, 0x43, 0x9A, 0x9F, 0x13
+	.byte 0x51, 0x58, 0x1F, 0x53, 0x47, 0x44, 0x52, 0x44
+	.byte 0x1F, 0x40, 0x51, 0x44, 0x40, 0x52, 0x1F, 0x40
+	.byte 0x46, 0x40, 0x48, 0xCD, 0x53, 0x4E, 0x1F, 0x45
+	.byte 0x48, 0x4D, 0x43, 0x1F, 0x40, 0x4B, 0x4B, 0x1F
+	.byte 0x53, 0x47, 0x44, 0x1F, 0x52, 0x44, 0x42, 0x51
+	.byte 0x44, 0x53, 0x52, 0x9A, 0x9F	;Length: 0x6D
+
+.org 0x80D883D	;Adjust message of message box in the first room of Iggy's castle (french)
+	.byte 0x0F, 0x4E, 0x54, 0x51, 0x1F, 0x08, 0x46, 0x46
+	.byte 0x58, 0x1F, 0x0A, 0x4E, 0x4E, 0x4F, 0x40, 0x1F
+	.byte 0x41, 0x40, 0x53, 0x53, 0x51, 0x44, 0x9D, 0x44
+	.byte 0x52, 0x52, 0x40, 0x48, 0x44, 0x1F, 0x43, 0x44
+	.byte 0x1F, 0x4B, 0x44, 0x1F, 0x4F, 0x4E, 0x54, 0x52
+	.byte 0x52, 0x44, 0xD1, 0x43, 0x40, 0x4D, 0x52, 0x1F
+	.byte 0x4B, 0x40, 0x1F, 0x4B, 0x40, 0x55, 0x44, 0x1F
+	.byte 0x44, 0x4D, 0x1F, 0x45, 0x54, 0x52, 0x48, 0x4E
+	.byte 0x4D, 0x9B, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F	;Length: 0x86
+
+.org 0x80D8960	;Fix translation error in message in message box in Donut plains 1 (french)
+	.byte 0x1F, 0x42, 0x40, 0x4F, 0xC4, 0x4F, 0x4E, 0x54
+	.byte 0x51, 0x1F, 0x55, 0x4E, 0x54, 0x52, 0x1F, 0x44
+	.byte 0x4D, 0x55, 0x4E, 0x4B, 0x44, 0x51, 0x1F, 0x42
+	.byte 0x4E, 0x4C, 0x4C, 0xC4, 0x54, 0x4D, 0x44, 0x1F
+	.byte 0x45, 0x4B, 0x29, 0x42, 0x47, 0x44, 0x9A, 0x02
+	.byte 0x4E, 0x54, 0x51, 0x44, 0x59, 0x1F, 0x55, 0x48
+	.byte 0x53, 0x44, 0x1F, 0x44, 0x53, 0x1F, 0x4C, 0x40
+	.byte 0x48, 0x4D, 0x53, 0x44, 0x4D, 0x44, 0xD9, 0x4B
+	.byte 0x44, 0x1F, 0x41, 0x4E, 0x54, 0x53, 0x4E, 0x4D
+	.byte 0x1F, 0x01, 0x1B, 0x1F, 0x00, 0x4F, 0x4F, 0x54
+	.byte 0x58, 0x44, 0x59, 0x1F, 0x52, 0x54, 0xD1, 0x06
+	.byte 0x40, 0x54, 0x42, 0x47, 0x44, 0x1F, 0x4E, 0x54
+	.byte 0x1F, 0x03, 0x51, 0x4E, 0x48, 0x53, 0x44, 0x1F
+	.byte 0x52, 0x54, 0x51, 0x1F, 0x4B, 0xC0, 0x4C, 0x40
+	.byte 0x4D, 0x44, 0x53, 0x53, 0x44, 0x1F, 0x6F, 0x1F
+	.byte 0x4F, 0x4E, 0x54, 0x51, 0x1F, 0x55, 0x4E, 0x54
+	.byte 0xD2, 0x52, 0x53, 0x40, 0x41, 0x48, 0x4B, 0x48
+	.byte 0x52, 0x44, 0x51, 0x9B, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+
+.org 0x80D92EA	;Adjust alternative message of message box in the second room of Iggy's castle (french)
+IggySecondRoomMessageFrench:
+	.byte 0x15, 0x4E, 0x54, 0x52, 0x1F, 0x4F, 0x4E, 0x54
+	.byte 0x55, 0x44, 0x59, 0x1F, 0x51, 0x44, 0x55, 0x48
+	.byte 0x52, 0x48, 0x53, 0x44, 0xD1, 0x4B, 0x44, 0x52
+	.byte 0x1F, 0x4D, 0x48, 0x55, 0x44, 0x40, 0x54, 0x57
+	.byte 0x1F, 0x44, 0x53, 0x1F, 0x4B, 0x44, 0xD2, 0x42
+	.byte 0x47, 0x25, 0x53, 0x44, 0x40, 0x54, 0x57, 0x1F
+	.byte 0x50, 0x54, 0x44, 0x1F, 0x55, 0x4E, 0x54, 0x52
+	.byte 0x1F, 0x40, 0x55, 0x44, 0xD9, 0x43, 0x28, 0x49
+	.byte 0x26, 0x1F, 0x53, 0x44, 0x51, 0x4C, 0x48, 0x4D
+	.byte 0x28, 0x52, 0x9A, 0x9F, 0x11, 0x44, 0x45, 0x40
+	.byte 0x48, 0x53, 0x44, 0x52, 0x1C, 0x4B, 0x44, 0x52
+	.byte 0x1F, 0x4F, 0x4E, 0x54, 0x51, 0x9F, 0x43, 0x28
+	.byte 0x42, 0x4E, 0x54, 0x55, 0x51, 0x48, 0x51, 0x1F
+	.byte 0x53, 0x4E, 0x54, 0x52, 0x1F, 0x4B, 0x44, 0x54
+	.byte 0x51, 0xD2, 0x52, 0x44, 0x42, 0x51, 0x44, 0x53
+	.byte 0x52, 0x9A, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F	;Length: 0x84
+	
+.org 0x80D9C04	;Adjust message of message box in the first room of Iggy's castle (german)
+	.byte 0x01, 0x44, 0x52, 0x48, 0x44, 0x46, 0x44, 0x1F
+	.byte 0x08, 0x46, 0x46, 0x58, 0x1F, 0x0A, 0x4E, 0x4E
+	.byte 0x4F, 0x40, 0x9D, 0x48, 0x4D, 0x43, 0x44, 0x4C
+	.byte 0x1F, 0x43, 0x54, 0x1F, 0x48, 0x47, 0x4D, 0x1F
+	.byte 0x48, 0x4D, 0x1F, 0x43, 0x48, 0xC4, 0x0B, 0x40
+	.byte 0x55, 0x40, 0x1F, 0x52, 0x42, 0x47, 0x54, 0x41
+	.byte 0x52, 0x53, 0x9B, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F	;Length: 0x6B
+
+.org 0x80D9CD1	;Adjust message of message box in the second room of Iggy's castle (german)
+	.byte 0x58, 0x1D, 0x1F, 0x48, 0x4D, 0x43, 0x44, 0x4C
+	.byte 0x1F, 0x43, 0xD4, 0x48, 0x47, 0x4D, 0x1F, 0x48
+	.byte 0x4D, 0x1F, 0x43, 0x48, 0x44, 0x1F, 0x0B, 0x40
+	.byte 0x55, 0x40, 0x1F, 0x52, 0x42, 0x47, 0x54, 0x41
+	.byte 0x52, 0x53, 0x9B, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+
+.org 0x80D9D06	;Fix translation error in message in message box in Donut plains 1 (german)
+	.byte 0x43, 0x44, 0x4C, 0x1F, 0x02, 0x40, 0x4F, 0x44
+	.byte 0x1F, 0x1F, 0x9F
+
+.org 0x80DA6FE	;Adjust alternative message of message box in the second room of Iggy's castle (german)
+IggySecondRoomMessageGerman:
+	.byte 0x03, 0x54, 0x1F, 0x4A, 0x40, 0x4D, 0x4D, 0x52
+	.byte 0x53, 0x1F, 0x05, 0x44, 0x52, 0x53, 0x54, 0x4D
+	.byte 0x46, 0x44, 0x4D, 0x1F, 0x54, 0x4D, 0xC3, 0x16
+	.byte 0x44, 0x4B, 0x53, 0x44, 0x4D, 0x1D, 0x1F, 0x43
+	.byte 0x48, 0x44, 0x1F, 0x43, 0x54, 0x1F, 0x41, 0x44
+	.byte 0x51, 0x44, 0x48, 0x53, 0xD2, 0x41, 0x44, 0x44
+	.byte 0x4D, 0x43, 0x44, 0x53, 0x1F, 0x47, 0x40, 0x52
+	.byte 0x53, 0x1D, 0x1F,	0x44, 0x51, 0x4D, 0x44, 0x54
+	.byte 0xD3, 0x41, 0x44, 0x53, 0x51, 0x44, 0x53, 0x44
+	.byte 0x4D, 0x9A, 0x9F, 0x01, 0x44, 0x52, 0x54, 0x42 
+	.byte 0x47, 0x44, 0x1F, 0x52, 0x48, 0x44, 0x1F, 0x4D
+	.byte 0x4E, 0x42, 0x47, 0x4C, 0x40, 0x4B, 0x1F, 0x54
+	.byte 0x4D, 0x43, 0x9F, 0x4B, 0x22, 0x52, 0x44, 0x1F
+	.byte 0x40, 0x4B, 0x4B, 0x44, 0x1F, 0x11, 0x21, 0x53
+	.byte 0x52, 0x44, 0x4B, 0x9A, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F	;Length: 0x7D
+	
+.org 0x80DAFD1	;Adjust message of message box in the first room of Iggy's castle (spanish)
+	.byte 0x0F, 0x40, 0x51, 0x40, 0x1F, 0x55, 0x44, 0x4D
+	.byte 0x42, 0x44, 0x51, 0x1F, 0x40, 0x1F, 0x08, 0x46
+	.byte 0x46, 0xD8, 0x0A, 0x4E, 0x4E, 0x4F, 0x40, 0x1D
+	.byte 0x1F, 0x47, 0x40, 0x59, 0x4B, 0x4E, 0x1F, 0x42
+	.byte 0x40, 0x44, 0x51, 0x1F, 0x44, 0x4D, 0x1F, 0x4B
+	.byte 0xC0, 0x4B, 0x40, 0x55, 0x40, 0x9B, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	.byte 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F, 0x9F
+	;length: 0x68
+
+.org 0x80DB0CA	;Fix translation error in message in message box in Donut plains 1 (spanish)
+	.byte 0x4F, 0x40, 0x51, 0x40, 0x1F, 0x1F, 0x1F, 0x9F
+	.byte 0x51, 0x44, 0x4C, 0x4E, 0x4D, 0x53, 0x40, 0x51
+	.byte 0x1F, 0x44, 0x4B, 0x1F, 0x55, 0x54, 0x44, 0x4B
+	.byte 0x4E, 0x1A, 0x1F, 0x1F, 0x1F, 0x1F, 0x9F	;Length: 0x1F
+
+.org 0x80DBA1F	;Adjust alternative message of message box in the second room of Iggy's castle (spanish)
+IggySecondRoomMessageSpanish:
+	.byte 0x34, 0x0F, 0x54, 0x44, 0x43, 0x44, 0x52, 0x1F
+	.byte 0x51, 0x44, 0x55, 0x48, 0x52, 0x48, 0x53, 0x40
+	.byte 0x51, 0x1F, 0x4B, 0x4E, 0xD2, 0x42, 0x40, 0x52
+	.byte 0x53, 0x48, 0x4B, 0x4B, 0x4E, 0x52, 0x1F, 0x58
+	.byte 0x1F, 0x4B, 0x40, 0x52, 0x1F, 0x59, 0x4E, 0x4D
+	.byte 0x40, 0xD2, 0x50, 0x54, 0x44, 0x1F, 0x58, 0x40
+	.byte 0x1F, 0x47, 0x40, 0x58, 0x40, 0x52, 0x1F, 0x53
+	.byte 0x44, 0x51, 0x4C, 0x48, 0x4D, 0x40, 0x43, 0x4E
+	.byte 0x9A, 0x9F, 0x34, 0x15, 0x54, 0x44, 0x4B, 0x55
+	.byte 0x44, 0x1F, 0x40, 0x1F, 0x44, 0x52, 0x53, 0x4E
+	.byte 0x52, 0x1F, 0x4D, 0x48, 0x55, 0x44, 0x4B, 0x44
+	.byte 0xD2, 0x58, 0x1F, 0x43, 0x44, 0x52, 0x42, 0x54
+	.byte 0x41, 0x51, 0x44, 0x1F, 0x53, 0x4E, 0x43, 0x4E
+	.byte 0x52, 0x1F, 0x52, 0x54, 0xD2, 0x52, 0x44, 0x42
+	.byte 0x51, 0x44, 0x53, 0x4E, 0x52, 0x9A, 0x9F, 0x9F
+	.byte 0x9F;Length: 0x79
+
+.org 0x80DBC68	;Adjust message pointers (English)
+	.word IggySecondRoomMessageEnglish
+
+.org 0x80DBCF8	;(French)
+	.word IggySecondRoomMessageFrench
+
+.org 0x80DBD88	;(German)
+	.word IggySecondRoomMessageGerman
+
+.org 0x80DBE18	;(Spanish)
+	.word IggySecondRoomMessageSpanish
+
+.org 0x80DBEE8	;(English)
+	.word 0x80D7671
+
+.org 0x80DBF78	;(French)
+	.word 0x80D8827
+	
+.org 0x80DC008	;(German)
+	.word 0x80D9BED
+
+.org 0x80DC098	;(Spanish)
+	.word 0x80DAFBA
 
 .org 0x80DC546	;Removes space between coin symbol, x and the coin number
 	.halfword 0x00FC, 0x102F
@@ -7539,14 +8485,26 @@ SpriteTableStatus:
 .org 0x8101B76	;Fix vanilla secret overworld pipe tile
 	.byte 0xAA
 
-.org 0x8101BAA	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3
+.org 0x8101BAA	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3 (1)
 	.halfword 0x01F0, 0x0304, 0x0227, 0x0000, 0x0000
 
-.org 0x8101C08
+.org 0x8101BB4	;Prevents castles and fortresses from collapsing on the overworld when Bowser wasn't defeated yet to make them reenterable (2)
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x8101C08	;Prevent star world warps from appearing after takeing the normal exit of star world 2+3 (1)
 	.halfword 0x0000, 0x0000
 
 .org 0x8101C60
 	.halfword 0x0000, 0x0000
+
+.org 0x8101C99	;Prevents castles and fortresses from collapsing on the overworld when Bowser wasn't defeated yet to make them reenterable (3)
+	.byte 0x00
+	.halfword 0x0000
+	.word 0x00000000
+	.halfword 0x0000
+	.byte 0x00
 	
 .org 0x8101DA6	;Prevent star world warps from appearing after takeing the normal exit of star world 1+4
 	.halfword 0x0000
@@ -7967,6 +8925,20 @@ SpriteTableStatus:
 	.halfword 0x016E, 0x0000	;0x0173, 0x0000	;0x78-0x79
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.org 0x8103210	;Prevents castles and fortresses from collapsing on the overworld when Bowser wasn't defeated yet to make them reenterable (3)
+FreeSpaceLDT:
+	.byte 0x28, 0x83, 0x29, 0x01, 0x2A, 0x02, 0x03, 0x80
+	.byte 0x4D, 0x01, 0x52, 0x01, 0x53, 0x01, 0x5B, 0x04
+	.byte 0x5C, 0x02, 0x57, 0x08, 0x30, 0x01
+FreeSpaceSSI1:
+	.halfword 0x000E, 0xFFF1
+	.halfword 0x0010, 0xFFE0
+	.halfword 0x001F, 0xFFF1
+	.halfword 0x002F, 0xFFF1
+	.halfword 0x0000
+	.word 0x00000000
+	.word 0x00000000
+
 .org 0x8103921	;Fix distance of Layer 2 bg scrolling
 	.byte 0x40, 0x60, 0x40, 0x20, 0x10, 0x40, 0x20
  
@@ -8366,8 +9338,8 @@ SpriteTableStatus:
 .org 0x8109F48 +08h	;Prevent green para koopa from changing direction when touched like other para koopas
 	.byte 0x52
 	
-.org 0x8109F48 +2Bh	;Turn sumo brother's lightning into coin when goal passed
-	.byte 0x19
+.org 0x8109F48 +26h	;Prevent thwomps and thwimps from turning around when touched, make koopalings inedible and turn sumo brother's lightning into coin when goal passed
+	.byte 0x11, 0x11, 0x19, 0x81, 0x00, 0x19
 
 .org 0x8109F48 +4Ah	;Turn ? goal sphere into coins when goal passed
 	.byte 0x09
@@ -8396,7 +9368,7 @@ SpriteTableStatus:
 .org 0x8109F48 +09Ch	;Prevent amazing flying hammer bro platform from changing direction if touched
 	.byte 0x99
 
-.org 0x8109F48 +0A6h	;Make iggy's ball projectile inedible
+.org 0x8109F48 +0A6h	;Make Iggy's ball projectile inedible
 	.byte 0x15, 0x11
 
 .org 0x8109F48 +0A9h	;Prevent reznor from turning into a coin on the goal and make him inedible

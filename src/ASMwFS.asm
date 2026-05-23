@@ -967,56 +967,6 @@ DownUYE2:
 	pop r4-r6
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Adjust draw height of power ups and prevents out of bounds access of some item tables (ITA)
-.org 0x802EC7E
-	ldr r0,=3007A48h
-	ldr r2,[r0]
-	ldrb r0,[r3,1Ah]
-	cmp r0,76h
-	bne DownPowerUp1
-
-.org 0x802ECA0
-	b DownPowerUp2
-
-.org 0x802ECB4
-	.pool
-
-.org 0x802ECC4
-	.halfword 0x0000
-DownPowerUp1:
-	ldr r1,=810968Eh
-	mov r3,r12
-	bl FreeSpaceITA
-	add r0,r0,r1
-	ldr r1,=0EC8h
-	add r2,r2,r1
-	ldrb r0,[r0]
-	strb r0,[r2]
-DownPowerUp2:
-	mov r0,r12
-	add r0,34h
-	ldrb r0,[r0]
-	lsl r0,r0,3h
-	ldr r1,=3002C28h
-	add r5,r0,r1
-	lsl r2,r7,17h
-	lsr r2,r2,17h
-	ldrh r0,[r5,2h]
-	mov r1,0FEh
-	lsl r1,r1,8h
-	and r0,r1
-	orr r0,r2
-	strh r0,[r5,2h]
-	add r6,1h
-	strb r6,[r5]
-	
-.org 0x802ECFC
-	bl FreeSpaceITA
-	
-.org 0x802EDAC
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;Adjusts the spawn height of several sprites (1)
 .org 0x802F4B8
 	bl FreeSpaceASH
@@ -1239,16 +1189,16 @@ PlayerIsNotRidingAYoshi:
 .org 0x8035726
 	pop r0
 	bx r0
+	.halfword 0x0000
 
 FreeSpacePID:
-	add r3,0E1h
-	ldrb r2,[r3]
-	cmp r2,4h
+	cmp r6,4h
 	bls GoodItem
-	mov r2,0h
-	strb r2,[r3]
+	mov r6,0h
+	strb r6,[r3]
 GoodItem:
 	bx r14
+	.halfword 0x0000
 
 .org 0x8035766
 	bl FreeSpaceMFIS
@@ -1323,8 +1273,28 @@ CheckStartMusic:
 .org 0x8038730	;Prevent special world point counter overflow
 	bl FreeSpacePSPO1
 	
-.org 0x8038B90	;Prevent dropping invalid item
+.org 0x8038B8A	;Prevent dropping invalid item
+	ldr r1,=3002340h
+	ldr r3,[r1,20h]
+	add r3,0E1h
+	ldrb r6,[r3]
 	bl FreeSpacePID
+	cmp r6,0h
+	beq 8038C70h
+	ldr r2,=1C58h
+	add r0,r1,r2
+	ldr r0,[r0]
+	ldr r4,=08EEh
+	add r0,r0,r4
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 8038C70h
+	sub r4,0Ah
+	add r0,r1,r4
+	mov r2,0h
+	ldsh r0,[r0,r2]
+	cmp r0,0h
+	bne 8038C70h
 	
 .org 0x8038C5E	;Prevent itembox item drop from turning into a coin at the goal
 	mov r2,1h
@@ -1335,6 +1305,9 @@ CheckStartMusic:
 	bne 8038C70h
 	add r1,0Eh
 	strb r2,[r1]
+	
+.org 0x8038C78
+	.pool
 	
 .org 0x803DF08	;Prevent point counter overflow
 	bl FreeSpacePNPO2
@@ -1577,6 +1550,12 @@ DownChucks1:
 	strb r0,[r2,1Bh]
 	pop r0
 	bx r0
+
+.org 0x804A304	;Fix thwomp sprite interaction
+	bl FreeSpaceSIR
+	
+.org 0x804A354	;Fix thwimp sprite interaction
+	bl FreeSpaceSIR
 	
 .org 0x804BC0C	;Adjust draw height of vulcano lotos
 	bl FreeSpaceHVL
@@ -2036,6 +2015,27 @@ DownSkull4:
 	bl 8035324h
 	mov r0,r7
 	bl FreeSpaceSLS
+
+.org 0x805C2A6	;Prevent invalid Yoshi palette
+	ldr r6,[r3,20h]
+	mov r0,r6
+	add r0,0E9h
+	ldrb r2,[r0]
+	mov r0,r7
+	add r0,35h
+	ldrb r0,[r0]
+	lsr r0,r0,1h
+	mov r1,7h
+	and r0,r1
+	ldr r3,=810FB24h
+	bl FreeSpacePIA
+	ldrb r1,[r0]
+	mov r4,r6
+	add r4,0D7h
+	ldrb r3,[r4]
+
+.org 0x805C324
+	.pool
 	
 .org 0x805CA4A	;Reset Yoshicolor when reseting yoshi
 	strh r1,[r0]
@@ -2529,32 +2529,6 @@ DownMushroom:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
-.org 0x8067CFC	;Makes goal item a 1-up if Player is big and has feather or flower in stock
-	ldr r3,=3002340h
-	ldr r0,[r3,20h]
-	add r0,0E0h
-	ldrb r5,[r0]
-	add r2,r5,0h
-	ldr r0,=1C58h
-	add r1,r3,r0
-	ldr r0,[r1]
-	ldr r1,=1158h
-	add r0,r0,r1
-	ldrb r0,[r0]
-	cmp r0,0h
-	beq DownGIM
-	mov r2,4h
-DownGIM:
-	ldr r0,=1C58h
-	add r1,r3,r0
-	ldr r0,[r1]
-	
-.org 0x8067D38
-	.pool
-
-.org 0x8067D6A
-	bl FreeSpaceGIM
-	
 .org 0x80691FC	;Fix a glitch that causes Luigi to use Marios Voice when saying Bravo after collecting 5 Yoshi coins
 	add r4,r1,r3
 	ldrb r0,[r4]

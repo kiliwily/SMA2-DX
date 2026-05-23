@@ -1,19 +1,4 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceLDT:
-	.byte 0x28, 0x83, 0x29, 0x01, 0x2A, 0x02, 0x03, 0x80
-	.byte 0x4D, 0x01, 0x52, 0x01, 0x53, 0x01, 0x5B, 0x04
-	.byte 0x5C, 0x02, 0x57, 0x08, 0x30, 0x01
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceSSI1:
-	.halfword 0x000E, 0xFFF1
-	.halfword 0x0010, 0xFFE0
-	.halfword 0x001F, 0xFFF1
-	.halfword 0x002F, 0xFFF1
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceUVR:
 	push r14
 	ldr r1,=3002340h
@@ -31,7 +16,6 @@ NoVRAMUpdate:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceMPM1:
-	push r14
 	cmp r6,6h
 	bne NotInOverworld1
 	mov r0,90h
@@ -40,8 +24,7 @@ FreeSpaceMPM1:
 NotInOverworld1:
 	ldr r0,[r4]
 	add r1,r5,0
-	pop r2
-	bx r2
+	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -552,17 +535,6 @@ FreeSpaceFIC1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceITA:
-	ldrb r0,[r3,1Ah]
-	sub r0,74h
-	cmp r0,0Ch
-	bls RealItem
-	mov r0,8h
-RealItem:
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceASH:
 	push r4,r14
 	mov r4,r0
@@ -927,6 +899,14 @@ FreeSpaceFYS:
 NotSparky:
 	bx r14
 	.pool
+
+FreeSpaceSIR:
+	push r14
+	bl 803515Ch
+	mov r0,r4
+	bl 8034964h
+	pop r0
+	bx r0
 	
 FreeSpaceHVL:
 	ldrh r0,[r2]
@@ -1023,16 +1003,26 @@ FreeSpaceFSB:
 	bx r14
 	
 FreeSpaceSLS:
-	push r4,r14
-	mov r4,r0
+	push r14
 	bl 802F9F0h
-	mov r0,r4
+	mov r0,r7
 	add r0,24h
 	ldrb r0,[r0]
-SwitchNotHit:	
-	pop r4
+SwitchNotHit:
 	pop r1
 	bx r1
+	
+FreeSpacePIA:
+	cmp r0,1h
+	bls BadYoshiShell
+	sub r0,2h
+	cmp r0,3h
+	bls GoodYoshiShell
+BadYoshiShell:
+	mov r0,3h
+GoodYoshiShell:
+	add r0,r0,r3
+	bx r14	
 	
 FreeSpaceUYD:
 	add r0,1h
@@ -1055,18 +1045,6 @@ FreeSpaceUYD:
 NotDiedInLava:
 	bx r14
 	.pool
-	
-FreeSpacePIA:
-	cmp r0,1h
-	bls BadYoshiShell
-	sub r0,2h
-	cmp r0,3h
-	bls GoodYoshiShell
-BadYoshiShell:
-	mov r0,3h
-GoodYoshiShell:
-	add r0,r0,r3
-	bx r14
 	
 FreeSpaceSNS:
 	ldr r0,=3007A48h
@@ -1211,9 +1189,16 @@ FreeSpaceFRG:
 	and r0,r1
 	cmp r0,0h
 	beq RopeNoGround
-	mov r1,0h
+	ldr r2,=0854h
+	add r0,r5,r2
+	ldrh r0,[r0]
+	mov r1,40h
+	and r0,r1
+	cmp r0,0h
+	bne RopeNoGround
 	mov r0,r4
 	add r0,28h
+	mov r1,0h
 	strb r1,[r0]
 	ldr r2,=1D0Fh
 	add r0,r5,r2
@@ -1284,28 +1269,6 @@ NotIggyOne:
 UpdateHair:
 	strh r3,[r4,4h]
 NotIggyTwo:
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceGIM:
-	add r0,0E1h
-	ldrb r0,[r0]
-	cmp r5,0h
-	bne CheckBigMario
-	cmp r0,3h
-	bne Make1Up
-	b ReturnToGoalFct
-CheckBigMario:
-	cmp r5,1h
-	bne ReturnToGoalFct
-	cmp r0,2h
-	beq Make1Up
-	cmp r0,4h
-	bne ReturnToGoalFct
-Make1Up:
-	mov r0,r5
-ReturnToGoalFct:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1484,7 +1447,6 @@ FreeSpaceGHP:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceMPM4:
-	push r14
 	ldr r3,=1D18h
 	add r1,r5,r3
 	ldrb r1,[r1]
@@ -1496,12 +1458,10 @@ FreeSpaceMPM4:
 NotInOverworld2:
 	add r1,r4,0
 	mov r2,14h
-	pop r3
-	bx r3
+	bx r14
 	.pool
 	
 FreeSpaceMPM5:
-	push r14
 	mov r1,0Fh
 	and r0,r1
 	ldr r3,=3002340h
@@ -1513,8 +1473,7 @@ FreeSpaceMPM5:
 	mov r1,90h
 	orr r0,r1
 NotInOverworld3:
-	pop r2
-	bx r2
+	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

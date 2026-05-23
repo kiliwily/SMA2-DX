@@ -56,6 +56,7 @@
 - Added checks for showing the Bravo Mario/Luigi message on several spots where a life chain breaks an the game didn't check for it.
 - The red berry and pink berry counter for yoshi now gets reset every time a new yoshi spawns.
 - Teleportation between levels is now unlocked from the start of the game.
+- Castles and fortresses can be reentered after beating them even before Bowser is defeated.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
@@ -172,3 +173,8 @@
 - Fixed a bug that caused the Player let go of a carried sprite when getting shoot out of a diagonal pipe.
 - Fixed fire Mario has the wrong outline color.
 - Made amazing flying hammer bro only throw hammer if he's alive.
+- Reduced the level end timer when hiting a switch palace switch to prevent the Player from jumping over the message box when doing a yump on the switch.
+- Fixed several sprites do not call the sprite interaction routine, despite having the sprite interaction enabled bit set.
+- The changing item in the trancelucent box no longer changes, the ghosts in the sunken ghost ship no longer appear and disappear and the star no longer blinks when the game is frozen.
+- Fixed a bug that caused the lines that indicate where the Player gets lifes in the bonus game to sometimes have a different color.
+- Fixed a incorrect translation in french, german and spanish in the message box in the cape training room.
