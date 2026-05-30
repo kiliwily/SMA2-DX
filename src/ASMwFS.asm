@@ -316,11 +316,38 @@ NotFirstTime:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of ChangeYoshiCoins (CYC)
+.org 0x800CF50
+	add r2,r4,r1
+	ldrb r0,[r2]
+
+.org 0x800CF60
+	mov r5,80h
+	lsl r5,r5,3h
+	mov r2,r5
+
+.org 0x800CF6E
+	mov r2,r5
+
 .org 0x800CF78
 	bl FreeSpaceCYC2
+	ldr r2,=899h
+	add r0,r4,r2
+	mov r5,0h
+	strb r5,[r0]
+	sub r2,1h
+	add r0,r4,r2
+	strb r5,[r0]
+	bl 8009438h
+	bl 8005694h
+	mov r0,83h
+	lsl r0,r0,4h
+	add r2,r4,r0
+	ldrh r0,[r2]
+	mov r1,80h
+	lsl r1,r1,1h
 	
 .org 0x800D004
-	.halfword 0x0000
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Restore coin sound when yoshi eats something during the intro cutscene
@@ -3287,11 +3314,25 @@ DownFRW4:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 3 of ChangeYoshiCoins (CYC)
+.org 0x8072A38
+	add r2,r4,r3
+	ldrb r0,[r2]
+	
 .org 0x8072A50
-	bl FreeSpaceCYC3
+	bl FreeSpaceCYC2
+	ldr r0,=886h
+	add r1,r4,r0
+	mov r0,5h
+	strb r0,[r1]
+	ldr r2,=0CE8h
+	add r1,r4,r2
+	mov r0,99h
+	strb r0,[r1]
+	ldr r3,=83Eh
+	add r1,r4,r3
 	
 .org 0x8072B44
-	.halfword 0x0000
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix smoke of yoshis house becomes garbeled when pressing A or Start during the beginning of the intro (YHI)

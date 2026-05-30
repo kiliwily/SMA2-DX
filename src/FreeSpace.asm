@@ -132,16 +132,59 @@ ReturnFCR:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceCYC2:
 	push r14
-	ldr r4,=3002340h
-	mov r1,8Ah
-	lsl r1,r1,4h
+	ldr r1,=8A7h
 	add r0,r4,r1
-	ldrb r0,[r0,7h]
+	ldrb r0,[r0]
 	cmp r0,0h
 	beq NoPeachCoinsCYC2
 	bl MakePeachCoins
 NoPeachCoinsCYC2:
-	ldr r2,=899h
+	pop r0
+	bx r0
+	.pool
+	
+MakePeachCoins:
+	push r4-r7,r14
+	ldr r4,=82002F4h
+	ldr r1,=6000100h
+	add r0,r4,0h
+	mov r2,10h
+	bl 809EBB4h
+	mov r0,40h
+	add r0,r0,r4
+	mov r7,r0
+	ldr r1,=6000300h
+	mov r2,10h
+	bl 809EBB4h
+	add r6,r4,0h
+	add r6,80h
+	ldr r1,=6000500h
+	add r0,r6,0h
+	mov r2,10h
+	bl 809EBB4h
+	add r5,r4,0h
+	add r5,0C0h
+	ldr r1,=6000700h
+	add r0,r5,0h
+	mov r2,10h
+	bl 809EBB4h
+	ldr r1,=6014040h
+	add r0,r4,0h
+	mov r2,10h
+	bl 809EBB4h
+	ldr r1,=6014440h
+	mov r0,r7
+	mov r2,10h
+	bl 809EBB4h
+	ldr r1,=6014840h
+	add r0,r6,0h
+	mov r2,10h
+	bl 809EBB4h
+	ldr r1,=6014C40h
+	add r0,r5,0h
+	mov r2,10h
+	bl 809EBB4h
+	pop r4-r7
 	pop r0
 	bx r0
 	.pool
@@ -1598,67 +1641,6 @@ RightWall:
 FixPos:
 	strh r4,[r5]
 	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-FreeSpaceCYC3:
-	push r14
-	ldrb r0,[r4,7h]
-	cmp r0,0h
-	beq NoPeachCoinsCYC3
-	bl MakePeachCoins
-NoPeachCoinsCYC3:
-	ldr r4,=3002340h
-	ldr r0,=886h
-	pop r1
-	bx r1
-	.pool
-	
-MakePeachCoins:
-	push r4-r7,r14
-	ldr r4,=82002F4h
-	ldr r1,=6000100h
-	add r0,r4,0h
-	mov r2,10h
-	bl 809EBB4h
-	mov r0,40h
-	add r0,r0,r4
-	mov r7,r0
-	ldr r1,=6000300h
-	mov r2,10h
-	bl 809EBB4h
-	add r6,r4,0h
-	add r6,80h
-	ldr r1,=6000500h
-	add r0,r6,0h
-	mov r2,10h
-	bl 809EBB4h
-	add r5,r4,0h
-	add r5,0C0h
-	ldr r1,=6000700h
-	add r0,r5,0h
-	mov r2,10h
-	bl 809EBB4h
-	ldr r1,=6014040h
-	add r0,r4,0h
-	mov r2,10h
-	bl 809EBB4h
-	ldr r1,=6014440h
-	mov r0,r7
-	mov r2,10h
-	bl 809EBB4h
-	ldr r1,=6014840h
-	add r0,r6,0h
-	mov r2,10h
-	bl 809EBB4h
-	ldr r1,=6014C40h
-	add r0,r5,0h
-	mov r2,10h
-	bl 809EBB4h
-	pop r4-r7
-	pop r0
-	bx r0
-	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

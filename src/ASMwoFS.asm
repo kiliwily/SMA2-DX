@@ -3548,7 +3548,7 @@ SpriteDirection:
 	lsr r1,r1,7h
 	orr r0,r1
 	cmp r0,0h
-	bne ReturnNoInteraction
+	bne 80351BCh
 DoPlayerInteraction:
 	ldr r1,=0CE8h
 	add r0,r3,r1
