@@ -38,16 +38,25 @@ DownVRAMUpdate:
 ;Puts the trigger of the found all Yoshi Coins Cutscene on a better place and prevent it
 ;from overwritting the castle cutscene trigger; Also adds some sanity checks for the;;;;
 ;Yoshi Coins Counter and the Exit Counter (YCC);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.org 0x8003A9F
-	.byte 0x4C
-	
-.org 0x8003AA1
-	.byte 0x49
+.org 0x80038BE
+	b DownSkipStateChange
 
-.org 0x8003AA2
-	add r1,r4,r1
-	ldrb r0,[r1]
+.org 0x8003A8C
+	ldr r0,=3002340h
+	
+.org 0x8003A98
+	ldr r3,=842h
+
+.org 0x8003A9E
+	ldr r4,=3002340h
+	ldr r1,=886h
+	add r5,r4,r1
 	bl CheckTriggerCutscene
+DownSkipStateChange:
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Update the Framecounter during the "Welcome to dinosaurland" and yoshis house credit cutscene to animate the berries (UFC, Credits: Mister Man)
@@ -101,25 +110,101 @@ DownVRAMUpdate:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Change Yoshi Coins in intro level in Peach Coins when they are unlocked (CYC)
-.org 0x8008337
-	.byte 0x4E
-	
-.org 0x800833A
-	add r0,r6,r2
-	
-.org 0x8008344
-	add r0,r6,r3
+.org 0x8008312
+	ldr r4,=3002340h
+	ldr r2,=88Fh
+	add r0,r4,r2
+	sub r2,4h
+
+.org 0x8008336
+	ldr r6,=3002340h
+	ldr r1,=888h
+	add r4,r6,r1
+	mov r2,0h
+	strb r2,[r4]
+	add r1,18h	;r1=8A0h
+	add r7,r6,r1
+	strb r2,[r7]
+	sub r1,1h	;r1=89Fh
+	add r0,r6,r1
 	strb r2,[r0]
-	sub r0,1h
+	add r1,8h	;r1=8A7h
+	add r0,r6,r1
 	strb r2,[r0]
-	add r0,8h
-	strb r2,[r0]
-	
-.org 0x800837E
-	bl FreeSpaceCYC1
-	
-.org 0x8008390
+	sub r1,18h	;r1=88Fh
+	add r5,r6,r1
+CYCLoopStart:
+	mov r0,0h
+	strb r0,[r5]
+	bl 8007DA0h
+	mov r0,0h
+	ldsb r0,[r4,r0]
+	add r0,r6,r0
+	ldr r1,=88Ch
+	add r0,r0,r1
+	ldrb r1,[r5]
+	strb r1,[r0]
+	bl 8008058h
+	mov r0,0h
+	ldsb r0,[r4,r0]
+	ldrb r1,[r6,16h]
+	cmp r0,r1
+	bne CYCLoopIncrement
+	ldr r0,[r6,20h]
+	add r0,0D5h
+	ldrb r0,[r0]
+	cmp r0,60h
+	bne CYCDown1
+	mov r0,1h
+	strb r0,[r7]
+CYCDown1:
+	ldr r0,[r6,20h]
+	add r0,37h
+	ldrb r0,[r0]
+	mov r1,80h
+	and r0,r1
+	cmp r0,0h
+	beq CYCDown2
+	ldr r3,=89Fh
 	add r1,r6,r3
+	mov r0,1h
+	strb r0,[r1]
+CYCDown2:
+	bl FreeSpaceCYC1
+CYCLoopIncrement:
+	ldrb r0,[r4]
+	add r0,1h
+	strb r0,[r4]
+	mov r0,0h
+	ldsb r0,[r4,r0]
+	cmp r0,3h
+	bne CYCLoopStart
+	ldr r1,=888h
+	add r0,r6,r1
+	mov r5,0h
+	strb r5,[r0]
+	ldr r2,=88Fh
+	add r0,r6,r2
+	strb r5,[r0]
+	ldr r1,[r6,20h]
+	cmp r1,0h
+	beq CYCDown3
+	mov r3,0EDh
+	lsl r3,r3,5h
+	add r0,r6,r3
+	bl 8007174h
+CYCDown3:
+	str r5,[r6,20h]
+	ldr r2,=889h
+	add r1,r6,r2
+	ldrb r0,[r6,15h]
+	strb r0,[r1]
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of Mario Palette Move (MPM)
@@ -137,11 +222,84 @@ DownVRAMUpdate:
 	cmp r0,0FFh
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Part 3 of Mario Palette Move (MPM)
+.org 0x800BBDE	;Fix potential endless loop
+	b 800BBCAh
+
+.org 0x800BC12
+	add r3,1h
+	add r1,r1,r3
+	ldrb r0,[r0]
+	strb r0,[r1]
+	ldr r0,[r4,20h]
+	add r0,0E0h
+	mov r5,1h
+	strb r5,[r0]
+	ldr r0,[r4,20h]
+	add r0,0DCh
+	mov r3,r9
+	strb r3,[r0]
+	ldr r0,[r4,20h]
+	mov r1,r0
+	add r1,0DEh
+	ldrb r1,[r1]
+	str r1,[sp,4h]
+	mov r1,r0
+	add r1,0E9h
+	ldrb r1,[r1]
+	str r1,[sp,8h]
+	mov r1,r0
+	add r1,0A0h
+	mov r0,4Dh
+	strh r0,[r1]
+	ldr r0,[r4,20h]
+	add r0,0E9h
+	mov r1,36h
+	strb r1,[r0]
+	ldr r0,[r4,20h]
+	add r0,0DEh
+	strb r5,[r0]
+	bl 8004080h
+	ldr r3,=1C58h
+	add r2,r4,r3
+	mov r8,r2
+	ldr r0,[r2]
+	ldr r1,=115Eh
+	add r0,r0,r1
+	mov r1,5h
+	strb r1,[r0]
+	ldr r0,[r2]
+	ldr r1,=11B3h
+	add r0,r0,r1
+	mov r1,r9
+	strb r1,[r0]
+	add r3,0C0h
+	add r0,r4,r3
+	mov r1,0Ah
+	strb r1,[r0]
+	bl 80043CCh
+	ldr r2,=838h
+	add r0,r4,r2
+	ldr r1,=3C44h
+	strh r1,[r0]
+	ldr r3,=83Ah
+	add r0,r4,r3
+	strh r1,[r0]
+	ldr r1,=400000Ah
+	ldr r0,=0D442h
+	strh r0,[r1]
+	add r1,2h
+	ldr r0,=0D843h
+
+.org 0x800BE58
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Part 2 of Save Prompt (SPR)
 .org 0x800CDAC
 	bne NotFirstTime
 	bl 800CC64h
-	bl FreeSpaceSPR1
+	bl FreeSpaceSPR
 NotFirstTime:
 	ldr r0,[r5,20h]
 	add r0,37h
@@ -169,7 +327,7 @@ NotFirstTime:
 .org 0x800D5DC
 	b DownIntroCutscene
 
-.org 0x800D60A	;800D60Ah Orig.
+.org 0x800D60A
 	b DownIntroCutscene
 
 .org 0x800D678
@@ -177,7 +335,7 @@ NotFirstTime:
 
 .org 0x800D6E4
 	ldr r0,=3002340h
-	ldr r3,=0854h
+	ldr r3,=854h
 	add r1,r0,r3
 	add r3,2h
 	add r0,r0,r3
@@ -187,7 +345,7 @@ NotFirstTime:
 
 .org 0x800D700
 	bl FreeSpaceICC
-	ldr r0,=0886h
+	ldr r0,=886h
 	add r4,r4,r0
 	ldrb r0,[r4]
 	cmp r0,14h
@@ -344,7 +502,6 @@ SetLevelBowserStar5:
 	orr r0,r1
 	strb r0,[r2]
 	b EndOfLevelChecks
-
 CheckDonutSecret2:
 	cmp r3,14h
 	bne CheckChocoSecret
@@ -354,7 +511,6 @@ CheckDonutSecret2:
 	orr r0,r1
 	strb r0,[r2,0Bh]
 	b EndOfLevelChecks
-
 CheckChocoSecret:
 	cmp r3,4Fh
 	bne EndOfLevelChecks
@@ -364,37 +520,194 @@ CheckChocoSecret:
 	ldrb r1,[r5,2h]
 	orr r0,r1
 	strb r0,[r2]
-
 EndOfLevelChecks:
 	pop r4-r6
 	pop r0
 	bx r0
 	.word 0x00000000
 	.word 0x00000000
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 3 of Save Prompt (SPR);;;;;;;;;;;;;;;;;;;;;;
+;Also contains a fix for an oversight that caused the SNES symbol in the special world to not appear after beating the special world without reloading the overworld map
 ;Also contains parts of Yoshi Coins Cutscene (YCC)
-.org 0x801EC48
-	bl FreeSpaceSPR2
+.org 0x801EC38	;(SPR)
+	ldr r6,=3002340h
+	ldr r0,=1C5Ch
+	add r5,r6,r0
+	ldr r7,=3002BC7h
+SPRFct1:
+	ldr r0,[r6,20h]
+	mov r3,85h
+	lsl r3,r3,1h
+	add r1,r0,r3
+	ldr r0,=80FE25Ch
+	add r0,r2,r0
+	ldrh r1,[r1]
+	ldrb r0,[r0]
+	cmp r1,r0
+	bne SPRFct3
+	ldr r0,[r5]
+	add r0,2Bh
+	mov r4,0h
+	ldsb r0,[r0,r4]
 	cmp r0,0h
-	beq 801ECB8h
-	
-.org 0x801ED1E
-	bl FreeSpaceSPR3
-	
-.org 0x801EE8E	;(YCC)
-	add r0,r2,1h
-
-.org 0x8022F3A	;(YCC)
-	cmp r0,60h
-	beq 8022F50h
-	add r0,1h
+	ble SPRFct3
+SPRFct2:
+	ldr r0,[r6,20h]
+	add r3,7h
+	add r1,r0,r3
+	mov r0,2h
 	strb r0,[r1]
-	bl FreeSpaceYCC1
+	b SPRFct4
+	.pool
+SPRFct3:
+	sub r2,1h
+	cmp r2,0h
+	bge SPRFct1
+	ldr r1,[r6,20h]
+	add r1,0EBh
+	ldrb r0,[r1]
+	cmp r0,1h
+	bne SPRFct5
+	ldr r0,[r5]
+	add r0,2Bh
+	ldrb r0,[r0]
+	cmp r0,0E0h
+	bne SPRFct2
+	ldr r2,=89Ah
+	add r4,r6,r2
+	ldrb r0,[r4]
+	sub r0,1h
+	strb r0,[r4]
+	mov r0,0h
+	ldsb r0,[r4,r0]
+	cmp r0,0h
+	bge SPRFct6
+	ldr r0,[r6,20h]
+	add r3,7h
+	add r0,r0,r3
+	mov r1,2h
+	strb r1,[r0]
+	bl 801E97Ch
+	mov r0,2h
+	strb r0,[r4]
+	mov r0,6h
+	strb r0,[r7]
+SPRFct4:
+	ldr r1,[r6,20h]
+	add r1,0EBh
+	ldrb r0,[r1]
+	cmp r0,1h
+	bne SPRFCt5
+	mov r0,2h
+	strb r0,[r1]
+SPRFct5:
+	ldr r2,[r6,20h]
+	ldr r0,[r5]
+	add r0,2Ch
+	ldrb r1,[r0]
+	lsl r0,r1,1h
+	add r2,8Ch
+	add r0,r2,r0
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	add r1,2h
+	lsl r1,r1,1h
+	add r2,r2,r1
+	mov r3,0h
+	ldsh r1,[r2,r3]
+	asr r0,r0,4h
+	asr r1,r1,4h
+	bl 801E654h
+	lsl r0,r0,10h
+	asr r0,r0,10h
+	ldr r1,[r6,20h]
+	ldr r2,=2002800h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	mov r3,85h
+	lsl r3,r3,1h
+	add r1,r1,r3
+	strh r0,[r1]
+	ldrb r0,[r7]
+	add r0,1h
+	strb r0,[r7]
+	ldr r1,[r6,20h]
+	mov r2,r1
+	add r2,0EAh
+	ldrb r0,[r2]
+	cmp r0,0h
+	bne SPRFct6
+	add r1,0D5h
+	ldrb r0,[r1]
+	cmp r0,60h
+	bne SPRFct6
+	mov r0,1h
+	strb r0,[r2]
+SPRFct6:
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+	
+.org 0x80231EA	;Fixed an oversight that causes the SNES symbol on the special world map to not appear after completing the world without reloading the overworld map
+	ldr r0,=3002340h
+	ldr r1,=1C58h
 
-.org 0x8023904
+.org 0x80231F2
+	ldr r1,=8102784h
+
+.org 0x8023202
+	ldr r7,=115Eh
+
+.org 0x8023216
+	ldr r0,=2006000h
+
+.org 0x8023220
+	ldr r4,=80F94F0h
+	ldr r3,=80F9B10h
+	mov r2,0h
+	ldr r6,=1FFh
+	ldr r5,=3003F98h
+
+.org 0x802324A
+	ldr r0,=2002800h
+	ldr r1,=8101F84h
+
+.org 0x8023256
+	ldr r2,=3002340h
+	ldr r0,[r2,20h]
+	add r0,4Fh
+	ldrb r0,[r0]
+	mov r1,80h
+	and r0,r1
+	cmp r0,0h
+	bne DrawSNESSymbol
+	ldr r0,[r2,20h]
+	add r0,0A0h
+	ldrh r0,[r0]
+	cmp r0,49h
+	bne NoSNESSymbol
+	ldr r1,=1C5Ch
+	add r0,r2,r1
+	ldr r0,[r0]
+	add r0,2Bh
+	mov r2,0h
+	ldsb r0,[r0,r2]
+	cmp r0,0h
+	ble NoSNESSymbol
+DrawSNESSymbol:
+	ldr r1,=2002DA2h
+	bl FreeSpaceSWS
+NoSNESSymbol:
+	bl 802316Ch
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+
+.org 0x8023904	;(SPR)
 	push r4,r5,r14
 	ldr r0,=3002340h
 	ldr r1,=1C5Ch
@@ -439,7 +752,7 @@ DownSPR1:
 	ldr r0,[r3,20h]
 	add r0,0EBh
 	ldrb r0,[r0]
-	cmp r0,2h
+	cmp r0,1h
 	beq DownSPR2
 	ldr r0,=3002340h
 	ldr r1,=887h
@@ -522,35 +835,31 @@ DownSPR5:
 	pop r0
 	bx r0
 	.pool
-	
-FreeSpaceSPR1:
-	ldr r0,[r5,20h]
-	lsl r1,r4,1h
-	add r1,11h
-	add r0,r0,r1
-	mov r2,2h
-	strb r2,[r0]
-	bx r14
-	
-FreeSpaceSPR2:
-	ldrb r1,[r1]
-	ldrb r0,[r0]
-	cmp r1,r0
-	beq NotSetToZero
-	mov r0,0h
-	cmp r2,0h
-	bne ReturnSPR2
-	ldr r1,[r6,20h]
-	add r1,0EBh
-	ldrb r1,[r1]
-	cmp r1,2h
-	bne ReturnSPR2
-NotSetToZero:
-	mov r0,1h
-ReturnSPR2:
+
+CheckTriggerCutscene:	;(YCC)
+	ldrb r0,[r5]
+	add r1,r0,1h
+	strb r1,[r5]
+	cmp r0,1Ch
+	bne ReturnYCC
+	ldr r2,[r4,20h]
+	add r2,0EBh
+	ldrb r0,[r2]
+	cmp r0,0h
+	bne ReturnYCC
+	ldr r1,[r4,20h]
+	add r1,0D6h
+	ldrb r0,[r1]
+	cmp r0,44h
+	bne ReturnYCC
+	mov r1,1h
+	strb r1,[r2]
+	mov r0,45h
+	strb r0,[r5]
+ReturnYCC:
 	bx r14
 	.word 0x00000000
-	.halfword 0x0000
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of ResetCheckpoints (RCP)
@@ -604,21 +913,6 @@ DeactivateOnOFFSwitch:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Prevents out of bounds access of the enemy unstun table (EUT)
-.org 0x802B024
-	ldrb r0,[r5,1Ah]
-	cmp r0,7h
-	bhi 802B022h
-	ldr r1,=3007A48h
-	mov r0,64h
-	mul r0,r2
-	ldr r2,=06CCh
-	bl FreeSpaceEUT
-
-.org 0x802B0A4
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;Fix out of bounds access of sprite status value (SOB) and despawn sprite that is in limbo when yoshis mouth is empty (DSL)
 ;Also contains code to prevent the p-balloon timer from decrementing when the game is frozen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to fix the Bravo Mario/Luigi message (FBM) when stunning a thrown sprite with the cape;;;;;;;;;;;;;;;;;
@@ -671,7 +965,7 @@ DownCheckMessage2:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne PBalloonTimerNotUpdatedOrTooHigh
-	ldr r1,=0894h
+	ldr r1,=894h
 	add r0,r3,r1
 	ldrb r0,[r0]
 	mov r6,3h
@@ -681,7 +975,7 @@ DownCheckMessage2:
 	mov r4,1h
 	ldr r2,=3007A48h
 	ldr r1,[r2]
-	ldr r0,=0672h
+	ldr r0,=672h
 	add r1,r1,r0
 	ldrb r0,[r1]
 	cmp r0,0h
@@ -703,7 +997,7 @@ DownCheckMessage2:
 	and r0,r6
 	cmp r0,0h
 	bne BPalloonSetTimer
-	ldr r2,=08C4h
+	ldr r2,=8C4h
 	add r1,r3,r2
 	ldrh r0,[r5,10h]
 	ldrh r1,[r1]
@@ -788,7 +1082,7 @@ NotOutOfBounds:
 	ldr r0,=300302Ch
 	str r0,[r2]
 	ldr r0,[r2]
-	ldr r1,=0683h
+	ldr r1,=683h
 	add r0,r0,r1
 	mov r3,0h
 	strb r3,[r0]
@@ -824,7 +1118,7 @@ NotOutOfBounds:
 	add r0,r0,r4
 	strb r3,[r0]
 	ldr r0,[r2]
-	ldr r1,=0686h
+	ldr r1,=686h
 	add r0,r0,r1
 	strb r3,[r0]
 	ldr r0,[r2]
@@ -871,7 +1165,7 @@ NotOutOfBounds:
 	ldr r1,=1C58h
 
 .org 0x802C62A
-	ldr r2,=08EEh
+	ldr r2,=8EEh
 
 .org 0x802C634
 	ldr r0,=3007A48h
@@ -887,13 +1181,12 @@ NotOutOfBounds:
 .org 0x802C670
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r4,=068Fh
+	ldr r4,=68Fh
 	add r0,r0,r4
 	ldrb r0,[r0]
 	cmp r0,0h
 	beq DownUYE1
 	bl 8032000h
-
 DownUYE1:
 	ldr r2,=3007A48h
 	ldr r0,[r2]
@@ -914,7 +1207,6 @@ DownUYE1:
 	ldr r4,=66Ch
 	add r0,r0,r4
 	strb r1,[r0]
-
 DownUYE2:
 	pop r4-r6
 	pop r0
@@ -928,7 +1220,7 @@ DownUYE2:
 
 .org 0x802C750
 	ldr r3,=3002340h
-	ldr r5,=0854h
+	ldr r5,=854h
 	
 .org 0x802C760
 	ldr r2,=3007A48h
@@ -1219,7 +1511,7 @@ GoodItem:
 	ldrb r2,[r2]
 	cmp r2,0h
 	beq 8035B8Ah
-	ldr r0,=0828h
+	ldr r0,=828h
 	add r4,r5,r0
 	bl FreeSpacePMO
 	cmp r0,0h
@@ -1284,7 +1576,7 @@ CheckStartMusic:
 	ldr r2,=1C58h
 	add r0,r1,r2
 	ldr r0,[r0]
-	ldr r4,=08EEh
+	ldr r4,=8EEh
 	add r0,r0,r4
 	ldrb r0,[r0]
 	cmp r0,0h
@@ -1393,7 +1685,7 @@ DownChucks1:
 	mov r1,0FCh
 	lsl r1,r1,8h
 	and r0,r1
-	ldr r1,=019Dh
+	ldr r1,=19Dh
 	orr r0,r1
 	strh r0,[r4,4h]
 	ldrb r3,[r4,3h]
@@ -1575,7 +1867,7 @@ DownChucks1:
 .org 0x804EBB4	;Reset several more values when a new yoshi spawns
 	ldr r5,=3007A48h
 	ldr r3,[r5]
-	ldr r1,=067Ah
+	ldr r1,=67Ah
 	add r0,r3,r1
 	mov r2,0h
 	strb r2,[r0]
@@ -1590,7 +1882,7 @@ DownChucks1:
 	ldr r0,[r5]
 	ldr r3,=0ED5h
 	add r2,r0,r3
-	ldr r3,=06C6h
+	ldr r3,=6C6h
 	add r0,r0,r3
 	ldrb r2,[r2]
 	strb r2,[r0]
@@ -1598,7 +1890,7 @@ DownChucks1:
 	strb r0,[r6,1Ah]
 	mov r0,8h
 	strb r0,[r6,1Ch]
-	ldr r3,=08C4h
+	ldr r3,=8C4h
 	add r2,r1,r3
 	ldrh r0,[r6,10h]
 	ldrh r2,[r2]
@@ -1633,7 +1925,7 @@ DownChucks1:
 	add r1,1h
 	strb r0,[r1]
 	ldr r0,[r5]
-	ldr r1,=06A5h
+	ldr r1,=6A5h
 	add r0,r0,r1
 	mov r1,40h
 	strb r1,[r0]
@@ -1716,7 +2008,7 @@ NoChangeYoshiSolid:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne 80540E0h
-	ldr r3,=0894h
+	ldr r3,=894h
 	add r0,r2,r3
 	ldrb r0,[r0]
 	mov r1,3h
@@ -1725,7 +2017,7 @@ NoChangeYoshiSolid:
 	bne NotYetTimeForSound
 	ldr r2,=3007A48h
 	ldr r1,[r2]
-	ldr r0,=06B7h
+	ldr r0,=6B7h
 	add r1,r1,r0
 	ldrb r0,[r1]
 	sub r0,1h
@@ -1759,7 +2051,7 @@ NotYetTimeForSound:
 	mov r0,r4
 	bl 802F214h
 	ldr r0,=3002340h
-	ldr r2,=0854h
+	ldr r2,=854h
 	add r0,r0,r2
 	ldrh r0,[r0]
 	lsr r0,r0,4h
@@ -1812,7 +2104,7 @@ DownDCB:
 
 .org 0x8056BE8
 	ldr r3,=3002340h
-	ldr r1,=0854h
+	ldr r1,=854h
 	
 .org 0x8056BF6
 	beq ItemNotCarried
@@ -1874,7 +2166,7 @@ ItemNotCarried:
 	ldr r6,=3007A48h
 	
 .org 0x80578E0
-	ldr r1,=06CCh
+	ldr r1,=6CCh
 
 .org 0x8057900
 	ldr r7,=0EB4h
@@ -1882,7 +2174,7 @@ ItemNotCarried:
 .org 0x8057914	
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r2,=0692h
+	ldr r2,=692h
 	add r3,r0,r2
 	ldrb r0,[r3]
 	lsl r0,r0,18h
@@ -1934,7 +2226,7 @@ DownSkull2:
 	blt DownSkull4
 	ldr r6,=3007A48h
 	ldr r0,[r6]
-	ldr r7,=0692h
+	ldr r7,=692h
 	add r0,r0,r7
 	ldrb r1,[r0]
 	cmp r1,0h
@@ -1946,7 +2238,7 @@ SkullAlreadyMoving:
 	add r0,34h
 	ldrb r0,[r0]
 	lsl r0,r0,3h
-	ldr r3,=08E8h
+	ldr r3,=8E8h
 	add r1,r5,r3
 	add r3,r0,r1
 	ldrb r0,[r3]
@@ -1996,7 +2288,7 @@ DownSkull3:
 	cmp r0,0h
 	bne DownSkull4
 	ldr r1,[r3]
-	ldr r0,=0683h
+	ldr r0,=683h
 	add r1,r1,r0
 	ldrb r0,[r1]
 	cmp r0,0h
@@ -2066,7 +2358,7 @@ DownSkull4:
 	ldrb r2,[r2]
 	cmp r2,0h
 	beq 805D24Ah
-	ldr r0,=0828h
+	ldr r0,=828h
 	add r4,r6,r0
 	bl FreeSpacePMO
 	cmp r0,0h
@@ -2111,7 +2403,7 @@ DownYoshiSwallow2:
 	bl FreeSpaceSNS
 	cmp r0,0h
 	bne 805DA42h
-	ldr r0,=0894h
+	ldr r0,=894h
 	add r0,r6,r0
 	ldrb r0,[r0]
 	mov r1,3h  
@@ -2120,7 +2412,7 @@ DownYoshiSwallow2:
 	bne 805D9B8h
 	ldr r2,=3007A48h
 	ldr r0,[r2]
-	ldr r3,=067Ah
+	ldr r3,=67Ah
 	add r1,r0,r3
 	ldrb r0,[r1]
 	cmp r0,0h
@@ -2147,7 +2439,7 @@ DownCheckSpriteInYoshisMouth:
 	ldrb r1,[r0]
 	mov r0,64h
 	mul r0,r1
-	ldr r1,=06CCh
+	ldr r1,=6CCh
 	add r0,r0,r1
 	ldr r1,[r4]
 	add r5,r0,r1
@@ -2187,7 +2479,7 @@ DownCheckSpriteInYoshisMouth:
 	bne DownYoshiWings1
 	bl 80714F0h
 	ldr r3,=3002340h
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 	add r2,r3,r1
 	ldrh r0,[r5,10h]
 	ldrh r2,[r2]
@@ -2226,7 +2518,7 @@ DownDespawnSpriteYoshi:
 	beq 805DCD8h
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r2,=067Ah
+	ldr r2,=67Ah
 	mov r1,40h
 	b DownSetSwallowTimer
 	.pool
@@ -2245,7 +2537,7 @@ DownSetSwallowTimer:
 .org 0x805E880	;Fixes Player can slide up slopes when riding yoshi
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r3,=067Dh
+	ldr r3,=67Dh
 
 .org 0x805E88C
 	beq YoshiNotPunched
@@ -2262,7 +2554,7 @@ YoshiNotPunched:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne 805E8D6h
-	ldr r4,=0854h
+	ldr r4,=854h
 	add r0,r3,r4
 	ldrh r0,[r0]
 	mov r1,80h
@@ -2539,7 +2831,7 @@ DownMushroom:
 	bne 8069228h
 	ldr r0,=1C70h
 	add r0,r9
-	ldr r1,=0828h
+	ldr r1,=828h
 	add r1,r9
 	ldrh r0,[r0]
 	strh r0,[r1]
@@ -2581,7 +2873,7 @@ CheckTimeLimit:
 	ldr r1,=1C58h
 	add r0,r4,r1
 	ldr r2,[r0]
-	ldr r1,=08EEh
+	ldr r1,=8EEh
 	add r0,r2,r1
 	ldrh r1,[r0]
 	lsl r1,r1,2h
@@ -2623,18 +2915,18 @@ CheckTimeLimit:
 	ldrb r0,[r1]
 	add r0,1h
 	strb r0,[r1]
-	ldr r2,=0886h
+	ldr r2,=886h
 	add r1,r4,r2
 	mov r0,1Fh
 	strb r0,[r1]
 	cmp r5,10h
 	bls DownOthers2
-	ldr r3,=3007A48h
+	ldr r2,=3007A48h
+	ldr r2,[r2]
 	bl FreeSpaceGYC
 DownOthers2:
-	ldr r0,=3002340h
 	ldr r1,=1C5Ch
-	add r0,r0,r1
+	add r0,r4,r1
 	ldr r0,[r0]
 	add r0,55h
 	mov r1,1h
@@ -2649,7 +2941,7 @@ DownOthers1:
 	bl FreeSpaceFWC
 ;;;;;;;;
 
-;Part 3 of Mario palette move (MPM)
+;Part 4 of Mario palette move (MPM)
 .org 0x806B5A8
 	bl FreeSpaceMPM4
 
@@ -2745,7 +3037,7 @@ DownOthers1:
 	bne 806E5D6h
 	ldr r0,=1C70h
 	add r0,r9
-	ldr r1,=0828h
+	ldr r1,=828h
 	add r1,r9
 	ldrh r0,[r0]
 	strh r0,[r1]
@@ -2755,7 +3047,7 @@ DownOthers1:
 	ldr r4,=3002340h
 	ldr r1,=1C70h
 	add r0,r4,r1
-	ldr r2,=0828h
+	ldr r2,=828h
 
 .org 0x806E5F0	;Gives the Player 100p when collecting a coin (2)
 	mov r0,18h
@@ -2786,7 +3078,6 @@ DownRemoveCoinTile:
 
 ;Part 2 of Yoshi Coins Cutscene (YCC)
 .org 0x8070B08
-	push r14
 	ldr r3,=3002340h
 	ldr r1,=1C58h
 	add r0,r3,r1
@@ -2795,57 +3086,62 @@ DownRemoveCoinTile:
 	add r0,r0,r1
 	ldrb r0,[r0]
 	cmp r0,0h
-	beq DownYCC3
-	bl FreeSpaceYCC2
-	and r1,r2
-	cmp r1,0h
-	bne DownYCC2
-	ldr r0,[r3,20h]
+	beq DownYCC2
+	ldr r2,[r3,20h]
+	mov r0,r2
+	add r0,0A0h
+	ldrh r1,[r0]
+	add r0,r2,6h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	mov r1,20h
+	and r0,r1
+	cmp r0,0h
+	bne DownYCC1
+	mov r0,r2
 	add r0,0D6h
 	ldrb r1,[r0]
 	cmp r1,44h
 	beq DownYCC1
+	ldrb r1,[r0]
 	add r1,1h
 	strb r1,[r0]
 DownYCC1:
-	ldr r1,[r3,20h]
-	add r2,r1,0
-	add r2,0EBh
-	ldrb r0,[r2]
-	cmp r0,0h
-	bne DownYCC2
-	add r0,r1,0
+	ldr r0,=3002340h
+	ldr r0,[r0,20h]
+	mov r1,r0
+	add r1,0A0h
+	ldrh r1,[r1]
+	add r0,6h
+	add r0,r0,r1
+	ldrb r1,[r0]
+	mov r2,20h
+	orr r1,r2
+	strb r1,[r0]
+DownYCC2:
+	bx r14
+	.pool
+
+FreeSpaceSPR:
+	ldr r0,[r5,20h]
+	ldr r1,=111h
+	add r0,r0,r1
+	mov r2,2h
+	strb r2,[r0]
+	bx r14
+	.pool
+	
+FreeSpaceCYC1:
+	ldr r0,[r6,20h]
 	add r0,0D6h
 	ldrb r0,[r0]
 	cmp r0,44h
-	bne DownYCC2
+	bne DownCYC1
+	add r3,8h
+	add r1,r6,r3
 	mov r0,1h
-	strb r0,[r2]
-DownYCC2:
-	bl FreeSpaceYCC2
-	orr r1,r2
-	strb r1,[r0]
-DownYCC3:
-	pop r0
-	bx r0
-	.pool
-	.word 0x00000000
-	.halfword 0x0000
-
-CheckTriggerCutscene:
-	add r0,1h
-	cmp r0,1Dh
-	bne ReturnYCC
-	ldr r3,[r4,20h]
-	add r3,0EBh
-	ldrb r2,[r3]
-	cmp r2,1h
-	bne ReturnYCC
-	add r2,1h
-	strb r2,[r3]
-	mov r0,45h
-ReturnYCC:
 	strb r0,[r1]
+DownCYC1:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2860,7 +3156,7 @@ ReturnYCC:
 	add r1,r2,r0
 	mov r0,1h
 	strb r0,[r1]
-	ldr r3,=0854h
+	ldr r3,=854h
 	add r1,r2,r3
 	mov r0,10h
 	strh r0,[r1]
@@ -2871,7 +3167,7 @@ ReturnYCC:
 	beq DownVictoryMarch1
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r3,=06C4h
+	ldr r3,=6C4h
 	add r0,r0,r3
 	ldrb r0,[r0]
 	cmp r0,0h
@@ -2882,7 +3178,7 @@ ReturnYCC:
 	cmp r0,0h
 	bne DownVictoryMarch2
 DownVictoryMarch1:
-	ldr r1,=0856h
+	ldr r1,=856h
 	add r0,r2,r1
 	ldrh r0,[r0]
 	cmp r0,1h
@@ -2890,7 +3186,7 @@ DownVictoryMarch1:
 DownVictoryMarch2:
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r3,=06C4h
+	ldr r3,=6C4h
 	add r0,r0,r3
 	ldrb r0,[r0]
 	cmp r0,2h
@@ -3061,7 +3357,7 @@ SkipMethodFYM2:
 	.byte 0x58, 0x59, 0x5D, 0x77, 0x79, 0x7E, 0xC2, 0xC3
 	
 .org 0x8102F28	;(SPR)
-	.byte 0x58, 0x59, 0x5D, 0x77, 0x79, 0x7E, 0xC2, 0xC3
+	.byte 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	
 .org 0x81088E8	;(DSL)
 	.word FreeSpaceDSL+1

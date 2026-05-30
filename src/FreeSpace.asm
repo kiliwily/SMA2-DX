@@ -32,7 +32,7 @@ FreeSpaceUFC:
 	push r14
 	bl 80014F4h
 	ldr r0,=3002340h
-	ldr r1,=0894h
+	ldr r1,=894h
 	add r0,r0,r1
 	ldrb r1,[r0]
 	add r1,1h
@@ -45,7 +45,7 @@ FreeSpaceUFC:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceELO1:
 	push r14
-	ldr r1,=0886h
+	ldr r1,=886h
 	add r0,r6,r1
 	ldrb r1,[r0]
 	cmp r1,24h
@@ -85,20 +85,6 @@ DownRCS:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceCYC1:
-	ldr r0,[r6,20h]
-	add r0,0D6h
-	ldrb r0,[r0]
-	cmp r0,44h
-	bne DownCYC1
-	mov r0,1h
-	strb r0,[r7,7h]
-DownCYC1:
-	ldr r0,[r6,20h]
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceMPM2:
 	push r14
 	bl 800923Ch
@@ -113,8 +99,8 @@ FreeSpaceMPM2:
 FreeSpaceMPM3:
 	push r14
 	bl 800923Ch
-	ldr r0,=0276h
-	ldr r1,=0191h
+	ldr r0,=276h
+	ldr r1,=191h
 	mov r2,6h
 	mov r3,0h
 	bl 800923Ch
@@ -155,7 +141,7 @@ FreeSpaceCYC2:
 	beq NoPeachCoinsCYC2
 	bl MakePeachCoins
 NoPeachCoinsCYC2:
-	ldr r2,=0899h
+	ldr r2,=899h
 	pop r0
 	bx r0
 	.pool
@@ -180,7 +166,7 @@ FreeSpaceCPG:
 	cmp r5,38h
 	bne NotACheckPoint
 	ldr r0,=3002340h
-	ldr r1,=086Ch
+	ldr r1,=86Ch
 	add r0,r0,r1
 	ldrh r2,[r0]
 	sub r2,4h
@@ -303,33 +289,24 @@ ReturnWithChecks:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceSPR3:
-	ldr r0,=3002340h
-	ldr r0,[r0,20h]
-	ldr r1,=0111h
-	mov r2,0EBh
-	add r1,r0,r1
-	add r2,r0,r2
-	ldrb r1,[r1]
-	ldrb r0,[r2]
-	cmp r1,2h
-	bne ReturnSPR3
-	cmp r0,2h
-	bne ReturnSPR3
-	add r0,1h
-	strb r0,[r2]
-ReturnSPR3:
-	pop r0
-	bx r0
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceYCC1:
-	ldr r1,[r7,20h]
-	add r0,r1,0h
-	add r0,0DCh
-	ldrb r0,[r0]
+FreeSpaceSWS:
+	mov r0,8Eh
+	strb r0,[r1]
+	add r1,0Fh
+	mov r0,8Fh
+	strb r0,[r1]
+	add r1,1h
+	mov r0,90h
+	strb r0,[r1]
+	add r1,1h
+	mov r0,91h
+	strb r0,[r1]
+	add r1,0Fh
+	mov r0,92h
+	strb r0,[r1]
+	add r1,1h
+	mov r0,93h
+	strb r0,[r1]
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -353,12 +330,12 @@ FreeSpaceFLE:
 	push r14
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r1,=066Ah
+	ldr r1,=66Ah
 	add r0,r0,r1
 	mov r1,20h
 	strb r1,[r0]
 	ldr r1,=3002340h
-	ldr r2,=0828h
+	ldr r2,=828h
 	add r1,r1,r2
 	mov r0,78h
 	strh r0,[r1]
@@ -367,16 +344,6 @@ FreeSpaceFLE:
 	pop r0
 	bx r0
 	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceEUT:
-	add r0,r0,r2
-	ldr r1,[r1]
-	add r4,r0,r1
-	mov r0,8h
-	strb r0,[r4,1Ch]
-	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -751,7 +718,7 @@ ReturnJWN:
 FreeSpacePLO:
 	mov r3,0h
 	ldsh r0,[r1,r3]
-	ldr r2,=03E6h
+	ldr r2,=3E6h
 	cmp r0,r2
 	ble DownPLO
 	strh r2,[r1]
@@ -1026,7 +993,7 @@ GoodYoshiShell:
 	
 FreeSpaceUYD:
 	add r0,1h
-	ldr r1,=0686h
+	ldr r1,=686h
 	add r2,r2,r1
 	strb r0,[r2]
 	mov r0,0h
@@ -1049,7 +1016,7 @@ NotDiedInLava:
 FreeSpaceSNS:
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r2,=067Ah
+	ldr r2,=67Ah
 	add r1,r0,r2
 	ldrb r0,[r1]
 	cmp r0,0h
@@ -1189,7 +1156,7 @@ FreeSpaceFRG:
 	and r0,r1
 	cmp r0,0h
 	beq RopeNoGround
-	ldr r2,=0854h
+	ldr r2,=854h
 	add r0,r5,r2
 	ldrh r0,[r0]
 	mov r1,40h
@@ -1246,8 +1213,16 @@ MushroomRises:
 	mov r1,80h
 	lsl r1,r1,8h
 	add r0,r0,r1
-	lsl r0,r0,0Ch
-	cmp r0,0h
+	lsr r0,r0,0Fh
+	lsl r0,r0,1Bh
+	mov r3,0h
+	ldr r1,[r4,0Ch]
+	cmp r1,0h
+	bgt DownCompareValues
+	mov r3,0F8h
+	lsl r3,r3,18h
+DownCompareValues:
+	cmp r0,r3
 	bne NoStemTileChange
 ChangeStemTile:
 	mov r0,1h
@@ -1344,13 +1319,7 @@ FreeSpaceFTL:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceGYC:
-	ldr r0,[r4,20h]
-	add r0,0E2h
-	ldrb r1,[r0]
-	cmp r1,0h
-	bne ReturnGYC
-	ldr r2,[r3]
-	ldr r1,=0689h
+	ldr r1,=689h
 	add r0,r2,r1
 	ldrb r1,[r0]
 	cmp r1,0h
@@ -1358,7 +1327,7 @@ FreeSpaceGYC:
 	sub r1,1h
 	mov r0,64h
 	mul r0,r1
-	ldr r1,=06CCh
+	ldr r1,=6CCh
 	add r0,r0,r1
 	add r0,r0,r2
 	ldrb r1,[r0,1Ah]
@@ -1369,8 +1338,8 @@ FreeSpaceGYC:
 	ldr r0,[r4,20h]
 	add r0,0E2h
 	strb r1,[r0,1h]
-	mov r2,1h
-	strb r2,[r0]
+	mov r1,1h
+	strb r1,[r0]
 ReturnGYC:
 	bx r14
 	.pool
@@ -1409,7 +1378,7 @@ FreeSpaceFLB:
 	ldr r0,[r2,20h]
 	add r0,0DCh
 	ldrb r0,[r0]
-	ldr r2,=082Ch
+	ldr r2,=82Ch
 	add r2,r9
 	strh r0,[r2]
 	bx r14
@@ -1521,7 +1490,7 @@ FreeSpaceH1RS:
 	push r14
 	add sp,4h
 	ldr r0,[r4,20h]
-	ldr r2,=010Fh
+	ldr r2,=10Fh
 	add r1,r0,r2
 	ldrb r0,[r1]
 	add r0,1h
@@ -1552,19 +1521,6 @@ PlayerNotDied2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceYCC2:
-	ldr r0,[r3,20h]
-	add r1,r0,0
-	add r1,0A0h
-	ldrh r1,[r1]
-	add r0,6h
-	add r0,r0,r1
-	ldrb r1,[r0]
-	mov r2,20h
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFVM:
 	mov r4,r0
 	ldr r1,=1CE4h
@@ -1580,7 +1536,7 @@ FreeSpaceFVM:
 	bne PlayerInTheAir
 	ldr r3,=3007A48h
 	ldr r0,[r3]
-	ldr r1,=06BAh
+	ldr r1,=6BAh
 	add r0,r0,r1
 	ldrh r0,[r0]
 	cmp r0,0h
@@ -1621,7 +1577,7 @@ StopScrolling:
 	mov r4,0h
 SetScrolling:
 	ldr r0,[r3]
-	ldr r1,=06B9h
+	ldr r1,=6B9h
 	add r0,r0,r1
 	strb r4,[r0]
 PlayerInTheAir:
@@ -1653,7 +1609,7 @@ FreeSpaceCYC3:
 	bl MakePeachCoins
 NoPeachCoinsCYC3:
 	ldr r4,=3002340h
-	ldr r0,=0886h
+	ldr r0,=886h
 	pop r1
 	bx r1
 	.pool

@@ -65,9 +65,9 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 36AC Yoshi xpos
 36AE Sprite Id of Sprite in Yoshi egg after eating 10 berries
 36B0 Reward counter for enemies that change to a coin at the goal and for silver coins
-36B2 Yoshis Spriteslot - 1 (temporary)
+36B2 Yoshis Spriteslot + 1 (temporary)
 36B4 Generator related (if 9 then super koopas spawn)
-36B5 Yoshis Spriteslot - 1
+36B5 Yoshis Spriteslot + 1
 36BE Skull platform x speed
 36CB Star kill counter
 36CD Number of red berries eaten by Yoshi, resets when 10 are consumed
@@ -102,6 +102,8 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	2Bh blocked status. Sprite is blocked in direction:
      (x8h=up, x4h=down, x2h=left, x1h = right, 2x=Sprite touching layer 2 from below, 4x=Sprite touching layer 2 from the side, 8x=Sprite touches layer 2 from above)
 	2Dh if yoshi then tongue animation
+	2Eh Horizontally offscreen flag
+	2Fh Vertically offscreen flag
 	34h OAM slot
 	35h Palette
 	36h Animation frame
@@ -175,6 +177,16 @@ Format: n--sifhb
 3FA5 Direction the player is facing (0=left, 1=right)
 3FA6 Player blocked status. Player is blocked in direction:
      (x8h=up, x4h=down, x2h=left, x1h = right, 1x=Player is inside block, 8x=Player touches side of screen)
+3FA7 Flags used to disable drawing parts of the player's sprite (if = 0FFh then Yoshi will also be hidden).
+Format: dFfcEebh:
+	d - used in conjunction with all other set bits in order to disable processes such as the star timer decrementing.
+	h - hide head tile (upper 16x16).
+	b - hide body tile (lower 16x16).
+	e - hide extra tile #1.
+	E - hide extra tile #2.
+	c - hide regular cape tile.
+	f - hide extra cape flight tile #1.
+	F - hide extra cape flight tile #2.
 3FA8 Player x Momentum?
 3FAC Player y Momentum?
 3FB0 Player xpos equivalent to 3FB4
@@ -230,6 +242,7 @@ Format: n--sifhb
 42F9 Number of Exits found
 42FA Number of levels with Yoshi Coins collected
 42FB Unlocked Yoshis (0000 RBYG)
+42FC-42FF Ingame time in level list
 4300 Current Player (0 = Mario, 1 = Luigi)
 4301 Player Starpoints
 4302 Map, the Player is currently on
@@ -285,9 +298,9 @@ Format: n--sifhb
 54E8 ingame time ones
 550C Game freeze flag
 5578 Overworld path animation related
-558E Overworld path animation related (if = 1 the don't trigger animation), screen number in enemy roll credits
+558E Overworld path animation related (if = 1 then don't trigger animation), screen number in enemy roll credits
 558F Current Overworld unlock event
-559B Current exit triggered (0=none, 1=normal, 2=secret, 80 or E0 =exit already triggered or level ended before the exit)
+559B Current exit triggered (0=none, 1=normal, 2=secret, 80=level ended before the exit, E0=exit already triggered)
 559F
 55A2
 55BE Related to Overworld stuff

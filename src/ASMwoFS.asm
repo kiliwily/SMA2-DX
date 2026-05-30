@@ -37,7 +37,7 @@ WaitEnd:
 	orr r1,r0
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r7,=06B7h
+	ldr r7,=6B7h
 	add r7,r0,r7
 	ldrb r0,[r7]
 	orr r1,r0
@@ -99,7 +99,7 @@ MusicFlagIsPositive2:
 	strb r2,[r0]
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r5,=06B7h
+	ldr r5,=6B7h
 	add r0,r0,r5
 	strb r2,[r0]
 	strb r2,[r7]
@@ -118,7 +118,7 @@ MusicFlagIsPositive2:
 .org 0x80031DC
 	push r4-r6,r14
 	ldr r0,=3002340h
-	ldr r2,=089Ah
+	ldr r2,=89Ah
 	add r1,r0,r2
 	ldrb r0,[r1]
 	sub r0,1h
@@ -203,7 +203,7 @@ BranchPSS5:
 	add r0,r2,r1
 	mov r1,1h
 	strb r1,[r0]
-	ldr r3,=0886h
+	ldr r3,=886h
 	add r0,r2,r3
 	ldrb r0,[r0]
 	cmp r0,25h
@@ -216,7 +216,7 @@ BranchPSS5:
 	beq BranchPSS6
 	cmp r0,36h
 	beq BranchPSS6
-	ldr r1,=089Dh
+	ldr r1,=89Dh
 	add r0,r2,r1
 	ldrb r0,[r0]
 	lsl r0,r0,18h
@@ -227,7 +227,7 @@ BranchPSS5:
 	bl 809BFACh
 BranchPSS6:
 	ldr r4,=3002340h
-	ldr r2,=089Dh
+	ldr r2,=89Dh
 	add r0,r4,r2
 	ldrb r1,[r0]
 	add r1,1h
@@ -238,12 +238,12 @@ BranchPSS6:
 	cmp r0,8h
 	bne ReturnPSS1
 	bl 80014F4h
-	ldr r3,=089Ah
+	ldr r3,=89Ah
 	add r1,r4,r3
 	mov r0,0h
 	strb r0,[r1]
 	ldr r0,=3002340h
-	ldr r1,=0886h
+	ldr r1,=886h
 	add r0,r0,r1
 	ldrb r1,[r0]
 	add r1,1h
@@ -253,7 +253,7 @@ BranchPSS6:
 	bls BranchPSS7
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r2,=0654h
+	ldr r2,=654h
 	add r0,r0,r2
 	mov r1,0h
 	strb r1,[r0]
@@ -267,10 +267,11 @@ ReturnPSS1:
 	.pool
 	
 FreeSpacePSS1:
-	add r1,r4,r0
+	add r1,r4,r2
 	ldrb r0,[r4,16h]
 	strb r0,[r1]
-	sub r1,60h
+	sub r2,60h
+	add r1,r4,r2
 	mov r0,3h
 	bx r14
 
@@ -284,7 +285,6 @@ FreeSpacePSS2:
 	bx r14
 	.word 0x00000000
 	.word 0x00000000
-	.halfword 0x0000
 	
 .org 0x800377C
 	beq DownPSS1
@@ -320,7 +320,7 @@ DownPSS1:
 	strh r2,[r0]
 	mov r5,0Ch
 	ldr r3,[r4,20h]
-	ldr r4,=011Fh
+	ldr r4,=11Fh
 	mov r2,0h
 StartLoopGameOver:
 	lsl r1,r5,18h
@@ -346,7 +346,7 @@ StartLoopGameOver:
 ;Fix all bgs in the enemy roll credits use the same sky color (Credits: Mister Man)
 .org 0x8005098
 	ldr r2,=3002340h
-	ldr r5,=08C4h
+	ldr r5,=8C4h
 
 .org 0x80050A4
 	ldr r1,=1C58h
@@ -382,19 +382,19 @@ NoBGColor:
 	ldr r5,=1C58h
 
 .org 0x800510A
-	ldr r0,=08CCh
+	ldr r0,=8CCh
 	add r1,r4,r0
 	ldr r0,=0FF80h
 
 .org 0x8005116
 	ldr r1,=0FE80h
 	strh r1,[r0]
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 	add r0,r4,r1
-	ldr r5,=08D4h
+	ldr r5,=8D4h
 
 .org 0x8005126
-	ldr r1,=08D8h
+	ldr r1,=8D8h
 
 .org 0x800514E
 	ldr r2,=0FFBFh
@@ -444,7 +444,7 @@ NoBGColor:
 	push r4,r5,r14
 	bl 800735Ch
 	ldr r4,=3002340h
-	ldr r1,=0888h
+	ldr r1,=888h
 	add r0,r4,r1
 	ldrb r1,[r0,7h]
 	cmp r1,0h
@@ -460,12 +460,12 @@ NoBGColor:
 	ldr r1,=2000004h
 	strh r0,[r1]
 	bl 8007C18h
-	ldr r0,=0888h
+	ldr r0,=888h
 	add r5,r4,r0
 	mov r0,0h
 	ldsb r0,[r5,r0]
 	add r0,1h
-	ldr r1,=08A1h
+	ldr r1,=8A1h
 	add r4,r4,r1
 	add r0,r0,r4
 	ldrb r0,[r0]
@@ -487,11 +487,6 @@ ReturnPSS2:
 	pop r0
 	bx r0
 	.pool
-	
-.org 0x8008368
-	bl FreeSpacePSS4
-	cmp r0,r2
-	bne 8008396h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix bug when pressing direction button and select button at the same time when on the overworld
@@ -566,36 +561,7 @@ AlternativeMessage8:
 	mov r5,23h
 
 .org 0x8009C24
-	blt MessageLoopEnd
-
-.org 0x8009C3E
-	ldr r1,=1C58h
-
-.org 0x8009C44
-	ldr r1,=1157h
-
-.org 0x8009C5C
-MessageLoopEnd:
-	cmp r5,0h
-	bge MessageNotFail
-	b StoreEmptyMessage
-MessageNotFail:
-	cmp r3,25h
-	bne 8009C8Ch
-	mov r0,r4
-	ldr r2,=1C58h
-	add r0,r0,r2
-	ldr r0,[r0]
-	ldr r3,=08EEh
-	add r0,r0,r3
-	ldrh r1,[r0]
-	mov r0,0FEh
-	lsl r0,r0,1h
-	cmp r1,r0
-	bne 8009D38h
-	mov r5,22h
-	b 8009D38h
-	.pool
+	blt 8009C5Ch
 
 .org 0x8009D02
 	bhi 8009D24h
@@ -603,14 +569,19 @@ MessageNotFail:
 .org 0x8009D28
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r3,=0689h
+	ldr r3,=689h
 
-.org 0x8009D42
+.org 0x8009D38
+	cmp r5,23h
+	bhi StoreEmptyMessage
+	mov r0,r5
+	bl 8009A38h
+	lsl r0,r0,18h
+	cmp r0,0h
 	beq DownAlternativeMessage1
 	ldr r3,=80DBE60h
 	b DownAlternativeMessage2
 	.pool
-	.word 0x00000000
 	.word 0x00000000
 DownAlternativeMessage1:
 	ldr r3,=80DBC20h
@@ -618,7 +589,7 @@ DownAlternativeMessage2:
 	lsl r2,r5,2h
 	add r2,r2,r3
 	ldr r0,=3002340h
-	ldr r1,=0889h
+	ldr r1,=889h
 	add r0,r0,r1
 	ldrb r1,[r0]
 	mov r0,3h
@@ -655,7 +626,7 @@ DownProcessMessage3:
 	add r4,r3,r0
 	mov r2,r9
 	ldr r1,[r2]
-	ldr r0,=08ECh
+	ldr r0,=8ECh
 	add r1,r1,r0
 	ldr r2,=80D6FACh
 	lsl r0,r6,1h
@@ -709,12 +680,6 @@ DownProcessMessage4:
 	bne 800A6B8h
 
 ;others
-.org 0x800A7E6	;Cleans up point overflow check
-	ble NoPointOverflow
-	str r0,[r2,68h]
-NoPointOverflow:
-	nop
-
 .org 0x800A8C4	;Make digits of lifecounter rightaligned in hud like al the other digits (in level)
 	strh r0,[r2,3Eh]
 	ldr r0,[r1]
@@ -722,9 +687,6 @@ NoPointOverflow:
 	strh r2,[r0,3Ah]
 	ldr r0,[r1]
 	strh r2,[r0,3Ch]
-
-.org 0x800A900
-	.word 0x000F423F
 
 .org 0x800A92C
 	strh r0,[r3,3Ch]
@@ -744,7 +706,7 @@ NoPointOverflow:
 
 .org 0x800D5F0	;(PSS)
 	ldr r2,=3002340h
-	ldr r5,=0854h
+	ldr r5,=854h
 	
 .org 0x800D600
 	add r5,32h
@@ -834,7 +796,7 @@ FreeSpaceFIN:
 
 .org 0x800E2CA	
 	ldr r2,=3002340h
-	ldr r3,=0856h
+	ldr r3,=856h
 	add r0,r2,r3
 	ldrh r0,[r0]
 	mov r1,6h		;(FBI)
@@ -850,12 +812,18 @@ FreeSpaceFIN:
 .org 0x800E2F8	;(FBI)
 	mov r1,80h
 
-.org 0x800E3BC
-	bl FreeSpacePSS1
-	
-.org 0x800E3E4
-	.halfword 0x0888
+.org 0x800E3A8
+	ldr r4,=3002340h
+	ldr r1,=856h
 
+.org 0x800E3BA
+	ldr r2,=888h
+	bl FreeSpacePSS1
+	bl 809C1C4h
+	ldr r1,=889h
+	
+.org 0x800E3DC
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fixes weird Player pose during the credits when holding up after rescuing Peach (PUP)
@@ -1069,7 +1037,7 @@ NoYoshi:
 	blt ContinueCheckPointCheck
 	cmp r0,0h
 	bgt 801EA94h
-	ldr r3,=0887h
+	ldr r3,=887h
 	add r2,r1,r3
 	mov r0,7h
 	strb r0,[r2]
@@ -1095,7 +1063,7 @@ ContinueCheckPointCheck:
 	orr r0,r2
 	strb r0,[r1]
 CheckpointSetStatus:
-	ldr r2,=0887h
+	ldr r2,=887h
 	add r1,r3,r2
 	mov r0,7h
 	strb r0,[r1]
@@ -1140,7 +1108,7 @@ ContinueOther:
 ;Fix bug when pressing select + A, Start or a directional button at the same frame on the overworld
 .org 0x8021508
 	ldr r2,=3002340h
-	ldr r3,=0856h
+	ldr r3,=856h
 
 .org 0x8021518
 	ldr r4,=1C5Ch
@@ -1182,7 +1150,8 @@ ContinueOther:
 	mov r9,r1
 	ldr r0,=8101B04h
 
-.org 0x8022E52
+.org 0x8022E50
+	bne DownLevelBeaten2
 	ldr r1,=8101C0Ch
 	lsl r0,r4,18h
 	asr r0,r0,17h
@@ -1200,13 +1169,108 @@ ContinueOther:
 	mov r1,1h
 	and r0,r1
 	cmp r0,0h
-	beq 8022EB4h
+	beq DownLevelBeaten1
 	mov r0,r3
 	mov r1,r2
 	bl 80234B8h
-	b 8022EBAh
+	b DownLevelBeaten2
 	.pool
-	.word 0x00000000
+DownLevelBeaten1:
+	ldr r1,=2002800h
+	add r0,r2,r1
+	strb r3,[r0]
+DownLevelBeaten2:
+	lsl r0,r4,18h
+	mov r1,0FFh
+	lsl r1,r1,18h
+	add r0,r0,r1
+	lsr r4,r0,18h
+	cmp r0,0h
+	bge 8022E44h
+	ldr r3,=3002340h
+	ldr r0,=1C5Ch
+	add r4,r3,r0
+	ldr r1,[r4]
+	add r1,4Eh
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq DownLevelBeaten5
+	mov r0,r8
+	strb r0,[r1]
+	mov r1,84h
+	lsl r1,r1,4h
+	add r0,r3,r1
+	mov r1,r8
+	strh r1,[r0]
+	ldr r0,=887h
+	add r1,r3,r0
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	ldr r2,[r3,20h]
+	ldr r1,[r4]
+	ldrb r0,[r1,1Fh]
+	lsr r0,r0,3h
+	add r2,0B2h
+	add r2,r2,r0
+	ldr r6,=8101AE8h
+	ldrb r1,[r1,1Fh]
+	mov r5,7h
+	and r1,r5
+	add r1,r1,r6
+	ldrb r0,[r2]
+	ldrb r1,[r1]
+	orr r0,r1
+	strb r0,[r2]
+	ldr r2,[r3,20h]
+	mov r0,r2
+	add r0,0DCh
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownLevelBeaten3
+	ldr r1,[r4]
+	ldrb r0,[r1,1Fh]
+	lsr r0,r0,3h
+	add r2,0C2h
+	add r2,r2,r0
+	ldrb r0,[r1,1Fh]
+	and r0,r5
+	add r0,r0,r6
+	ldrb r1,[r2]
+	ldrb r0,[r0]
+	orr r1,r0
+	strb r1,[r2]
+DownLevelBeaten3:
+	ldr r1,[r7,20h]
+	add r1,0D5h
+	ldrb r0,[r1]
+	cmp r0,60h
+	beq DownLevelBeaten4
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	ldr r1,[r7,20h]
+	mov r0,r1
+	add r0,0DCh
+	ldrb r0,[r0]
+	add r1,0E6h
+	add r1,r1,r0
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+DownLevelBeaten4:
+	mov r1,r9
+	ldr r0,[r1]
+	mov r1,r8
+	strb r1,[r0,1Eh]
+DownLevelBeaten5:
+	pop r3,r4
+	mov r8,r3
+	mov r9,r4
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
@@ -1230,7 +1294,7 @@ ContinueOther:
 	ldr r1,=2002800h
 
 .org 0x8022FE2
-	ldr r1,=0117h
+	ldr r1,=117h
 
 .org 0x8022FE8
 	lsl r0,r4,18h
@@ -1426,7 +1490,7 @@ LevelListInitializationLoop2Start:
 	add r1,r3,r2
 	mov r0,0FFh
 	strb r0,[r1]
-	ldr r7,=089Ch
+	ldr r7,=89Ch
 	add r1,r3,r7
 	mov r0,1h
 	strb r0,[r1]
@@ -1474,7 +1538,7 @@ LevelListMainFunction:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne DownLevelListMainRoutine2
-	ldr r2,=0856h
+	ldr r2,=856h
 	add r0,r4,r2
 	ldrh r0,[r0]
 	mov r1,6h
@@ -1498,7 +1562,7 @@ DownLevelListMainRoutine1:
 	cmp r0,0h
 	beq DownLevelListMainRoutine2
 	bl 802A4ECh
-	ldr r2,=0886h
+	ldr r2,=886h
 	add r0,r4,r2
 	ldrb r0,[r0]
 	cmp r0,3Dh
@@ -1533,7 +1597,7 @@ DownLevelListMainRoutine4:
 
 .org 0x8028C5E
 	b 8028E92h
-	ldr r2,=0893h
+	ldr r2,=893h
 
 .org 0x8028C70
 	ldr r7,=3002340h
@@ -1543,17 +1607,17 @@ DownLevelListMainRoutine4:
 	ldr r6,=813BE78h
 
 .org 0x8028C92
-	ldr r0,=08EAh
+	ldr r0,=8EAh
 
 .org 0x8028CB2
-	ldr r1,=08E8h
+	ldr r1,=8E8h
 
 .org 0x8028CCA
 	ldr r0,=0FFFFh
 
 .org 0x8028CD0
 	ldr r2,=3002340h
-	ldr r3,=0856h
+	ldr r3,=856h
 
 .org 0x8028CE0
 	beq LevelListButtonPressed1
@@ -1592,7 +1656,7 @@ LevelListLoop1End:
 	ldrb r0,[r0]
 	mov r1,1h
 	bl 8029D74h
-	ldr r2,=08CCh
+	ldr r2,=8CCh
 	add r0,r4,r2
 	mov r1,0h
 	strh r1,[r0]
@@ -1602,7 +1666,7 @@ LevelListLoop1End:
 	.pool
 LevelListButtonPressed1:
 	ldr r2,=3002340h
-	ldr r1,=0856h
+	ldr r1,=856h
 	add r0,r2,r1
 	ldrh r0,[r0]
 	mov r1,88h
@@ -1647,7 +1711,7 @@ LevelListLoop2End:
 	ldrb r0,[r0]
 	mov r1,1h
 	bl 8029D74h
-	ldr r2,=08CCh
+	ldr r2,=8CCh
 	add r0,r4,r2
 	mov r1,0F0h
 	strh r1,[r0]
@@ -1659,7 +1723,7 @@ LevelListLoop2End:
 	mov r1,0h
 	bl 8029D74h
 LevelListPlaySound:
-	ldr r2,=0884h
+	ldr r2,=884h
 	add r1,r4,r2
 	mov r0,0h
 	strb r0,[r1]
@@ -1886,7 +1950,7 @@ DownLLTA3:
 	cmp r1,r0
 	bne 802938Ah
 	ldr r1,=813C540h
-	ldr r4,=0889h
+	ldr r4,=889h
 	add r0,r7,r4
 	ldrb r0,[r0]
 	lsl r0,r0,18h
@@ -1951,7 +2015,7 @@ DownLLTA7:
 	ldrb r0,[r1]
 	lsl r0,r0,3h
 	add r0,r0,r7
-	ldr r4,=08EAh
+	ldr r4,=8EAh
 	add r0,r0,r4
 	ldrh r0,[r0]
 	lsl r0,r0,17h
@@ -1981,7 +2045,7 @@ DownLLTA7:
 	ldrb r0,[r0]
 	lsl r0,r0,3h
 	add r0,r0,r5
-	ldr r4,=08E8h
+	ldr r4,=8E8h
 	add r0,r0,r4
 	mov r1,0A0h
 	strb r1,[r0]
@@ -2049,7 +2113,7 @@ DownLLTB5:
 	b 802968Eh
 DownLLTB6:
 	ldr r1,=813C540h
-	ldr r4,=0889h
+	ldr r4,=889h
 	add r0,r7,r4
 	ldrb r0,[r0]
 	lsl r0,r0,18h
@@ -2122,7 +2186,7 @@ DownLLTB11:
 	ldrb r2,[r0]
 	lsl r2,r2,3h
 	add r2,r2,r1
-	ldr r0,=08EAh
+	ldr r0,=8EAh
 	add r2,r2,r0
 	ldrh r3,[r2]
 	lsl r1,r3,17h
@@ -2143,7 +2207,7 @@ DownLLTB11:
 	
 .org 0x802A4EE	;Make teleportation possible wthout having found all 96 exits (2)
 	ldr r4,=3002340h
-	ldr r1,=0856h
+	ldr r1,=856h
 	add r0,r4,r1
 	ldrh r1,[r0]
 	mov r0,9h
@@ -2216,7 +2280,7 @@ LevelListTeleportRoutineDownNotEqual3:
 	cmp r3,3h
 	bls LevelListTeleportRoutineLoop1Start
 	ldr r1,=3002340h
-	ldr r3,=0886h
+	ldr r3,=886h
 	add r2,r1,r3
 	mov r0,1Bh
 	strb r0,[r2]
@@ -2253,7 +2317,7 @@ LevelListTeleportRoutineCheckDirectionalButtons1:
 	ldrb r0,[r0]
 	cmp r0,1h
 	bls LevelListTeleportRoutineContinue2
-	ldr r1,=0856h
+	ldr r1,=856h
 	add r0,r4,r1
 	ldrh r1,[r0]
 	mov r0,40h
@@ -2271,7 +2335,7 @@ LevelListTeleportRoutineCheckDirectionalButtons2:
 	beq LevelListTeleportRoutineContinue2
 	mov r7,1h
 LevelListTeleportRoutineContinue1:
-	ldr r2,=0884h
+	ldr r2,=884h
 	add r1,r4,r2
 	mov r0,0h
 	strb r0,[r1]
@@ -2352,7 +2416,7 @@ LevelListTeleportRoutineLoop3Continue5:
 	beq LevelListTeleportRoutineLoop3Start
 LevelListTeleportRoutineLoop3End:
 	ldr r4,=3002340h
-	ldr r2,=0884h
+	ldr r2,=884h
 	add r1,r4,r2
 	ldrb r0,[r1]
 	add r0,1h
@@ -2428,6 +2492,72 @@ LevelListTeleportRoutineReturn:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
+.org 0x802B004	;Prevents out of bounds access of the enemy unstun table
+	ldr r0,=810A1EBh 
+
+.org 0x802B024
+	ldrb r3,[r5,1Ah]
+	cmp r3,7h
+	bhi 802B022h
+	ldr r1,=3007A48h
+	mov r0,64h
+	mul r0,r2
+	ldr r2,=6CCh
+	add r0,r0,r2
+	ldr r1,[r1]
+	add r4,r0,r1
+	mov r0,8h
+	strb r0,[r4,1Ch]
+	ldr r1,=81086FCh
+	add r0,r3,r1
+	ldrb r0,[r0]
+	strb r0,[r4,1Ah]
+	mov r0,r4
+	bl 802F54Ch
+	mov r3,0h
+	ldrh r0,[r5,10h]
+	strh r0,[r4,10h]
+	mov r6,10h
+	ldsh r0,[r4,r6]
+	lsl r0,r0,10h
+	str r0,[r4]
+	ldrh r0,[r5,12h]
+	strh r0,[r4,12h]
+	mov r2,12h
+	ldsh r0,[r4,r2]
+	lsl r0,r0,10h
+	str r0,[r4,4h]
+	mov r6,r4
+	add r6,2Ah
+	strb r3,[r6]
+	mov r2,r4
+	add r2,25h
+	mov r0,10h
+	strb r0,[r2]
+	mov r1,r5
+	add r1,3Dh
+	add r2,18h
+	ldrb r0,[r1]
+	strb r0,[r2]
+	sub r1,1Bh
+	ldrb r2,[r1]
+	strb r3,[r1]
+	cmp r2,1h
+	beq 802B0B4h
+	mov r0,r4
+	bl 802FB50h
+	mov r1,1h
+	eor r0,r1
+	strb r0,[r6]
+	ldr r1,=810CACCh
+	ldrb r0,[r6]
+	lsl r0,r0,2h
+	add r0,r0,r1
+	ldr r0,[r0]
+	str r0,[r4,8h]
+	b 802B1E2h
+	.pool
+	
 .org 0x802B7D0	;Fixes limit of goal coins
 	cmp r2,0Ah
 	bls 802B7D6h
@@ -2458,10 +2588,10 @@ DownDiscoShell:
 
 .org 0x802EC3C	;Adjust draw height of power ups and fix star man is blinking even if the game freeze flag is set (2)
 	ldr r4,=3002340h
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 
 .org 0x802EC4C
-	ldr r3,=08C8h
+	ldr r3,=8C8h
 
 .org 0x802EC64
 	ldr r0,=012F0000h
@@ -2473,7 +2603,7 @@ DownDiscoShell:
 	cmp r0,76h
 	bne DownPowerUp1
 	ldr r3,=810968Ah
-	ldr r1,=0894h
+	ldr r1,=894h
 
 .org 0x802EC98
 	b DownPowerUp2
@@ -2521,14 +2651,14 @@ DownPowerUp4:
 	
 .org 0x802EDD0	;Adjust draw height of moving coin
 	ldr r3,=3002340h
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 	add r0,r3,r1
 	mov r7,r12
 	ldrh r1,[r7,10h]
 	ldrh r0,[r0]
 	sub r1,r1,r0
 	lsl r1,r1,10h
-	ldr r4,=08C8h
+	ldr r4,=8C8h
 	add r2,r3,r4
 	ldrh r0,[r7,12h]
 	ldrh r2,[r2]
@@ -2567,7 +2697,7 @@ DownMovingCoin3:
 	ldr r0,[r0]
 	ldr r7,=0ED5h
 	add r0,r0,r7
-	ldr r7,=0894h
+	ldr r7,=894h
 	add r1,r3,r7
 	ldrb r3,[r0]
 	ldrb r1,[r1]
@@ -2585,7 +2715,7 @@ DownMovingCoin3:
 .org 0x802F2FA	;Makes sure that Mario is not riding a Yoshi and no sprite is in yoshis mouth, when Yoshi despawns
 	ldr r2,=3007A48h
 	ldr r0,[r2]
-	ldr r3,=0694h
+	ldr r3,=694h
 	add r0,r0,r3
 
 .org 0x802F308
@@ -2624,7 +2754,7 @@ DownDespawnSprite:
 	strb r0,[r4,1Bh]
 	ldr r1,=3007A48h
 	ldr r0,[r1]
-	ldr r1,=06C6h
+	ldr r1,=6C6h
 	add r0,r0,r1
 	mov r1,0FFh
 	strb r1,[r0]
@@ -2635,6 +2765,9 @@ DownOthers:
 	pop r0
 	bx r0
 	.pool
+
+.org 0x802F44E	;Fixes a bug that causes big sprites to lose their interaction with the Player if too big parts of their sprite is horizonztally offscreen (1)
+	mov r1,80h
 	
 .org 0x802FBA0	;Prevents sprites that chase/aim at the Player from chasing/aiming at a point above the Player
 	mov r0,0h
@@ -2662,7 +2795,7 @@ DownOthers:
 	ldrh r4,[r6]
 	cmp r4,7h
 	bhi DownStomping1Ups1
-	ldr r2,=08C4h
+	ldr r2,=8C4h
 	add r1,r3,r2
 	ldrh r0,[r5,10h]
 	ldrh r1,[r1]
@@ -2689,12 +2822,12 @@ DownOthers:
 	
 DownStomping1Ups1:
 	ldr r2,=3002340h
-	ldr r0,=08C4h
+	ldr r0,=8C4h
 	add r1,r2,r0
 	ldrh r0,[r5,10h]
 	ldrh r1,[r1]
 	sub r0,r0,r1
-	ldr r1,=0828h
+	ldr r1,=828h
 	add r2,r2,r1
 	strh r0,[r2]
 	ldr r0,=3007A48h
@@ -2731,7 +2864,7 @@ Stomping5up:
 	.pool
 	
 DownOtherFlagStomping:
-	ldr r2,=06BEh
+	ldr r2,=6BEh
 StoreValueStomping:
 	add r1,r1,r2
 	ldrh r0,[r1]
@@ -2832,7 +2965,7 @@ DownMessage2:
 	ldr r2,=3002340h
 	ldr r3,=1C70h
 	add r0,r2,r3
-	ldr r3,=0828h
+	ldr r3,=828h
 	add r1,r2,r3
 	ldrh r0,[r0]
 	strh r0,[r1]
@@ -2877,7 +3010,7 @@ FreeSpaceFGO:
 	add r2,r1,r3
 	mov r0,0FFh
 	strb r0,[r2]
-	ldr r1,=0886h
+	ldr r1,=886h
 	add r1,r4,r1
 	mov r0,26h
 	strb r0,[r1]
@@ -2966,18 +3099,18 @@ SetPlayerHeightGhosts:
 	
 .org 0x8031D70	;Fix ghost in sunken ghostship disappear and reappear if the game is frozen
 	ldr r1,=3002340h
-	ldr r0,=08C4h
+	ldr r0,=8C4h
 
 .org 0x8031D9E
 	ldr r0,=3002340h
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 
 .org 0x8031DB2
 	ldr r3,=3007A48h
 	ldr r0,[r3]
-	ldr r4,=06B5h
+	ldr r4,=6B5h
 	add r1,r0,r4
-	ldr r6,=065Bh
+	ldr r6,=65Bh
 	add r0,r0,r6
 	ldrb r1,[r1]
 	strb r1,[r0]
@@ -2987,7 +3120,7 @@ SetPlayerHeightGhosts:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne SunkenGhostShipGhosts4
-	ldr r2,=0693h
+	ldr r2,=693h
 	
 .org 0x8031DD6
 	beq SunkenGhostShipGhosts2
@@ -3027,7 +3160,7 @@ SunkenGhostShipGhosts3:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne 8031EEAh
-	ldr r0,=0691h
+	ldr r0,=691h
 	add r2,r1,r0
 	ldrb r0,[r2]
 	add r0,1h
@@ -3041,13 +3174,13 @@ SunkenGhostShipGhosts4:
 	ldrb r1,[r0]
 	cmp r1,0h
 	bne 8031EEAh
-	ldr r4,=0693h
+	ldr r4,=693h
 	add r0,r2,r4
 	ldrb r0,[r0]
 	cmp r0,0h
 	beq 8031E7Ch
 	strb r1,[r5,18h]
-	ldr r6,=0691h
+	ldr r6,=691h
 	add r0,r2,r6
 	strb r1,[r0]
 	b 8031FE2h
@@ -3168,12 +3301,12 @@ DownOne:
 
 .org 0x8033EAC	;Allow to get up to a 5up for throwing a shell etc. into multiple other enemies
 	ldr r2,=3002340h
-	ldr r0,=08C4h
+	ldr r0,=8C4h
 	add r1,r2,r0
 	ldrh r0,[r4,10h]
 	ldrh r1,[r1]
 	sub r0,r0,r1
-	ldr r1,=0828h
+	ldr r1,=828h
 	add r2,r2,r1
 	strh r0,[r2]
 	ldrh r0,[r4,3Ah]
@@ -3261,12 +3394,12 @@ DownLightSwitch:
 	add r0,1h
 	strh r0,[r4,3Ah]
 	ldr r2,=3002340h
-	ldr r0,=08C4h
+	ldr r0,=8C4h
 	add r1,r2,r0
 	ldrh r0,[r4,10h]
 	ldrh r1,[r1]
 	sub r0,r0,r1
-	ldr r1,=0828h
+	ldr r1,=828h
 	add r2,r2,r1
 	strh r0,[r2]
 	ldrh r0,[r4,3Ah]
@@ -3398,39 +3531,30 @@ SpriteDirection:
 	bx r0
 	.pool
 	
-.org 0x803516A	;Fixes a bug that causes big sprites to lose their interaction with the Player if too big parts of their sprite is horizonztally offscreen
+.org 0x803516A	;Fixes a bug that causes big sprites to lose their interaction with the Player if too big parts of their sprite is horizonztally offscreen (2)
 	bne DoPlayerInteraction
 	ldr r0,=3007A48h
 	ldr r0,[r0]
 	ldr r1,=0ED5h
 	add r0,r0,r1
-	ldr r1,=3002340h
-	ldr r3,=893h
+	ldr r3,=3002340h
+	ldr r1,=893h
+	add r1,r3,r1
 	
 .org 0x8035184
+	mov r1,r2
+	add r1,2Eh
+	ldrb r1,[r1]
+	lsr r1,r1,7h
+	orr r0,r1
 	cmp r0,0h
 	bne ReturnNoInteraction
 DoPlayerInteraction:
-	ldr r0,=3002340h
 	ldr r1,=0CE8h
-	add r0,r0,r1
-	ldrb r0,[r0]
-	cmp r0,99h
-	beq ReturnNoInteraction
-	mov r0,r2
-	bl 8035104h
-	lsl r0,r0,18h
-	lsr r0,r0,18h
-	b ReturnYesInteraction
-	.pool
+	add r0,r3,r1
 
-ReturnNoInteraction:
-	mov r0,0h
-ReturnYesInteraction:
-	pop r1
-	bx r1
-	.word 0x00000000
-	.word 0x00000000
+.org 0x80351A8
+	.pool
 	
 .org 0x80351CC	;Make every enemy give up to a 5up when killed with a star
 	ldr r2,=3007A48h
@@ -3445,7 +3569,7 @@ ReturnYesInteraction:
 	ldr r3,=1158h
 
 .org 0x80351EE
-	ldr r1,=06CAh
+	ldr r1,=6CAh
 
 .org 0x80351F6
 	ldr r0,=3007A48h
@@ -3759,7 +3883,7 @@ DownFBL:
 	mov r4,0h
 	ldr r5,=3007A48h
 	ldr r0,[r5]
-	ldr r1,=06C6h
+	ldr r1,=6C6h
 	add r0,r0,r1
 	mov r1,0FFh
 	strb r1,[r0]
@@ -3803,17 +3927,17 @@ ResetRoutineLoop1Start:
 	mov r3,r4
 	mul r3,r0
 	add r1,r1,r3
-	ldr r0,=06FBh
+	ldr r0,=6FBh
 	add r1,r1,r0
 	strb r5,[r1]
 	ldr r0,[r6]
 	add r0,r0,r3
-	ldr r1,=0711h
+	ldr r1,=711h
 	add r0,r0,r1
 	strb r5,[r0]
 	ldr r1,[r6]
 	add r2,r1,r3
-	ldr r7,=06E4h
+	ldr r7,=6E4h
 	add r0,r2,r7
 	strh r5,[r0]
 	mov r0,0E3h
@@ -3821,7 +3945,7 @@ ResetRoutineLoop1Start:
 	add r1,r1,r0
 	add r1,r1,r3
 	str r5,[r1]
-	ldr r1,=071Ch
+	ldr r1,=71Ch
 	add r2,r2,r1
 	strb r5,[r2]
 	ldr r0,[r6]
@@ -3955,7 +4079,7 @@ SetSpriteStatusAndCheckMessageR5:
 	ldr r6,=3007A48h
 	mov r0,64h
 	mul r0,r5
-	ldr r4,=06CCh
+	ldr r4,=6CCh
 	add r0,r0,r4
 	ldr r1,[r6]
 	
@@ -3985,7 +4109,7 @@ ContinueLoop:
 	bne DownPipeDoorRoutine
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r4,=0705h
+	ldr r4,=705h
 	add r1,r0,r4
 	ldrb r1,[r1]
 	ldr r6,=0E34h
@@ -4052,7 +4176,7 @@ InitializeValueAndCheckForBravoMessage:
 	mov r4,0h
 	ldr r1,=3007A48h
 	ldr r1,[r1]
-	ldr r2,=06BEh
+	ldr r2,=6BEh
 	add r0,r1,r2
 	ldrh r4,[r0]
 	add r2,2h
@@ -4230,7 +4354,7 @@ SpriteLoop1Start:
 	beq SpriteLoop1Continue
 	mov r0,64h
 	mul r0,r3
-	ldr r5,=06CCh
+	ldr r5,=6CCh
 	add r0,r0,r5
 	add r1,r0,r2
 	add r0,r1,0
@@ -4256,7 +4380,7 @@ SpriteLoop2Start:
 	beq SpriteLoop2Continue
 	mov r0,64h
 	mul r0,r3
-	ldr r5,=06CCh
+	ldr r5,=6CCh
 	add r0,r0,r5
 	add r1,r0,r2
 	add r0,r1,0
@@ -4277,7 +4401,7 @@ SpriteLoop2Continue:
 	beq SpriteInYoshisMouth
 	mov r0,64h
 	mul r0,r3
-	ldr r5,=06CCh
+	ldr r5,=6CCh
 	add r1,r0,r2
 	ldrb r0,[r1,1Ah]
 	cmp r0,0F8h
@@ -4294,12 +4418,12 @@ SpriteInYoshisMouth:
 .org 0x8037E40
 	ldr r2,=3007A48h
 	ldr r1,[r2]
-	ldr r3,=065Eh
+	ldr r3,=65Eh
 
 .org 0x8037E5C
 	ldr r0,=3007A48h
 	ldr r2,[r0]
-	ldr r5,=065Eh
+	ldr r5,=65Eh
 
 .org 0x8037E68
 	ldr r0,=3002340h
@@ -4308,12 +4432,12 @@ SpriteInYoshisMouth:
 	ldr r0,=810AFE4h
 
 .org 0x8037E86
-	ldr r1,=06E6h
+	ldr r1,=6E6h
 
 .org 0x8037E92
 	ldr r2,=3007A48h
 	ldr r0,[r2]
-	ldr r5,=065Bh
+	ldr r5,=65Bh
 
 .org 0x8037EA2
 	ldr r1,=06CCh
@@ -4322,7 +4446,7 @@ SpriteInYoshisMouth:
 	ldr r0,=810B028h
 
 .org 0x8037EB4
-	ldr r2,=0689h
+	ldr r2,=689h
 
 .org 0x8037EC0
 	ldr r1,=3007A48h
@@ -4347,7 +4471,7 @@ SpriteInYoshisMouth:
 	ldrh r1,[r0]
 	ldrh r0,[r2,8h]
 	sub r1,r1,r0
-	ldr r2,=0828h
+	ldr r2,=828h
 	add r0,r3,r2
 	strh r1,[r0]
 	b 8037F5Ch
@@ -4376,7 +4500,7 @@ Down16Bit4:
 .org 0x8037FFE
 	ldr r0,=3007A48h
 	ldr r2,[r0]
-	ldr r1,=06C9h
+	ldr r1,=6C9h
 	
 .org 0x803801A
 	ldr r0,=3002340h
@@ -4466,7 +4590,7 @@ Down16Bit5:
 	cmp r0,0h
 	bne NoCoinSound
 	ldr r1,=3002340h
-	ldr r2,=0828h
+	ldr r2,=828h
 	add r1,r1,r2
 	strh r3,[r1]
 	mov r0,4h
@@ -4951,7 +5075,7 @@ No1upSound:
 
 .org 0x80413A0	;Swap draw order of amazing flying hammer bro and his platform to prevent the wings of the platform from getting drawn in front of the hammer bro
 	ldr r0,=3002340h
-	ldr r1,=0894h
+	ldr r1,=894h
 	add r0,r0,r1
 	ldrb r0,[r0] 
 	lsr r0,r0,3h
@@ -4968,7 +5092,7 @@ No1upSound:
 HammerBroLoopStart:
 	mov r0,64h
 	mul r0,r6
-	ldr r1,=06CCh
+	ldr r1,=6CCh
 	add r0,r0,r1
 	ldr r1,[r2]
 	add r4,r0,r1
@@ -5038,7 +5162,7 @@ HammerBroNotAlive:
 HammerBroGameNotFrozen:
 	mov r0,r5
 	bl 802FA2Ch
-	ldr r1,=0894h
+	ldr r1,=894h
 	add r0,r4,r1
 	ldrb r0,[r0]
 	mov r1,1h
@@ -5099,7 +5223,7 @@ HammerBroGameNotFrozen:
 	ldrh r4,[r1]
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r1,=0674h
+	ldr r1,=674h
 	add r0,r0,r1
 	ldrh r2,[r0]
 	mov r0,0h
@@ -5120,7 +5244,7 @@ TurnBlockDestroyed1:
 	ldr r0,=3007A48h
 	ldr r0,[r0]
 	ldrb r2,[r0]
-	ldr r1,=0674h
+	ldr r1,=674h
 	add r0,r0,r1
 	strh r2,[r0]
 	ldrh r2,[r0]
@@ -5158,41 +5282,45 @@ DownChuckDestroyYes:
 	
 .org 0x8043494	;Fix whistlin' chucks summons super koopas underwater
 	ldr r2,=3002340h
-	ldr r1,=0894h
+	ldr r1,=894h
 
 .org 0x80434A4
-	ldr r3,=08C4h
+	ldr r3,=8C4h
 
 .org 0x80434BC
 	ldr r0,=3002340h
-	ldr r1,=0894h
+	ldr r1,=894h
 	
 .org 0x80434D4
 	ldr r0,=3002340h
-	ldr r3,=0894h
+	ldr r3,=894h
 
-.org 0x80434E4
+.org 0x80434DC
+	lsr r2,r0,2h
+	mov r1,7h
+	and r2,r1
 	ldr r0,=810C696h
-
-.org 0x80434EC
-	ldr r0,=3007A48h
-	ldr r2,[r0]
-	ldr r0,[r4]
-	ldr r1,[r4,8h]
-	sub r0,r0,r1
-	asr r0,r0,10h
+	add r0,r2,r0
+	ldrb r0,[r0]
+	strb r0,[r4,1Fh]
+	ldrh r0,[r4,10h]
+	add r0,8h
 	mov r1,10h
 	and r0,r1
 	cmp r0,0h
 	beq WakeUpFish
+	ldr r0,=3007A48h
+	ldr r0,[r0]
 	mov r3,0D2h
 	lsl r3,r3,3h
 	b SetWhistleChuckValues
 	.pool
 WakeUpFish:
-	ldr r3,=06A9h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=6A9h
 SetWhistleChuckValues:
-	add r0,r2,r3
+	add r0,r0,r3
 	mov r1,9h
 	strb r1,[r0]
 	pop r4
@@ -5227,7 +5355,7 @@ SetWhistleChuckValues:
 	str r0,[r4,8h]
 	ldr r5,=3007A48h
 	ldr r1,[r5]
-	ldr r3,=069Fh
+	ldr r3,=69Fh
 	add r6,r1,r3
 	ldrb r0,[r6]
 	add r0,1h
@@ -5279,13 +5407,13 @@ DownRex:
 	
 .org 0x8046862	;Adjust draw height of super koopa on the ground
 	ldr r3,=3002340h
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 
 .org 0x8046870
-	ldr r7,=08C8h
+	ldr r7,=8C8h
 
 .org 0x80468AE
-	ldr r2,=08E8h
+	ldr r2,=8E8h
 	
 .org 0x80468B4
 	ldr r0,=3007A48h
@@ -5428,7 +5556,7 @@ DownFB1:
 	cmp r0,0h
 	bne DownFB3
 	ldr r0,=3002340h
-	ldr r2,=0893h
+	ldr r2,=893h
 	add r0,r0,r2
 	ldrb r0,[r0]
 	mov r1,3h
@@ -5585,12 +5713,12 @@ DownMegaMole:
 	lsr r1,r1,6h
 	cmp r0,r1
 	beq DownChangingItem1
-	ldr r3,=08C4h
+	ldr r3,=8C4h
 	add r1,r5,r3
 	ldrh r0,[r4,10h]
 	ldrh r1,[r1]
 	sub r0,r0,r1
-	ldr r2,=0828h
+	ldr r2,=828h
 	add r1,r5,r2
 	strh r0,[r1]
 	add r3,4h
@@ -5631,7 +5759,7 @@ DownChangingItem1:
 	ldrb r0,[r0]
 	lsl r0,r0,3h
 	add r0,r0,r5
-	ldr r2,=08E8h
+	ldr r2,=8E8h
 	add r0,r0,r2
 	ldrb r1,[r0]
 	sub r1,1h
@@ -5675,11 +5803,11 @@ DownSumoBrother:
 	ldr r2,=3007A48h
 
 .org 0x804EDC6
-	ldr r1,=06CCh
+	ldr r1,=6CCh
 
 .org 0x804EDD2
 	ldr r2,=3002340h
-	ldr r6,=08C4h
+	ldr r6,=8C4h
 	add r1,r2,r6
 	ldrh r0,[r5,10h]
 	ldrh r1,[r1]
@@ -5750,7 +5878,7 @@ DownBabyYoshi5:
 	ldrb r1,[r0]
 	cmp r1,0D0h
 	bhi 804FF68h
-	ldr r2,=08C8h
+	ldr r2,=8C8h
 	add r1,r7,r2
 	ldrb r0,[r0]
 	ldrh r1,[r1]
@@ -5766,7 +5894,7 @@ DownBabyYoshi5:
 	bl 802FA80h
 	ldr r2,=0EE8h
 	add r0,r6,r2
-	ldr r2,=08C4h
+	ldr r2,=8C4h
 	add r1,r7,r2
 	ldrb r0,[r0]
 	ldrh r1,[r1]
@@ -5804,7 +5932,7 @@ DownBabyYoshi5:
 	ldrb r0,[r4]
 	lsl r0,r0,3h
 	add r0,r0,r3
-	ldr r1,=08ECh
+	ldr r1,=8ECh
 	add r0,r0,r1
 	ldrh r1,[r0]
 	mov r2,0FCh
@@ -5816,7 +5944,7 @@ DownBabyYoshi5:
 	ldrb r0,[r4]
 	lsl r0,r0,3h
 	add r0,r0,r3
-	ldr r1,=08EBh
+	ldr r1,=8EBh
 	add r0,r0,r1
 	ldrb r1,[r0]
 	mov r2,0EFh
@@ -5825,7 +5953,7 @@ DownBabyYoshi5:
 	ldrb r0,[r4]
 	lsl r0,r0,3h
 	add r0,r0,r3
-	ldr r1,=08EBh
+	ldr r1,=8EBh
 	add r0,r0,r1
 	ldrb r1,[r0]
 	mov r2,0DFh
@@ -5851,20 +5979,20 @@ DownBabyYoshi5:
 	str r0,[r1]
 DownSnakeBlock1:
 	ldr r3,=3002340h
-	ldr r0,=08C4h
+	ldr r0,=8C4h
 	add r1,r3,r0
 	ldrh r0,[r6,10h]
 	ldrh r1,[r1]
 	sub r0,r0,r1
-	ldr r1,=0828h
+	ldr r1,=828h
 	add r2,r3,r1
 	strh r0,[r2]
-	ldr r0,=08C8h
+	ldr r0,=8C8h
 	add r1,r3,r0
 	ldrh r0,[r6,12h]
 	ldrh r1,[r1]
 	sub r0,r0,r1
-	ldr r1,=082Ah
+	ldr r1,=82Ah
 	add r3,r3,r1
 	strh r0,[r3]
 	ldr r0,[r6,4Ch]
@@ -6066,7 +6194,7 @@ DownKeyhole1:
 	mov r2,0Bh
 	ldr r0,=3007A48h
 	mov r5,64h
-	ldr r4,=06CCh
+	ldr r4,=6CCh
 	ldr r3,[r0]
 DownKeyhole2:
 	mov r0,r2
@@ -6117,7 +6245,7 @@ DownKeyhole7:
 	ldr r1,=3007A48h
 	mov r0,64h
 	mul r0,r2
-	ldr r2,=06CCh
+	ldr r2,=6CCh
 	add r0,r0,r2
 	ldr r1,[r1]
 	add r0,r0,r1
@@ -6142,7 +6270,7 @@ NotAtTheLimit:
 CountLives:
 	ldr r0,=3007A48h
 	ldr r1,[r0]
-	ldr r5,=06BEh
+	ldr r5,=6BEh
 	add r1,r1,r5
 	ldrh r0,[r1]
 	add r0,r0,r3
@@ -6177,7 +6305,7 @@ NoNeedToCountLives:
 	str r0,[r4,0Ch]
 	ldr r2,=3007A48h
 	ldr r1,[r2]
-	ldr r5,=069Fh
+	ldr r5,=69Fh
 
 .org 0x805894E
 	sub r2,r0,7h
@@ -6236,7 +6364,7 @@ DownMovingCastleBlock:
 	
 .org 0x805CEA8	;Gives 100p when yoshi eats a red/pink berry and 200p when yoshi eats an enemy and gives a coin and restores the coin sound
 	ldr r1,=3002340h
-	ldr r3,=08C4h
+	ldr r3,=8C4h
 	add r4,r1,r3
 
 .org 0x805CEB4
@@ -6251,7 +6379,7 @@ DownMovingCastleBlock:
 	bl 803BBA0h
 	ldr r6,=3007A48h
 	ldr r0,[r6]
-	ldr r2,=06A3h
+	ldr r2,=6A3h
 	add r4,r0,r2
 	ldrb r2,[r4]
 	cmp r2,2h
@@ -6271,7 +6399,7 @@ NoPoints:
 	cmp r2,1h
 	bne DownYoshiEat
 	ldr r1,[r6]
-	ldr r3,=06A1h
+	ldr r3,=6A1h
 	add r1,r1,r3
 	ldrb r0,[r1]
 	add r0,1h
@@ -6336,7 +6464,7 @@ DownYoshiEat:
 NotAt5ups3:
 	ldr r2,=3007A48h
 	ldr r1,[r2]
-	ldr r0,=0684h
+	ldr r0,=684h
 	add r1,r1,r0
 	ldrb r4,[r1]
 	ldrb r0,[r1]
@@ -6353,7 +6481,7 @@ NotAt5ups4:
 	bls DownDontGiveUps
 	ldr r0,=3007A48h
 	ldr r1,[r0]
-	ldr r2,=06C2h
+	ldr r2,=6C2h
 	add r1,r1,r2
 	ldrh r0,[r1]
 	add r0,r0,r3
@@ -6408,7 +6536,7 @@ StartLoopCoinsEaten:
 	ldr r1,=1CD6h
 
 .org 0x805E8BC
-	ldr r4,=0854h
+	ldr r4,=854h
 
 .org 0x805E8CC
 	ldr r0,=1D4Eh
@@ -6448,7 +6576,7 @@ UpdateYoshiAnimation:
 .org 0x805EABE	;Prevent Yoshi updating when Yoshi is despawned
 	ldr r5,=3007A48h
 	ldr r6,[r5]
-	ldr r2,=0689h
+	ldr r2,=689h
 	add r0,r6,r2
 	ldrb r3,[r0]
 	cmp r3,0h
@@ -6482,7 +6610,7 @@ UpdateYoshiAnimation:
 	ldrb r1,[r5]
 	mov r0,64h
 	mul r0,r1
-	ldr r1,=06CCh
+	ldr r1,=6CCh
 	add r0,r0,r1
 	add r6,r6,r0
 	ldrb r0,[r6,1Ah]
@@ -6626,12 +6754,12 @@ DownYoshiPosRGP3:
 
 .org 0x8063F04	;Adjust draw height of scaling mushrooms
 	ldr r2,=3002340h
-	ldr r1,=08C4h
+	ldr r1,=8C4h
 	add r0,r2,r1
 	ldrh r3,[r7,10h]
 	ldrh r0,[r0]
 	sub r3,r3,r0
-	ldr r0,=08C8h
+	ldr r0,=8C8h
 	add r1,r2,r0
 	ldrh r0,[r7,12h]
 	ldrh r1,[r1]
@@ -6643,7 +6771,7 @@ DownYoshiPosRGP3:
 	add r0,34h
 	ldrb r0,[r0]
 	lsl r0,r0,3h
-	ldr r1,=08E8h
+	ldr r1,=8E8h
 	add r2,r2,r1
 	add r5,r0,r2
 	mov r6,0h
@@ -6658,7 +6786,7 @@ LoopScalingMushrooms:
 	mov r1,0h
 	ldsb r1,[r0,r1]
 	add r1,r8
-	ldr r2,=01FFh
+	ldr r2,=1FFh
 	mov r0,r2
 	and r1,r0
 	ldrh r0,[r5,2h]
@@ -6814,7 +6942,7 @@ DownReznor:
 	mov r4,r0
 	ldr r2,=3007A48h
 	ldr r2,[r2]
-	ldr r1,=06BCh
+	ldr r1,=6BCh
 	add r0,r2,r1
 	mov r1,2h
 	strb r1,[r0]
@@ -6847,7 +6975,7 @@ DownReznorInit:
 	mov r3,0h
 	ldrb r0,[r0]
 	strb r0,[r1]
-	ldr r1,=06AEh
+	ldr r1,=6AEh
 	add r0,r2,r1
 	strh r3,[r0]
 	add r4,2Ah
@@ -7067,7 +7195,7 @@ ContinueGoalLoop:
 	
 .org 0x806A57A
 	ldr r3,=3002340h
-	ldr r1,=0854h
+	ldr r1,=854h
 	add r0,r3,r1
 	mov r2,2h
 	strh r2,[r0]
@@ -7106,7 +7234,7 @@ DownDiagonalPipeShoot1:
 	bne DownDiagonalPipeShoot2
 	ldr r2,=1C70h
 	add r0,r3,r2
-	ldr r4,=0828h
+	ldr r4,=828h
 	add r1,r3,r4
 	ldrh r0,[r0]
 	strh r0,[r1]
@@ -7174,7 +7302,7 @@ NotDeadStarMan:
 	ldrb r0,[r0]
 	cmp r0,0h
 	bne NoStarTimerDecrement
-	ldr r3,=0894h
+	ldr r3,=894h
 	add r0,r2,r3
 	ldrb r0,[r0]
 	mov r1,3h
@@ -7200,7 +7328,7 @@ NotDeadStarMan:
 	add r1,r0,r3
 	mov r2,0h
 	strh r5,[r1]
-	ldr r4,=069Fh
+	ldr r4,=69Fh
 	add r0,r0,r4
 	strb r2,[r0]
 NoStarTimerDecrement:
@@ -7228,7 +7356,7 @@ NoStarTimerDecrement:
 	orr r1,r0
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r2,=06B7h
+	ldr r2,=6B7h
 	add r0,r0,r2
 	ldrb r0,[r0]
 	orr r1,r0
@@ -7244,7 +7372,7 @@ NormalizeMusic:
 	
 DifferentColorFlashing:
 	ldr r0,=3002340h
-	ldr r4,=0893h
+	ldr r4,=893h
 	add r0,r0,r4
 	ldrb r0,[r0]
 	b 806B58Ah
@@ -7360,12 +7488,12 @@ DownCheckResetCounter:
 ResetCounter:
 	ldr r4,=3007A48h
 	ldr r0,[r4]
-	ldr r1,=06BEh
+	ldr r1,=6BEh
 	add r0,r0,r1
 	ldrh r0,[r0]
 	bl 8030D90h
 	ldr r0,[r4]
-	ldr r2,=06BEh
+	ldr r2,=6BEh
 	add r0,r0,r2
 	strh r5,[r0]
 SkipCounterResetSliding:
@@ -7527,7 +7655,7 @@ Checkpoint2:
 	strh r0,[r1]
 Checkpoint3:
 	add r1,r2,1
-	ldr r2,=089Eh
+	ldr r2,=89Eh
 	add r0,r6,r2
 	strb r1,[r0]
 	mov r5,28h
@@ -7615,7 +7743,7 @@ DownPHR:
 
 .org 0x8073546
 	ldr r0,=3002340h
-	ldr r1,=0856h
+	ldr r1,=856h
 	
 .org 0x8073552
 	ldr r0,=3007A38h
@@ -7629,18 +7757,18 @@ DownPHR:
 	strh r0,[r1]
 DownSetNotZero:
 	ldr r4,=03002340h
-	ldr r2,=0856h
+	ldr r2,=856h
 	add r0,r4,r2
 	ldrh r0,[r0]
 	mov r1,0C0h
 	and r0,r1
 	cmp r0,0h
 	beq 80735ACh
-	ldr r0,=0828h
+	ldr r0,=828h
 	add r1,r4,r0
 	mov r0,0h
 	bl 809C1C4h
-	ldr r1,=0888h
+	ldr r1,=888h
 	add r2,r4,r1
 	ldrb r1,[r2]
 	mov r0,1h
@@ -7713,6 +7841,12 @@ DownHST4:	;7A0E2
 ;Also contains parts of Perma SaveSlot (PSS) and others
 .org 0x807A444
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.word 0x00000000
+.word 0x00000000
+.word 0x00000000
+.word 0x00000000
+.word 0x00000000
+
 FreeSpacePSS3:
 	push r4,r5,r14
 	mov r5,r0
@@ -7729,17 +7863,6 @@ NoReInitializationNeeded:
 	pop r0
 	bx r0
 	.pool
-	
-FreeSpacePSS4:
-	push r14
-	ldrb r1,[r5]
-	strb r1,[r0]
-	bl 8008058h
-	mov r0,0h
-	ldsb r0,[r4,r0]
-	ldrb r2,[r6,16h]
-	pop r1
-	bx r1	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 BeginFuncFBI:
 	push r4-r7,r14
@@ -7752,6 +7875,8 @@ BeginFuncFBI:
 	cmp r0,0h
 	bne 807A48Eh
 	b 807A6A4h
+	ldr r1,=828h
+	add r4,r2,r1
 	
 .org 0x807A548
 	.word 0x00000000
@@ -8096,6 +8221,9 @@ IggySecondRoomMessageSpanish:
 	.halfword 0x114A, 0x1144
 	.halfword 0x114D, 0x1144
 	.halfword 0x1152
+	
+.org 0x80E410E	;Fix error in tilemap of castle in the castle destruction sequence
+	.halfword 0x1B4
 
 .org 0x80E6205	;Fix position of koopas in enemy roll credits
 	.byte 0x91
