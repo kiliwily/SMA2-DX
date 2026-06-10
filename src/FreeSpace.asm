@@ -354,21 +354,6 @@ FreeSpaceSWS:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceRCS2:
-	mov r4,0BFh
-	mov r3,6h
-LoopRCS:
-	add r1,r0,r3
-	ldrb r2,[r1]
-	and r2,r4
-	strb r2,[r1]
-	add r3,1h
-	cmp r3,62h
-	bls LoopRCS
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFLE:
 	push r14
 	ldr r0,=3007A48h
@@ -387,6 +372,21 @@ FreeSpaceFLE:
 	pop r0
 	bx r0
 	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceRCS2:
+	mov r4,0BFh
+	mov r3,6h
+LoopRCS:
+	add r1,r0,r3
+	ldrb r2,[r1]
+	and r2,r4
+	strb r2,[r1]
+	add r3,1h
+	cmp r3,62h
+	bls LoopRCS
+	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -539,6 +539,19 @@ FreeSpaceFIC1:
 	orr r1,r0
 	add r6,3h
 	add r0,r3,r6
+	ldrb r0,[r0]
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceTBF:
+	ldr r3,=3002340h
+	ldr r1,=1C58h
+	add r0,r3,r1
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
 	ldrb r0,[r0]
 	bx r14
 	.pool
@@ -925,6 +938,24 @@ FreeSpaceHVL:
 	ldrh r0,[r2]
 	strb r0,[r3]
 	bx r14
+
+FreeSpaceFMB1:
+	add r0,21h
+	ldrb r1,[r0]
+	cmp r1,6h
+	bls DownFMB
+	mov r1,6h
+	strb r1,[r0]
+DownFMB:
+	bx r14
+
+FreeSpaceFMB2:
+	add r0,42h
+	ldrb r1,[r0]
+	mov r2,8h
+	orr r1,r2
+	strb r1,[r0]
+	bx r14
 	
 FreeSpaceFMY:
 	ldrb r0,[r4,1Fh]
@@ -1299,11 +1330,11 @@ FreeSpaceFWC:
 	ldrb r0,[r1]
 	cmp r0,2h
 	bne ResetCape
-	ldr r1,=1C58h
-	add r0,r2,r1
+	ldr r3,=1C58h
+	add r0,r2,r3
 	ldr r0,[r0]
-	ldr r3,=10FAh
-	add r0,r0,r3
+	ldr r1,=10FAh
+	add r0,r0,r1
 	ldrb r0,[r0]
 	cmp r0,0h
 	beq HandleCape

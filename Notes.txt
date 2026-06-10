@@ -146,6 +146,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 3F50 Number of coins to give the player (Adress in 7A48h + 0F24h)
 3F52 Yoshi has a key in his mouth flag
 3F53 Sprite slot of the sprite in yoshis mouth
+3F5A Yoshi standing on a solid sprite flag
 3F5F Sound related?
 3FA0 Player animation:
 	00 no animation
@@ -282,7 +283,7 @@ Format: dFfcEebh:
 4452 BG2 y pos
 546C No. of 1ups you get from a life chain (via Star, Stomping or Cape 1up trick)
 546E Timer between the 1ups when geting >1up (2up, 3up, 5up etc.)
-5476 Riding Yoshi flag
+5476 Riding Yoshi flag (0 = No, 1 = Yes, 2 = Yes, and turn around)
 54BB Flag that determines if Mario/Luigi dies or the level ends when they fall below the ground
 54C2 Vertical scrolling enable/disable flag?
 54C3 Horizontal scrolling enable/disable flag?
@@ -433,6 +434,7 @@ DD1C
 0804D754 Something with the New Enemy Sprites
 0804EBB0 Handle yoshi hatching (set growing animation timer)
 08069810 Handle player animations
+0806E2C0 Check spawn throw block sprite
 08071428 Kill the player
 080729D0 Load New Enemy Sprites
 08022570 Timer "R" in Overworld

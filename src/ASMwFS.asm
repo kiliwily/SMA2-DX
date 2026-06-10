@@ -889,6 +889,38 @@ ReturnYCC:
 	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix Layer 2 autoscroll wall triggers earthquake every frame when touching the ground (FLE)
+.org 0x8026BBC
+	ldr r2,=3002340h
+	ldr r1,=1C58h
+	add r4,r2,r1
+	ldr r0,[r4]
+
+.org 0x8026BCA
+	ldr r1,[r4]
+	add r1,0D6h
+	ldr r2,=8103B16h
+
+.org 0x8026BDE
+	bne DeactivateOnOffSwitch
+	ldr r1,[r4]
+	add r1,0BAh
+	ldrh r0,[r1]
+	cmp r0,0h
+	beq 8026C40h
+	mov r0,0h
+	strh r0,[r1]
+	bl FreeSpaceFLE
+DeactivateOnOffSwitch:
+	ldr r0,=3002340h
+	ldr r1,=1D05h
+	add r0,r0,r1
+	mov r1,0h
+	strb r1,[r0]
+	b 8026C40h
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Part 2 of ResetCheckpoints (RCP)
 .org 0x802834A	;Game Over
 	add r0,0DDh
@@ -908,43 +940,11 @@ ReturnYCC:
 	b 802841Ch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Fix Layer 2 autoscroll wall triggers earthquake every frame when touching the ground (FLE)
-.org 0x8026BBC
-	ldr r2,=3002340h
-	ldr r1,=1C58h
-	add r4,r2,r1
-	ldr r0,[r4]
-
-.org 0x8026BCA
-	ldr r1,[r4]
-	add r1,0D6h
-	ldr r2,=8103B16h
-
-.org 0x8026BDE
-	bne DeactivateOnOFFSwitch
-	ldr r1,[r4]
-	add r1,0BAh
-	ldrh r0,[r1]
-	cmp r0,0h
-	beq 8026C40h
-	mov r0,0h
-	strh r0,[r1]
-	bl FreeSpaceFLE
-DeactivateOnOFFSwitch:
-	ldr r0,=3002340h
-	ldr r1,=1D05h
-	add r0,r0,r1
-	mov r1,0h
-	strb r1,[r0]
-	b 8026C40h
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;Fix out of bounds access of sprite status value (SOB) and despawn sprite that is in limbo when yoshis mouth is empty (DSL)
 ;Also contains code to prevent the p-balloon timer from decrementing when the game is frozen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Also contains code to fix the Bravo Mario/Luigi message (FBM) when stunning a thrown sprite with the cape;;;;;;;;;;;;;;;;;
-.org 0x802B880	;Remove empty fct for when sprite is in yoshis mouth
-	.halfword 0x0000
+.org 0x802B1EC	;Prevent throw block from flashing when the game is frozen (1)
+	.halfword 0x0894
 
 .org 0x802B95A	;Fix Bravo Mario/Luigi message
 	mov r2,0h
@@ -1284,6 +1284,38 @@ DownUYE2:
 	
 .org 0x802CA14
 	pop r4-r6
+	
+.org 0x802CD2E	;Prevent throw block from flashing when the game is frozen (2)
+	bne DownThrowBlock3
+	bl FreeSpaceTBF
+	cmp r0,0h
+	bne DownThrowBlock2
+	mov r3,r2
+	add r3,22h
+	ldrb r0,[r3]
+	cmp r0,3Fh
+	bhi DownThrowBlock1
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne DownThrowBlock2
+DownThrowBlock1:
+	add r3,13h
+	ldrb r0,[r3]
+	add r0,2h
+	mov r1,0Fh
+	and r0,r1
+	strb r0,[r3]
+DownThrowBlock2:
+	mov r0,r2
+	bl 802D4A4h
+	b DownThrowBlock4
+DownThrowBlock3:
+	mov r0,r2
+	bl 805FFF0h
+DownThrowBlock4:
+	pop r0
+	bx r0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Adjusts the spawn height of several sprites (1)
@@ -1627,7 +1659,13 @@ CheckStartMusic:
 	
 .org 0x8038C78
 	.pool
-	
+
+.org 0x803A7EC	;Prevent throw block from flashing when the game is frozen (3)
+	.halfword 0x0894
+
+.org 0x803A870
+	.halfword 0x0894
+
 .org 0x803DF08	;Prevent point counter overflow
 	bl FreeSpacePNPO2
 	
@@ -1887,6 +1925,43 @@ DownChucks1:
 	
 .org 0x804C5C4
 	bl FreeSpaceFGS2
+	
+.org 0x804CA0E	;Fix bubbles can burst multiple times when hit by a thrown sprite
+	b DownBubbles1
+
+.org 0x804CA26
+	b DownBubbles3
+
+.org 0x804CAAA
+	sub r1,1h
+	ldrb r0,[r1]
+	sub r0,1h
+	strb r0,[r1]
+	mov r0,r6
+	bl 802FB18h
+	mov r1,r6
+	add r1,2Ah
+	strb r0,[r1]
+	b DownBubbles3
+	
+.org 0x804CAC8
+	bls DownBubbles2
+	
+.org 0x804CB46
+	beq DownBubbles3
+
+.org 0x804CB50
+DownBubbles1:
+	mov r0,r6
+	bl FreeSpaceFMB1
+DownBubbles2:
+	mov r0,r6
+	bl FreeSpaceFMB2
+DownBubbles3:
+	pop r4-r7
+	pop r0
+	bx r0
+	.halfword 0x0000
 	
 .org 0x804EB44	;Prevent a (baby) yoshi from hatching from an egg if another (adult) yoshi is in the level
 	bl FreeSpaceFMY

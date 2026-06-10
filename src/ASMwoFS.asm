@@ -671,7 +671,7 @@ DownProcessMessage4:
 	bge DownProcessMessage3
 	
 .org 0x800A2A4	;Fix star man is blinking even if the game freeze flag is set (1)
-	.word 0x00000894
+	.halfword 0x0894
 	
 .org 0x800A69E	;Fix bug when star runs out with less then 100 secs left
 	bne 800A6B8h
@@ -6355,6 +6355,16 @@ DownMovingCastleBlock:
 
 .org 0x805C108	;Fix priority of moving castle block
 	mov r0,8h
+
+.org 0x805C57E	;Don't increment stomp counter when jumping on Yoshi
+	mov r0,0h
+	strb r0,[r1]
+	mov r0,1h
+	b 805C5CAh
+	.halfword 0x0000
+
+.org 0x805C5C4
+	.halfword 0x1CCE
 	
 .org 0x805CBB0	;Reset Yoshicolor when reseting Yoshi
 	strh r1,[r0]
@@ -9382,6 +9392,13 @@ FreeSpaceSSI1:
 .org 0x8105DA4
 	.halfword 0x0007
 	
+.org 0x8108D60	;Replace empty function call with another empty function to free space
+	.word 0x0802B881
+	.word 0x0802B881
+
+.org 0x8108D7C
+	.word 0x0802B881
+	
 ;several sprite property fixes;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .org 0x8109C00 +34h	;Fix boss flame death animation
 	.byte 0x80
@@ -9439,8 +9456,8 @@ FreeSpaceSSI1:
 .org 0x8109E76 +91h	;Prevent chucks from triggering the item routine
 	.byte 0xB9, 0xB9, 0xB9, 0xB9, 0xB9, 0xB9, 0xB9, 0xB9
 
-.org 0x8109E76 +9Dh	;Fix sprite in a bubble glitch and make ball 'n' chain invincible
-	.byte 0x80, 0x02
+.org 0x8109E76 +9Eh	;Make ball 'n' chain invincible
+	.byte 0x02
 
 .org 0x8109E76 +0A1h	;Make bowsers ball invincible
 	.byte 0x02
@@ -9581,7 +9598,7 @@ FreeSpaceSSI1:
 	.byte 0x08
 	
 .org 0x810A820	;Fill empty slot with empty function to prevent out of bounds reading
-	.word 0x08030EF9
+	.word 0x0802B881
 	
 .org 0x810B040	;Repoint sprite status table to make space for 1 more entry to prevent glitchy sprite spawn
 	.halfword 0x0004
