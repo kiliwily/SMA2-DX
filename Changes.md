@@ -180,5 +180,5 @@
 - Fixed a incorrect translation in french, german and spanish in the message box in the cape training room.
 - Fixed a bug that caused the SNES symbol on the special world map to not appear after beating the special world without reloading the overworld map.
 - Fixed a tiling error on the castle in the castle destruction cutscenes.
-- Fixed a bug that caused the enemy stomp counter to get inremented when jumping on Yoshi.
+- Fixed a bug that caused the enemy stomp counter to get incremented when jumping on Yoshi.
 - Fixed a bug that caused bubbles to burst multiple times when hit by a thrown sprite.
