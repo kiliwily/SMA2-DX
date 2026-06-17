@@ -556,7 +556,7 @@ EndOfLevelChecks:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 3 of Save Prompt (SPR);;;;;;;;;;;;;;;;;;;;;;
-;Also contains a fix for an oversight that caused the SNES symbol in the special world to not appear after beating the special world without reloading the overworld map
+;Also contains a fix for an oversight that causes the SNES symbol in the special world to not appear after beating the special world without reloading the overworld map
 ;Also contains parts of Yoshi Coins Cutscene (YCC)
 .org 0x801EC38	;(SPR)
 	ldr r6,=3002340h
@@ -1597,7 +1597,7 @@ GoodItem:
 .org 0x8037AC2	;Prevent extra live counter overflow
 	bl FreeSpacePLO
 	
-.org 0x8037B78	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi
+.org 0x8037B78	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi (1)
 	bl FreeSpaceCSC
 	
 .org 0x8037FBC	;Make directional coin restart the music on activation in case a p-switch was pressed before
@@ -1664,6 +1664,12 @@ CheckStartMusic:
 	.halfword 0x0894
 
 .org 0x803A870
+	.halfword 0x0894
+
+.org 0x803D620	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi (2)
+	.halfword 0x0894
+
+.org 0x803D674
 	.halfword 0x0894
 
 .org 0x803DF08	;Prevent point counter overflow

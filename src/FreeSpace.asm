@@ -816,11 +816,12 @@ FreeSpaceCSC:
 	ldrb r0,[r1]
 	cmp r0,2h
 	beq HandleCapeSpin
-	ldr r1,=1CF4h
+	ldr r1,=1C63h
 	add r0,r2,r1
-	ldrb r0,[r0]
+	mov r3,0h
+	ldsb r0,[r0,r3]
 	cmp r0,0h
-	bne HandleCapeSpin
+	blt HandleCapeSpin
 ResetCapeSpin:
 	ldr r2,=3007A48h
 	ldr r0,[r2]

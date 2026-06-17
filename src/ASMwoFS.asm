@@ -2583,7 +2583,7 @@ DownDiscoShell:
 .org 0x802C1A4	;;Fixes a bug that causes Mario/Luigi to drop a sprite carried through a pipe when getting shoot from a diagonal pipe (1)
 	bls 802C1D8h
 
-.org 0x802DD0C	;Fixes a bug that caused several sprites not sinking before despawn in lava
+.org 0x802DD0C	;Fixes a bug that causes several sprites not sinking before despawn in lava
 	ldrb r0,[r5]
 
 .org 0x802EC3C	;Adjust draw height of power ups and fix star man is blinking even if the game freeze flag is set (2)
@@ -4568,6 +4568,12 @@ Down16Bit5:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent coin sound from getting triggerd to often when you get multiple coins in a row
+.org 0x8038DF6	;Make screen shake after smashing on the ground after a cape dive also affect sprites in slots 0xA and 0xB
+	mov r4,0Bh
+	
+.org 0x80399F2	;Fix bug that causes sprites, that are on top of a block, to not bounce when hitting the block while climbing on a vine (1)
+	bge 80399F8h
+
 .org 0x803B30E	;Give 100 points for a coin from a ?-Block instead of 10
 	mov r0,5h
 
@@ -4685,6 +4691,9 @@ CallRewardFct:
 .org 0x803CFDA
 	mov r1,1h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.org 0x803D106	;Fix bug that causes sprites, that are on top of a block, to not bounce when hitting the block while climbing on a vine (2)
+	bge 803D10Ch
 
 .org 0x803D23E	;Fix block check routine doesn't handle 16bit values properly (3)
 	ldr r3,=0EB4h

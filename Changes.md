@@ -182,3 +182,5 @@
 - Fixed a tiling error on the castle in the castle destruction cutscenes.
 - Fixed a bug that caused the enemy stomp counter to get incremented when jumping on Yoshi.
 - Fixed a bug that caused bubbles to burst multiple times when hit by a thrown sprite.
+- Fixed a bug that caused the earthquake, that Mario/luigi can cause when landing after a deep dive, to not affect sprites in slot 0xA and 0xB.
+- Fixed a bug that caused sprites on top of a ?-Block, spin block or note block to not bounce when hitting the block while climbing on a vine.
