@@ -6169,6 +6169,9 @@ DownSnakeBlock6:
 .org 0x8052F58
 	mov r1,2h
 	
+.org 0x8054D58	;Update the hide in the shell timer of bony beetles properly if the game is not frozen 
+	.halfword 0x894
+	
 .org 0x8055A6A	;Fix priority of smasher
 	mov r0,0Ch
 	
@@ -7892,8 +7895,9 @@ BeginFuncFBI:
 	mov r0,0C0h
 	and r0,r1
 	cmp r0,0h
-	bne 807A48Eh
+	bne DownFBI
 	b 807A6A4h
+DownFBI:
 	ldr r1,=828h
 	add r4,r2,r1
 	
