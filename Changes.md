@@ -187,7 +187,7 @@
 - Fixed parts of the outline of the cape had the wrong color in some sprites.
 - Fixed bottom part of small Luigis left/right hand when walking leftwards/rightwards or jumping while facing the left/right was cut off.
 - Fixed a bug that occured when dropping/kicking a bob-omb at the same frame it explodes.
-- Fixed a bug that caused multiple shlless koopas to hop in the same frame.
+- Fixed a bug that caused multiple shelless koopas to hop in the same frame.
 - Fixed a bug that caused the springboard sfx to play every frame the Player touches the springboard instead of only once.
 - Fixed a bug that caused Yoshi's swallow animation to show a glitched tile in the underwater area of the sunken ghost ship and the rooms with the big switches in switch palaces.
 - Fixed a bug that caused the ghosts in sunken ghost ship to not consider Yoshi's hitbox in the collision detection routine.
