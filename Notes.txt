@@ -97,11 +97,12 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	21h if powerup then itembox drop flag
 	22h if bob-omb then exploding flag
 	24h lava death timer
+	26h stun timer
 	29h if baby yoshi then enemy eaten counter
 	2Ah Horizontal direction of sprite
 	2Bh blocked status. Sprite is blocked in direction:
      (x8h=up, x4h=down, x2h=left, x1h = right, 2x=Sprite touching layer 2 from below, 4x=Sprite touching layer 2 from the side, 8x=Sprite touches layer 2 from above)
-	2Dh if yoshi then tongue animation
+	2Dh if yoshi then mouth routine pointer
 	2Eh Horizontally offscreen flag
 	2Fh Vertically offscreen flag
 	34h OAM slot
@@ -111,6 +112,8 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 	39h if = FFh then sprite won't respawn
 	3Ah if kickable sprite then counter for how many sprites were killed with this sprite
 	3Ch Graphical layer of the sprite
+	3Dh Sprite in liquid indicator (0h=Sprite not in liquid, 1h=Sprite in water, 80h=Sprite in lava)
+	45h if = 1 then koopa shell becomes a disco shell
 	5Ch counter for how many lifes gotten with the cape spin trick with this sprite
 	5Eh if kickable sprite then counter for how many lefes gotten by killing other sprites with this sprite
 	Slot 0: 36F8
@@ -288,12 +291,15 @@ Format: dFfcEebh:
 54BB Flag that determines if Mario/Luigi dies or the level ends when they fall below the ground
 54C2 Vertical scrolling enable/disable flag?
 54C3 Horizontal scrolling enable/disable flag?
-54C6 Sprites enters pipe with the Player (0=not in pipe, 1=horizontal pipe, 2=vertical pipe, 0FFh=shoot from diagonal pipe)
+54C6 Sprite enters pipe with the Player (0=not in pipe, 1=horizontal pipe, 2=vertical pipe, 0FFh=shoot from diagonal pipe)
 54C9 Which exit was triggered (if = 0 then normal exit, else if = 4 secret exit)
 54D3 Message box flag
 54D4 Star Timer
-54DA if = 2h: Sprite A5h is fuzzy else A5h is sparky
+54DA Sprite setting from the level header (if = 2h: Sprite A5h is fuzzy else A5h is sparky)
+54DC Foreground palette settings from the level header
+54DD Sprite palette settings from the level header
 54DE Level background color
+54DF Background palette settings from the level header
 54E5 Timer between in game time updates
 54E6 ingame time hundreds
 54E7 ingame time tens
@@ -408,6 +414,7 @@ DD1C
 0805D834 Yoshi Stuff
 0805EABC Process Yoshi
 0805EC34 Handle hit while riding yoshi
+0805ED8C Collision detection while riding yoshi
 0805FB80 Handle yoshi standing on a solid sprite
 0806BF14 Update player previous Positions
 0806BFBC Update player xPos

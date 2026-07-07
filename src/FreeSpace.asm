@@ -894,6 +894,78 @@ FreeSpacePSPO2:
 DownPSPO2:
 	bx r14
 	.pool
+
+FreeSpaceESY:
+	push r14
+	ldr r1,=1C58h
+	add r0,r4,r1
+	ldr r0,[r0]
+	ldr r2,=10FAh
+	add r0,r0,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq ESYNoCollision
+	ldr r3,=3007A48h
+	ldr r0,[r3]
+	ldr r2,=689h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	sub r0,1h
+	mov r1,64h
+	mul r1,r0
+	add r2,43h
+	add r1,r1,r2
+	ldr r0,[r3]
+	add r0,r0,r1
+	bl 802FC64h
+	mov r5,0Dh
+	ldr r1,=1D4Eh
+	add r0,r4,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq ESYNotDucking
+	sub r5,8h
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r2,=0EB6h
+	add r1,r1,r2
+	ldrh r0,[r1]
+	add r0,8h
+	strh r0,[r1]
+ESYNotDucking:
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq ESYNoCollision
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=0EB6h
+	add r1,r0,r2
+	mov r3,0h
+	ldsh r1,[r1,r3]
+	add r1,r1,r5
+	add r2,8h
+	add r0,r0,r2
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	cmp r1,r0
+	blt ESYNoCollision
+	mov r1,8Ch
+	lsl r1,r1,4h
+	add r0,r4,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne ESYNoCollision
+	mov r0,1h
+	b ReturnESY
+	.pool
+ESYNoCollision:
+	mov r0,0h
+ReturnESY:
+	pop r1
+	bx r1
 	
 FreeSpaceCDH:
 	strh r0,[r5,2h]
@@ -1121,16 +1193,13 @@ ReturnNoSwallow:
 	.pool
 	
 FreeSpaceF0T1:
+	ldr r1,=3002340h
 	mov r2,0E3h
 	lsl r2,r2,5h
-	add r2,r1,r2
-	ldrb r3,[r2]
-	cmp r3,9h
-	beq PlayerDied
-	strb r0,[r2]
-PlayerDied:
-	ldrb r0,[r2]
+	add r7,r1,r2
+	ldrb r0,[r7]
 	bx r14
+	.pool
 	
 FreeSpaceRAP:
 	push r14
@@ -1145,34 +1214,96 @@ ReturnRAP:
 	pop r0
 	bx r0
 	
-FreeSpaceFYA:
-	ldrb r2,[r1,1Bh]
-	cmp r2,1h
-	bne YoshiNotMounted
-	add r1,36h
-	strb r0,[r1]
-YoshiNotMounted:
+FreeSpaceYSA:
+	mov r2,r8
+	ldr r1,=1C58h
+	add r3,r2,r1
+	ldr r3,[r3]
+	ldr r1,=115Eh
+	add r3,r3,r1
+	ldrb r3,[r3]
+	ldr r2,=13Fh
+	cmp r3,7h
+	bne NotGhostShip
+	sub r2,4h
+	b EndOfFctYSA
+	.pool
+NotGhostShip:
+	cmp r3,0Bh
+	bne EndOfFctYSA
+	add r2,40h
+EndOfFctYSA:
 	bx r14
 	
-FreeSpaceSYF:
-	ldr r0,=1CB5h
-	add r1,r3,r0
-	ldrb r1,[r1]
-	cmp r1,0h
-	beq YoshiIsSliding
-	sub r0,1h
-	add r0,r3,r0
+FreeSpaceYCD:
+	ldrb r0,[r4,1Ah]
+	cmp r0,9Dh
+	beq EndOfFctNoCollision
+	mov r1,r0
+	sub r1,15h
+	lsl r1,r1,18h
+	lsr r1,r1,18h
+	cmp r1,1h
+	bhi DownCCC1
+	mov r0,r4
+	add r0,3Dh
 	ldrb r0,[r0]
-	lsl r0,r0,18h
-	asr r0,r0,18h
 	cmp r0,0h
-	bne YoshiIsSliding
-	mov r0,1h
-	b ReturnYoshiSlope
+	bne EndOfFctCollisionType1
+	b EndOfFctCollisionType2
+DownCCC1:
+	cmp r0,3h
+	bhi DownCCC2
+	cmp r0,2h
+	beq EndOfFctCollisionType1
+	mov r0,r4
+	add r0,28h
+	ldrb r0,[r0]
+	mov r1,80h
+	and r0,r1
+	cmp r0,0h
+	beq EndOfFctCollisionType1
+	EndOfFctCollisionType2:
+	mov r0,2h
+	b ReturnYCD
+DownCCC2:
+	cmp r0,0BFh
+	bne DownCCC3
+	cmp r6,0h
+	beq EndOfFctNoCollision
+	b EndOfFctCollisionType1
+DownCCC3:
+	cmp r0,7Eh
+	bne DownCCC4
+	ldrb r0,[r4,1Bh]
+	cmp r0,0h
+	beq EndOfFctNoCollision
+	ldr r1,=3002340h
+	mov r2,0E3h
+	lsl r2,r2,5h
+	add r0,r1,r2
+	ldrb r0,[r0]
+	cmp r0,9h
+	beq EndOfFctNoCollision
+	mov r0,3h
+	b ReturnYCD
 	.pool
-YoshiIsSliding:
+DownCCC4:
+	mov r1,r0
+	sub r1,4Dh
+	lsl r1,r1,18h
+	lsr r1,r1,18h
+	cmp r1,1h
+	bhi EndOfFctCollisionType1
+	ldrb r0,[r4,1Bh]
+	cmp r0,1h
+	bls EndOfFctNoCollision
+EndOfFctCollisionType1:
+	mov r0,1h
+	b ReturnYCD
+EndOfFctNoCollision:
 	mov r0,0h
-ReturnYoshiSlope:
+ReturnYCD:
 	bx r14
 	
 FreeSpaceYSP:

@@ -1708,6 +1708,125 @@ CheckStartMusic:
 .org 0x803E298
 	.pool
 	
+.org 0x803E4FC	;Fix extended sprites do not consider Yoshi's hit box on collision check when riding a Yoshi
+	ldr r4,=3002340h
+
+.org 0x803E520
+	bne ESCollisionDetection1
+	bl FreeSpaceESY
+	lsl r0,r0,18h
+	cmp r0,0h
+	bne ESCollisionDetection1
+	b 803E638h
+ESCollisionDetection1:
+	ldrb r0,[r6,18h]
+	cmp r0,0Ah
+	bne ESDealDamage
+	ldr r0,=8C4h
+	add r1,r4,r0
+	ldrh r0,[r6,10h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	lsl r0,r0,10h
+	asr r0,r0,10h
+	bl 803BBA0h
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r2,=68Ah
+	add r1,r1,r2
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+	mov r1,3h
+	ldr r0,=3007A48h
+	ldr r2,[r0]
+	mov r3,0BFh
+	lsl r3,r3,2h
+ESCollisionDetection2:
+	lsl r0,r1,4h
+	add r0,r2,r0
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq ESCollisionDetection3
+	sub r1,1h
+	cmp r1,0h
+	bge ESCollisionDetection2
+ESCollisionDetection3:
+	cmp r1,0h
+	bge ESCollisionDetection4
+	mov r1,0h
+ESCollisionDetection4:
+	ldr r4,=3007A48h
+	lsl r1,r1,4h
+	mov r0,0BCh
+	lsl r0,r0,2h
+	add r1,r1,r0
+	ldr r0,[r4]
+	add r1,r1,r0
+	mov r5,0h
+	ldrh r0,[r6,10h]
+	strh r0,[r1,8h]
+	mov r2,8h
+	ldsh r0,[r1,r2]
+	lsl r0,r0,10h
+	str r0,[r1]
+	ldrh r0,[r6,12h]
+	strh r0,[r1,0Ah]
+	mov r2,0Ah
+	ldsh r0,[r1,r2]
+	lsl r0,r0,10h
+	str r0,[r1,4h]
+	mov r0,0Ah
+	strb r0,[r1,0Dh]
+	bl 803E194h
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	lsl r1,r0,1h
+	add r1,r1,r0
+	lsl r1,r1,3h
+	add r1,0C8h
+	ldr r0,[r4]
+	add r1,r1,r0
+	mov r0,5h
+	strb r0,[r1,14h]
+	ldrh r0,[r6,10h]
+	strh r0,[r1,8h]
+	mov r2,8h
+	ldsh r0,[r1,r2]
+	lsl r0,r0,10h 
+	str r0,[r1]
+	ldrh r0,[r6,12h]
+	strh r0,[r1,0Ah]
+	mov r2,0Ah
+	ldsh r0,[r1,r2]
+	lsl r0,r0,10h 
+	str r0,[r1,4h]
+	mov r0,30h
+	strb r0,[r1,15h]
+	strh r5,[r1,16h]
+	mov r0,r6
+	bl 803E444h
+	b 803E638h
+	.pool
+ESDealDamage:
+	ldr r1,=1C58h
+	add r0,r4,r1
+	ldr r1,[r0]
+	ldr r2,=1158h
+	add r0,r1,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 803E61Eh
+	sub r2,5Eh
+	add r0,r1,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 803E618h
+	bl 8030A00h
+	b 803E638h
+	.pool
+	
 .org 0x804389E	;Adjust draw position of chucks
 	add r0,r2,r0
 	mov r3,0h
@@ -2437,10 +2556,10 @@ DownSkull4:
 .org 0x805C324
 	.pool
 	
-.org 0x805CA4A	;Reset Yoshicolor when reseting yoshi
+.org 0x805CA4A	;Reset Yoshicolor when reseting Yoshi
 	strh r1,[r0]
 	
-.org 0x805CC80	;Update yoshi correctly after dying in lava
+.org 0x805CC80	;Update Yoshi correctly after dying in lava
 	ldr r2,[r0]
 
 .org 0x805CC84
@@ -2576,15 +2695,15 @@ DownCheckSpriteInYoshisMouth:
 	ldrb r4,[r5,1Bh]
 	cmp r4,0h
 	beq 805DC80h
+	bl FreeSpaceF0T1
+	cmp r0,9h
+	beq 805DC80h
 	mov r0,r6
 	bl 805DA7Ch
 	cmp r4,2h
-	bne DownYoshiWings1
-	ldr r1,=3002340h
+	bne DownYoshiWings
 	mov r0,8h
-	bl FreeSpaceF0T1
-	cmp r0,8h
-	bne DownYoshiWings1
+	strb r0,[r7]
 	bl 80714F0h
 	ldr r3,=3002340h
 	ldr r1,=8C4h
@@ -2597,7 +2716,7 @@ DownCheckSpriteInYoshisMouth:
 	strh r0,[r1]
 	mov r0,3Bh
 	bl 809C1C4h
-DownYoshiWings1:
+DownYoshiWings:
 	mov r0,r5
 	bl 805CCD8h
 	b DownDespawnSpriteYoshi
@@ -2639,6 +2758,86 @@ DownSetSwallowTimer:
 .org 0x805DE0C	;Give the Player the correct amount of points when yoshi eats them
 	bl FreeSpaceRAP
 
+.org 0x805E28A	;Fix Yoshi swallow animation is broken in switch palace and sunken ghost ship level
+	b EndOfFctSwallow
+
+.org 0x805E2A8
+	b EndOfFctSwallow
+
+.org 0x805E36A
+	b EndOfFctSwallow
+	
+.org 0x805E3B6
+	ldr r6,=3007A48h
+	ldr r0,[r6]
+	ldr r4,=0EB8h
+
+.org 0x805E3CE
+	ldr r0,=3002340h
+	mov r8,r0
+	ldr r1,=8C4h
+
+.org 0x805E3E4
+	ldr r1,=8C8h
+
+.org 0x805E3F0
+	ldr r4,=0EB6h
+
+.org 0x805E400
+	ldr r3,=810FECCh
+
+.org 0x805E426
+	ldr r1,=0EB6h
+	add r2,r0,r1
+	ldr r1,=810FEF4h
+	ldr r3,=0EB8h
+
+.org 0x805E448
+	ldrb r4,[r7,3h]
+	mov r0,0EFh
+	and r4,r0
+	orr r4,r2
+	ldrh r0,[r7,4h]
+	mov r2,0FCh
+	lsl r2,r2,8h
+	and r0,r2
+	bl FreeSpaceYSA
+	orr r0,r2
+	strh r0,[r7,4h]
+	mov r2,3Fh
+	and r4,r2
+	strb r4,[r7,3h]
+	ldrb r0,[r7,1h]
+	and r0,r2
+	strb r0,[r7,1h]
+	ldr r1,=810A688h
+	ldr r2,=3003F98h
+	ldr r0,[r2]
+	ldr r3,=1177h
+	add r0,r0,r3
+	ldrb r0,[r0]
+	lsr r0,r0,4h
+	add r0,r0,r1
+	ldrb r2,[r0]
+	mov r0,3h
+	and r2,r0
+	lsl r2,r2,2h
+	ldrb r0,[r7,5h]
+	mov r1,0F3h
+	and r0,r1
+	orr r0,r2
+	strb r0,[r7,5h]
+EndOfFctSwallow:
+	add sp,0Ch
+	pop r3-r5
+	mov r8,r3
+	mov r9,r4
+	mov r10,r5
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+
 .org 0x805E536	;Prevents Yoshi from using his pipe animation when he is not mounted by the Player (FYA)
 	bl FreeSpaceFYA
 	
@@ -2678,23 +2877,63 @@ YoshiNotPunched:
 
 .org 0x805ED2C	;Reset Yoshicolor when reseting Yoshi
 	strh r4,[r0]
-	
-.org 0x805EE10	;Fix 0-time glitch (Player touches wings)
-	ldrb r0,[r4,1Ah]
-	cmp r0,0BFh
-	beq 805EEA2h
-	cmp r0,7Eh
-	bne 805EE5Ch
-	ldrb r0,[r4,1Bh]
+
+.org 0x805ED8C	;Fix collision detection when riding Yoshi doesn't consider the player's hitbox
+	push r4-r6,r14
+
+.org 0x805ED94
+	bl 802FBF0h
+	mov r0,r5
+	bl 802FC64h
+	mov r6,0Dh
+	ldr r0,=3002340h
+	ldr r1,=1D4Eh
+	add r0,r0,r1
+	ldrb r0,[r0]
 	cmp r0,0h
-	beq 805EEA2h
+	beq DownYND
+	sub r6,8h
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r2,=0EB6h
+	add r1,r1,r2
+	ldrh r0,[r1]
+	add r0,8h
+	strh r0,[r1]
+DownYND:
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	bne DownYCD1
+	mov r6,0h
+	bl 80349DCh
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq EndOfFctYCD
+DownYCD1:
+	bl FreeSpaceYCD
+	cmp r0,0h
+	beq EndOfFctYCD
+	cmp r0,1h
+	beq DownYCD4
 	cmp r0,2h
-	bne DownYoshiWings2
+	bne DownYCD2
+	mov r0,r4
+	bl 8030960h
+	b EndOfFctYCD
+DownYCD2:
+	cmp r0,3h
+	bne EndOfFctYCD
+	ldrb r0,[r4,1Bh]
+	cmp r0,2h
+	bne DownYCD3
 	ldr r1,=3002340h
-	mov r0,8h
-	bl FreeSpaceF0T1
-	cmp r0,8h
-	bne DownYoshiWings2
+	mov r0,0E3h
+	lsl r0,r0,5h
+	add r2,r1,r0
+	mov r3,8h
+	strb r3,[r2]
 	bl 80714F0h
 	ldr r3,=3002340h
 	ldr r1,=8C4h
@@ -2707,11 +2946,75 @@ YoshiNotPunched:
 	strh r0,[r1]
 	mov r0,3Bh
 	bl 809C1C4h
-DownYoshiWings2:
-	add r0,r4,0
+DownYCD3:
+	mov r0,r4
 	bl 805CCD8h
-	b 805EEA2h
+	b EndOfFctYCD
 	.pool
+DownYCD4:
+	cmp r6,0h
+	beq DownYCD5
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=0EB6h
+	add r1,r0,r2
+	mov r3,0h
+	ldsh r1,[r1,r3]
+	add r1,r1,r6
+	add r2,8h
+	add r0,r0,r2
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	cmp r1,r0
+	blt EndOfFctYCD
+DownYCD5:
+	ldr r0,=3002340h
+	mov r1,8Ch
+	lsl r1,r1,4h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne EndOfFctYCD
+	mov r0,r5
+	mov r1,r4
+	bl 805EC34h
+EndOfFctYCD:
+	pop r4-r6
+	pop r0
+	bx r0
+	.pool
+
+FreeSpaceFYA:
+	ldrb r2,[r1,1Bh]
+	cmp r2,1h
+	bne YoshiNotMounted
+	add r1,36h
+	strb r0,[r1]
+YoshiNotMounted:
+	bx r14
+	
+FreeSpaceSYF:
+	ldr r0,=1CB5h
+	add r1,r3,r0
+	ldrb r1,[r1]
+	cmp r1,0h
+	beq YoshiIsSliding
+	sub r0,1h
+	add r0,r3,r0
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bne YoshiIsSliding
+	mov r0,1h
+	b ReturnYoshiSlope
+	.pool
+YoshiIsSliding:
+	mov r0,0h
+ReturnYoshiSlope:
+	bx r14
 	
 .org 0x805F67A	;Prevents Yoshi from falling through lakitu's cloud and correct Yoshi's position on top of skull platforms if the player also stands on it
 	beq YoshiSolidSprite6

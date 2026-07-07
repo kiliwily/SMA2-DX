@@ -2580,8 +2580,81 @@ LevelListTeleportRoutineReturn:
 	mov r0,4h
 DownDiscoShell:
 
+.org 0x802C192	;Fixes a bug that occurs when dropping/kicking a bob-omb at the same frame it explodes (1)
+	ldr r0,=3002340h
+
 .org 0x802C1A4	;;Fixes a bug that causes Mario/Luigi to drop a sprite carried through a pipe when getting shoot from a diagonal pipe (1)
-	bls 802C1D8h
+	bls DropSprite2
+	
+.org 0x802C1AC	;Fixes a bug that occurs when dropping/kicking a bob-omb at the same frame it explodes (2)
+	ldr r1,=3002340h
+	
+.org 0x802C1B8
+	beq DropSprite2
+	
+.org 0x802C1C0
+	ldr r1,=114Ah
+
+.org 0x802C1C8
+	bne DropSprite2
+	ldrb r0,[r6,1Ch]
+	cmp r0,0Bh
+	beq DropSprite1
+	b 802C398h
+DropSprite1:
+	mov r0,9h
+	strb r0,[r6,1Ch]
+	b 802C398h
+	.pool
+DropSprite2:
+	ldrb r0,[r6,1Ch]
+	cmp r0,8h
+	bne DropSprite3
+	b 802C398h
+DropSprite3:
+	ldr r0,=3002340h
+	ldr r2,=1C58h
+	add r0,r0,r2
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DropSprite4
+	mov r0,r6
+	bl 802AF1Ch
+	mov r0,r6
+	bl 8034964h
+	ldr r1,=3002340h
+	ldr r2,=1C58h
+	add r0,r1,r2
+	ldr r0,[r0]
+	ldr r2,=114Ah
+	add r0,r0,r2
+	ldrb r2,[r0]
+	cmp r2,0h
+	bne DropSprite4
+	ldr r0,=854h
+	add r1,r1,r0
+	ldrh r0,[r1]
+	mov r1,2h
+	and r0,r1
+	lsl r0,r0,10h
+	lsr r0,r0,10h
+	orr r2,r0
+	cmp r2,0h
+	beq DropSprite5
+DropSprite4:
+	mov r0,r6
+	bl 802BED0h
+	b 802C398h
+	.pool
+DropSprite5:
+	ldrb r0,[r6,1Ch]
+	cmp r0,0Bh
+	beq DropSprite6
+	b 802C398h
+DropSprite6:
 
 .org 0x802DD0C	;Fixes a bug that causes several sprites not sinking before despawn in lava
 	ldrb r0,[r5]
@@ -3057,44 +3130,102 @@ FreeSpaceRDF:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.org 0x80316D0	;Fix ducking flag is not considered when touching ghosts
-	ldr r0,=3007A48h
-	ldr r0,[r0]
-	ldr r1,=0EB4h
-	
-.org 0x80316DC
-	ldr r0,=3002340h
-	ldr r4,=1C90h
-
-.org 0x80316EC
-	ldr r0,=3007A48h
-
-.org 0x80316F4
-	ldr r3,=0EB8h
-	
-.org 0x80316FA
-	ldr r3,=3002340h
-	ldr r0,[r3,20h]
-	add r0,0E0h
+.org 0x8031694	;Fix ducking flag and riding a yoshi is not considered when touching ghosts
+	push r4-r6,r14
+	mov r3,r0
+	ldr r4,=3007A48h
+	ldr r0,[r4]
+	ldr r2,=0EBCh
+	add r1,r0,r2
+	ldrh r0,[r3,10h]
+	add r0,2h
+	strh r0,[r1]
+	ldr r0,[r4]
+	add r2,4h
+	add r1,r0,r2
+	mov r0,0Ch
+	strh r0,[r1]
+	ldr r0,[r4]
+	ldr r2,=0EBEh
+	add r1,r0,r2
+	ldrh r0,[r3,12h]
+	sub r0,35h
+	strh r0,[r1]
+	ldr r0,[r4]
+	add r2,4h
+	add r1,r0,r2
+	mov r0,0Ah
+	strh r0,[r1]
+	bl 80349DCh
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	bne HitByABoo
+	ldr r5,=3002340h
+	ldr r1,=1C58h
+	add r0,r5,r1
+	ldr r2,[r0]
+	ldr r1,=10FAh
+	add r0,r2,r1
 	ldrb r0,[r0]
 	cmp r0,0h
-	beq SmallPlayer
-	ldr r1,=1C62h
-	add r0,r3,r1
+	beq NoBooCollision
+	ldr r0,[r4]
+	ldr r2,=689h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	sub r0,1h
+	mov r1,64h
+	mul r1,r0
+	add r2,43h
+	add r1,r1,r2
+	ldr r0,[r4]
+	add r0,r0,r1
+	bl 802FC64h
+	mov r6,0Dh
+	ldr r1,=1D4Eh
+	add r0,r5,r1
 	ldrb r0,[r0]
 	cmp r0,0h
-	bne SmallPlayer
-	mov r1,20h
-	b SetPlayerHeightGhosts
-	.pool
-SmallPlayer:
-	mov r1,14h
-SetPlayerHeightGhosts:
-	ldr r4,=0EBCh
-	add r0,r2,r4
-	strh r1,[r0]
-	
-.org 0x803176C
+	beq YoshiNotDucking
+	sub r6,8h
+	ldr r1,[r4]
+	ldr r2,=0EB6h
+	add r1,r1,r2
+	ldrh r0,[r1]
+	add r0,8h
+	strh r0,[r1]
+YoshiNotDucking:
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq NoBooCollision
+	ldr r0,[r4]
+	ldr r2,=0EB6h
+	add r1,r0,r2
+	mov r3,0h
+	ldsh r1,[r1,r3]
+	add r1,r1,r6
+	add r2,8h
+	add r0,r0,r2
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	cmp r1,r0
+	blt NoBooCollision
+	mov r1,8Ch
+	lsl r1,r1,4h
+	add r0,r5,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne NoBooCollision
+HitByABoo:
+	bl 8031664h
+NoBooCollision:
+	pop r4-r6
+	pop r0
+	bx r0
 	.pool
 	
 .org 0x8031D70	;Fix ghost in sunken ghostship disappear and reappear if the game is frozen
@@ -3363,8 +3494,45 @@ DownThrownA4:
 	.word 0x00000000
 	.word 0x00000000
 
+.org 0x80340A8	;Fixes a bug that causes multiple koopas to hop into the same shell (1)
+	mov r1,r12
+	add r1,22h
+	ldrb r0,[r1]
+
 .org 0x80340B6	;Prevents shellless koopas from hopping into anything that's not a shell
 	cmp r0,0Ch
+	
+.org 0x80340BA	;Fixes a bug that causes multiple koopas to hop into the same shell (2)
+	add r1,9h
+	ldrb r0,[r1]
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
+	beq 803413Ah
+	ldrb r0,[r2,1Bh]
+	cmp r0,0h
+	bne 803413Ah
+	add r2,35h
+	ldrb r1,[r2]
+	mov r0,80h
+	and r0,r1
+	cmp r0,0h
+	beq 80340F8h
+	mov r0,7Fh
+	and r0,r1
+	strb r0,[r2]
+	ldr r0,=0FFFE0000h
+	mov r4,r12
+	str r0,[r4,0Ch]
+	add r4,25h
+	mov r0,20h
+	strb r0,[r4]
+	mov r1,r3
+	add r1,24h
+	strb r0,[r1]
+	strb r0,[r3,1Bh]
+	b 803413Ah
+	.pool
 	
 .org 0x803426A	;Make sprites interact with lightswitch like they interact with flying ?-Block (1)
 	ldrb r0,[r5,1Ah]
@@ -5342,6 +5510,77 @@ SetWhistleChuckValues:
 	lsl r0,r0,1Ch
 	lsr r0,r0,1Ah
 	
+.org 0x80442DE	;Fixes a bug that causes multiple koopas to hop into the same shell (3)
+	b EndFctShellessKoopa
+
+.org 0x8044492
+	b EndFctShellessKoopa
+
+.org 0x8044540
+	b EndFctShellessKoopa
+	
+.org 0x80445CA
+	b EndFctShellessKoopa
+	
+.org 0x8044630
+	b EndFctShellessKoopa
+	
+.org 0x8044642
+	b EndFctShellessKoopa
+	ldr r3,=3007A48h
+	mov r4,r6
+	add r4,2Dh
+	ldrb r0,[r4]
+	mov r5,64h
+	mul r0,r5
+	ldr r1,=6CCh
+	add r0,r0,r1
+	ldr r1,[r3]
+	add r7,r0,r1
+	ldrb r0,[r7,1Ch]
+	cmp r0,7h
+	bls EndFctShellessKoopa
+	ldr r0,[r7,0Ch]
+	cmp r0,0h
+	blt EndFctShellessKoopa
+	ldrb r0,[r7,1Ah]
+	cmp r0,0Ch
+	bhi EndFctShellessKoopa
+	ldrb r0,[r7,1Bh]
+	cmp r0,0h
+	bne EndFctShellessKoopa
+	mov r0,r6
+	bl 802FBF0h
+	mov r0,r7
+	bl 802FC64h
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq EndFctShellessKoopa
+	mov r0,r6
+	bl 802F2F0h
+	mov r1,r7
+	add r1,24h
+	mov r0,10h
+	strb r0,[r1]
+	mov r1,r7
+	add r1,26h
+	ldrb r2,[r1]
+	orr r0,r2
+	strb r0,[r7,1Bh]
+	mov r0,r7
+	add r0,37h
+	mov r1,r9
+	strb r1,[r0]
+EndFctShellessKoopa:
+	pop r3,r4
+	mov r8,r3
+	mov r9,r4
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+	
 .org 0x80452F8	;Fix exploding bobomb death animation
 	mov r0,80h
 	
@@ -6174,6 +6413,58 @@ DownSnakeBlock6:
 	
 .org 0x8055A6A	;Fix priority of smasher
 	mov r0,0Ch
+
+.org 0x8056AEE	;Fix a bug that causes the springboard sfx to play every frame when jumping on a springboard instead of just once
+	add r6,r3,r1
+	ldrh r0,[r6]
+
+.org 0x8056B04
+	b DownSpringBoard1
+
+.org 0x8056B20
+	ldrh r0,[r6]
+	ldr r1,=101h
+	and r0,r1
+	cmp r0,0h
+	beq DownSpringBoard2
+DownSpringBoard1:
+	ldr r1,=3002340h
+	ldr r0,=1C61h
+	add r2,r1,r0
+	mov r0,0Bh
+	strb r0,[r2]
+	ldr r0,=810EBE7h
+	add r0,r5,r0
+	ldrb r2,[r0]
+	ldr r3,=1CCDh
+	add r1,r1,r3
+	ldrb r0,[r0]
+	strb r0,[r1]
+DownSpringBoard2:
+	ldr r1,=3002340h
+	ldr r5,=1C6Dh
+	add r0,r1,r5
+	strb r2,[r0]
+	mov r1,r4
+	add r1,36h
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq DownSpringBoard3
+	b 8056C6Ch
+DownSpringBoard3:	
+	ldr r1,=3002340h
+	ldr r3,=8C4h
+	add r2,r1,r3
+	ldrh r0,[r4,10h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	sub r3,9Ch
+	add r1,r1,r3
+	strh r0,[r1]
+	mov r0,34h
+	bl 809C1C4h
+	b 8056C6Ch
+	.pool
 	
 .org 0x8057212	;Fix player position on top of wall springboard
 	mov r0,30h
@@ -8407,7 +8698,25 @@ IggySecondRoomMessageSpanish:
 
 .org 0x80E6467
 	.byte 0x80
-		
+	
+.org 0x80E64BA	;Fix palette of torpedo ted in enemy roll credits
+	.byte 0x73
+
+.org 0x80E64BE
+	.byte 0x73
+
+.org 0x80E64C2
+	.byte 0x73
+
+.org 0x80E64C6
+	.byte 0x73
+
+.org 0x80E64D6
+	.byte 0x73
+
+.org 0x80E64DA
+	.byte 0x73
+
 .org 0x80E6551	;Fix position of spiny in enemy roll credits
 	.byte 0x80
 
