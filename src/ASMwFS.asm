@@ -1708,7 +1708,7 @@ CheckStartMusic:
 .org 0x803E298
 	.pool
 	
-.org 0x803E4FC	;Fix extended sprites do not consider Yoshi's hit box on collision check when riding a Yoshi
+.org 0x803E4FC	;Fix extended sprites do not consider Yoshi's hitbox on collision check when riding a Yoshi
 	ldr r4,=3002340h
 
 .org 0x803E520
