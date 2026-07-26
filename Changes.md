@@ -32,7 +32,8 @@
 - The speed of an item that a sprite gets changed into when being carried through the goal was reduced to prevent it from going offscreen and despawning.
 - Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
 - Despawn the sprite in yoshis mouth when yoshi despawns.
-- Made the lightswitch solid for and hitable with sprites.
+- Made the lightswitch and infoboxes triggerable with sprites.
+- Made the lightswitch, infoboxes, flying question blocks, the coin counter block in Donut Plains 1 and the 2 tile wide flying turnblock plattform triggerable with the cape.
 - Lemmy/Wendy no longer give points when stomping on them, because no other boss does that.
 - Made the amount of points the Player gets when crushing two sprites together depending on how many of the sprites die.
 - Animated the berries in the "Welcome to dinosaurland" and the Yoshi's house credits scene (Credits: Mister Man).
@@ -57,6 +58,7 @@
 - The red berry and pink berry counter for yoshi now gets reset every time a new yoshi spawns.
 - Teleportation between levels is now unlocked from the start of the game.
 - Castles and fortresses can be reentered after beating them even before Bowser is defeated.
+- Made it possible for wigglers to also spawn in sprite slots greater then 2.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.

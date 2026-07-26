@@ -1392,6 +1392,161 @@ DoCoinCheck:
 	bne 8033958h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Make sprites interact with lightswitch and infoboxes like they interact with flying ?-Block
+.org 0x803426A
+	ldrb r0,[r5,1Ah]
+	cmp r0,0B9h
+	beq DownLightSwitch
+	cmp r0,0C8h
+	beq DownLightSwitch
+	sub r0,83h
+	cmp r0,1h
+	bhi 803429Ch
+DownLightSwitch:
+	mov r0,r4
+	bl 802FCECh
+	mov r0,0h
+	str r0,[r4,0Ch]
+	mov r0,r5
+	bl 8033DA4h
+	b 803441Ah
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	
+.org 0x8034468
+	cmp r0,0B9h
+	beq TriggerableBlockHit
+	cmp r0,0C8h
+	beq TriggerableBlockHit
+	sub r0,83h
+	cmp r0,1h
+	bhi 80344B2h
+TriggerableBlockHit:
+	ldrb r0,[r4,1Ah]
+	cmp r0,53h
+	bne 80344A0h
+	mov r0,r4
+	add r0,57h
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 80344A0h
+	mov r0,r4
+	bl 80601C8h
+	ldr r1,=0FFFF4000h
+	ldr r0,[r4,8h]
+	cmp r0,0h
+	bge DownSpritePositiveSpeed
+	mov r1,0C0h
+	lsl r1,r1,8h
+DownSpritePositiveSpeed:
+	str r1,[r4,8h]
+	b 80344AAh
+	.pool
+	
+.org 0x80344FC
+	push r4-r7,r14
+	mov r5,r0
+	mov r4,r1
+	mov r6,0h
+	mov r7,r4
+StartSpriteCheck:
+	ldrb r0,[r7,1Ah]
+	cmp r0,3Eh
+	beq SkipSprite
+	cmp r0,80h
+	beq SkipSprite
+	cmp r0,0B9h
+	beq ActivateBlock
+	cmp r0,0C8h
+	beq ActivateBlock
+	sub r0,83h
+	cmp r0,1h
+	bhi KillSprite
+ActivateBlock:
+	mov r0,r7
+	bl 8033DA4h
+	b SkipSprite
+KillSprite:
+	mov r0,2h
+	strb r0,[r7,1Ch]
+	ldr r0,=0FFFD0000h
+	str r0,[r7,0Ch]
+	add r6,1h
+SkipSprite:
+	cmp r7,r5
+	beq EndOfSpriteCheck
+	mov r7,r5
+	b StartSpriteCheck
+	.pool
+EndOfSpriteCheck:
+	mov r0,r4
+	bl 8033E58h
+	cmp r6,0h
+	beq NoSpriteKilled
+	mov r1,1h
+	cmp r6,2h
+	bne OneSpriteKilled
+	mov r1,3h
+OneSpriteKilled:
+	mov r0,r4
+	bl 803E430h
+NoSpriteKilled:
+	mov r1,80h
+	lsl r1,r1,9h
+	ldr r0,[r4,8h]
+	cmp r0,0h
+	blt SpriteDirection
+	neg r1,r1
+SpriteDirection:
+	neg r0,r1
+	str r1,[r4,8h]
+	str r0,[r5,8h]
+	pop r4-r7
+	pop r0
+	bx r0
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	
+.org 0x80346F2
+	bl FreeSpaceSCD
+	cmp r0,0h
+	beq DownSpriteCollision1
+	b 803494Ah
+DownSpriteCollision1:
+	mov r2,r5
+	add r2,42h
+	mov r3,r6
+	add r3,42h
+	ldrb r0,[r2]
+	ldrb r1,[r3]
+	orr r0,r1
+	mov r1,8h
+	and r0,r1
+	sub r2,1Dh
+	ldrb r1,[r2]
+	orr r0,r1
+	sub r3,1Dh
+	ldrb r1,[r3]
+	orr r0,r1
+	add r2,0Dh
+	ldrb r1,[r2]
+	orr r0,r1
+	cmp r0,0h
+	beq DownSpriteCollision2
+	b 803494Ah
+DownSpriteCollision2:
+	add r2,0Ah
+	ldrb r0,[r2]
+	add r3,17h
+	ldrb r1,[r3]
+	cmp r0,r1
+	beq 8034734h
+	b 803494Ah
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Make turnblocks from 3-tile flying turnblock platform impassable from below like all the other turnblocks
 .org 0x8035562
 	ldr r3,=1CEDh
@@ -1826,6 +1981,150 @@ ESDealDamage:
 	bl 8030A00h
 	b 803E638h
 	.pool
+
+.org 0x80413A0	;Swap draw order of amazing flying hammer bro and his platform to prevent the wings of the platform from getting drawn in front of the hammer bro and make his flying grey blocks also triggerable with the cape
+	ldr r0,=3002340h
+	ldr r1,=894h
+	add r0,r0,r1
+	ldrb r0,[r0] 
+	lsr r0,r0,3h
+	mov r1,1h
+	and r0,r1
+	mov r1,r5
+	add r1,48h
+	strb r0,[r1]
+	sub r1,1Bh
+	mov r0,0FFh
+	strb r0,[r1]
+	mov r6,9h
+	ldr r2,=3007A48h
+HammerBroLoopStart:
+	mov r0,64h
+	mul r0,r6
+	ldr r1,=6CCh
+	add r0,r0,r1
+	ldr r1,[r2]
+	add r4,r0,r1
+	ldrb r0,[r4,1Ch]
+	cmp r0,8h
+	bne HammerBroLoopCheck
+	ldrb r0,[r4,1Ah]
+	cmp r0,9Bh
+	bne HammerBroLoopCheck
+	mov r1,r5
+	add r1,2Dh
+	strb r6,[r1]
+	ldr r0,[r5]
+	str r0,[r4]
+	ldrh r0,[r5,10h]
+	strh r0,[r4,10h]
+	ldr r0,[r5,4h]
+	ldr r1,=0FFF00000h
+	add r0,r0,r1
+	str r0,[r4,4h]
+	ldrh r0,[r5,12h]
+	sub r0,0Fh
+	strh r0,[r4,12h]
+	ldr r0,[r2]
+	mov r1,0F6h
+	lsl r1,r1,4h
+	add r2,r0,r1
+	mov r1,r5
+	add r1,34h
+	ldrb r0,[r1]
+	ldrb r3,[r2]
+	strb r3,[r1]
+	mov r1,r4
+	add r1,34h
+	strb r0,[r1]
+	ldr r3,=813A807h
+	ldrb r0,[r3]
+	ldrb r1,[r2]
+	add r0,r0,r1
+	strb r0,[r2]
+	mov r0,r4
+	bl 804191Ch
+	b HammerBroLoopEnd
+	.pool
+HammerBroLoopCheck:
+	sub r6,1h
+	cmp r6,0h
+	bge HammerBroLoopStart
+HammerBroLoopEnd:
+	mov r0,r5
+	bl 80415ACh
+	cmp r6,0h
+	bge HammerBroNotAlive
+	mov r0,3h
+	strb r0,[r5,1Bh]
+HammerBroNotAlive:
+	ldr r4,=3002340h
+	ldr r1,=1C58h
+	add r0,r4,r1
+	ldr r0,[r0]
+	ldr r2,=1190h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq HammerBroGameNotFrozen
+	b CheckPlattformHit
+HammerBroGameNotFrozen:
+	mov r0,r5
+	bl 802FA2Ch
+	ldr r1,=894h
+	add r0,r4,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne 80414CAh
+	mov r2,r5
+	add r2,21h
+	ldrb r6,[r2]
+	
+.org 0x8041478
+	ldr r0,=810C374h
+	
+.org 0x8041488
+	ldr r0,=810C376h
+
+.org 0x80414A6
+	ldr r0,=810C378h
+
+.org 0x80414B6
+	ldr r0,=810C37Ah
+
+.org 0x80414D6
+	ldr r4,=3007A48h
+	ldr r0,[r4]
+	ldr r2,=0EE9h
+	add r0,r0,r2
+	mov r1,r5
+	add r1,20h
+	ldrb r0,[r0]
+	strb r0,[r1]
+CheckPlattformHit:
+	mov r0,r5
+	bl 8035324h
+	mov r0,r5
+	bl CheckCapeTrigger
+	mov r0,r5
+	add r0,24h
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 8041566h
+	mov r0,1h
+	strb r0,[r5,1Bh]
+	mov r0,r5
+	bl 802FB18h
+	ldr r0,[r4]
+	ldr r1,=0ECEh
+	add r0,r0,r1
+	mov r2,0h
+	ldsh r0,[r0,r2]
+
+.org 0x804156C
+	.pool
 	
 .org 0x804389E	;Adjust draw position of chucks
 	add r0,r2,r0
@@ -2017,6 +2316,166 @@ DownChucks1:
 	mov r1,1h
 
 .org 0x80441D0
+	.pool
+	
+.org 0x8048D88	;Adjust draw height of flying question block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated and make it triggerable with the cape
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r0,[r0]
+	ldr r2,=1190h
+
+.org 0x8048DB4
+	mov r0,r4
+	add r0,34h
+	ldrb r0,[r0]
+	lsl r0,r0,3h
+	ldr r2,=3002C28h
+	add r6,r0,r2
+	mov r0,r4
+	add r0,20h
+	mov r1,0h
+	strb r1,[r0]
+	ldrb r0,[r4,1Bh]
+	cmp r0,0h
+	bne DownFB4
+	mov r0,r4
+	bl 802E234h
+	ldr r5,=3002340h
+	ldr r3,=1C58h
+	add r0,r5,r3
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne DownFB4
+	ldr r2,=894h
+	add r0,r5,r2
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne DownFB1
+	mov r3,r4
+	add r3,2Dh
+	ldrb r0,[r3]
+	mov r2,r0
+	and r2,r1
+	ldr r0,=810D1DCh
+	lsl r2,r2,2h
+	add r0,r2,r0
+	ldr r1,[r4,0Ch]
+	ldr r0,[r0]
+	add r1,r1,r0
+	str r1,[r4,0Ch]
+	ldr r0,=810D1ECh
+	add r2,r2,r0
+	ldr r0,[r2]
+	cmp r1,r0
+	bne DownFB1
+	ldrb r0,[r3]
+	add r0,1h
+	strb r0,[r3]
+DownFB1:
+	mov r0,r4
+	bl 802F254h
+	ldrb r0,[r4,1Ah]
+	cmp r0,83h
+	beq DownFB2
+	mov r5,r4
+	add r5,22h
+	ldrb r0,[r5]
+	cmp r0,0h
+	bne DownFB3
+	ldr r0,=3002340h
+	ldr r2,=894h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	mov r1,3h
+	and r0,r1
+	cmp r0,0h
+	bne DownFB3
+	mov r3,r4
+	add r3,21h
+	ldrb r1,[r3]
+	mov r0,1h
+	mov r2,r1
+	and r2,r0
+	ldr r0,=810D1E4h
+	lsl r2,r2,2h
+	add r0,r2,r0
+	ldr r1,[r4,8h]
+	ldr r0,[r0]
+	add r1,r1,r0
+	str r1,[r4,8h]
+	ldr r0,=810D1F4h
+	add r2,r2,r0
+	ldr r0,[r2]
+	cmp r1,r0
+	bne DownFB3
+	ldrb r0,[r3]
+	add r0,1h
+	strb r0,[r3]
+	mov r0,20h
+	strb r0,[r5]
+	b DownFB3
+	.pool
+	.halfword 0x0000
+	
+DownFB2:
+	ldr r0,=0FFFF4000h
+	str r0,[r4,8h]
+DownFB3:
+	mov r0,r4
+	bl 802F214h
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=0EE9h
+	add r0,r0,r3
+	mov r1,r4
+	add r1,20h
+	ldrb r0,[r0]
+	strb r0,[r1]
+	add r1,9h
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+DownFB4:
+	mov r0,r4
+	bl FreeSpaceBTC
+	mov r0,r4
+	bl 802F9D8h
+	mov r0,r4
+	add r0,24h
+	ldrb r7,[r0]
+	cmp r7,8h
+	bne 8048F60h
+	ldrb r2,[r4,1Bh]
+	cmp r2,2h
+	beq 8048F60h
+	ldrb r0,[r4,1Bh]
+	add r0,1h
+	strb r0,[r4,1Bh]
+	mov r0,0h
+	str r0,[r4,8h]
+	str r0,[r4,0Ch]
+	mov r1,r4
+	add r1,28h
+	mov r0,50h
+	strb r0,[r1]
+	ldr r3,=3002340h
+	ldr r5,=1C58h
+	add r2,r3,r5
+	ldr r1,[r2]
+	ldrh r0,[r4,10h]
+	strh r0,[r1,30h]
+	ldr r1,[r2]
+	ldrh r0,[r4,12h]
+	add r0,1h
+	strh r0,[r1,2Ch]
+
+.org 0x8048F92
 	.pool
 
 .org 0x804923C	;Prevent yoshi from eating sparks (FYS)
@@ -2325,6 +2784,9 @@ DownDCB:
 
 .org 0x8054130
 	bl FreeSpaceDCF
+	
+.org 0x8055ADA	;Make infoboxes triggerable with thrown sprites and the cape spin
+	bl FreeSpaceBTC
 
 .org 0x805695C	;Part of fix item carry (FIC)
 	push r4-r6,r14
@@ -2528,12 +2990,116 @@ DownSkull4:
 	bx r0
 	.pool
 	
-.org 0x8057A64	;Make lightswitch solid for sprites
-	bl 8034964h
-	mov r0,r7
-	bl 8035324h
-	mov r0,r7
-	bl FreeSpaceSLS
+.org 0x8057A64	;Make lightswitch triggerable with thrown sprites and the cape spin
+	bl FreeSpaceBTC
+
+.org 0x80580C8	;Prevent issues when 2 wigglers spawn in sprite slots that are exactly 4 slots apart
+	bl FreeSpaceWIF
+	cmp r0,3h
+	bhi DownWIF2
+DownWIF1:
+	mov r3,r4
+	add r3,2Dh
+	strb r0,[r3]
+	lsl r0,r0,1h
+	ldr r2,=810EE9Ch
+	add r0,r0,r2
+	ldrh r1,[r0]
+	lsl r0,r1,1h
+	ldr r2,=20144F0h
+	add r0,r0,r2
+	ldrh r2,[r4,10h]
+	strh r2,[r0]
+	lsl r2,r1,1h
+	ldr r3,=20144F2h
+	add r2,r2,r3
+	ldrh r3,[r4,12h]
+	strh r3,[r2]
+	lsl r1,r1,1h
+	ldr r2,=20144F4h
+	add r1,r1,r2
+	mov r2,7Eh
+	bl 809EBB8h
+	mov r0,r4
+	bl 802FB18h
+	add r4,2Ah
+	strb r0,[r4]
+	b DownWIF3
+	.pool
+DownWIF2:
+	mov r0,0h
+	strb r0,[r4,1Ch]
+DownWIF3:
+	pop r4
+	pop r0
+	bx r0
+	.halfword 0x0000
+	
+.org 0x80582B0
+	ldr r2,=810EE9Ch
+	mov r0,r4
+	add r0,2Dh
+	ldrb r0,[r0]
+	mov r1,3h
+	and r0,r1
+	lsl r0,r0,1h
+	add r0,r0,r2
+	ldrh r4,[r0]
+	lsl r0,r4,1h
+	ldr r2,=20144F4h
+	add r0,r0,r2
+	lsl r1,r4,1h
+	ldr r2,=20144F0h
+	add r1,r1,r2
+	mov r2,7Eh
+	bl 809EBB8h
+	lsl r0,r4,1h
+	ldr r1,=20145ECh
+	add r0,r0,r1
+	ldrh r1,[r5,10h]
+	strh r1,[r0]
+	lsl r4,r4,1h
+	ldr r2,=20145EEh
+	add r4,r4,r2
+	ldrh r0,[r5,12h]
+	strh r0,[r4]
+	pop r4,r5
+	pop r0
+	bx r0
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x805831E
+	ldr r0,=3007A48h
+	
+.org 0x8058324
+	ldr r3,=0EB8h
+	
+.org 0x8058332
+	ldr r1,=3002C30h
+	add r5,r0,r1
+	ldr r3,=810EE9Ch
+	mov r0,r6
+	add r0,2Dh
+	ldrb r0,[r0]
+
+.org 0x805834E
+	ldr r7,=3007A48h
+	ldr r1,=3002C08h
+	
+.org 0x8058370
+	ldr r0,=810EECCh
+	
+.org 0x8058384
+	ldr r4,=0EC6h
+	
+.org 0x805838C
+	.pool
+	.word 0x00000000
+	
+.org 0x8058AC0
+	.halfword 0x0894
 
 .org 0x805C2A6	;Prevent invalid Yoshi palette
 	ldr r6,[r3,20h]
@@ -3128,6 +3694,10 @@ YoshiSolidSprite9:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Make the coin counter in Donut Plains 1 triggerable with the cape
+.org 0x806082C
+	bl FreeSpaceBTC
+
 ;Fixed a bug that causes the Player to climb in the air when getting pushed from a rope mechanism by a solid block and stop the rope mechanism carrying the Player when they touch the ground
 .org 0x8063322
 	ldr r5,=3002340h
@@ -3224,11 +3794,8 @@ DownMushroom:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Gives Iggy Koopa his correct hair tile (FIH)
-.org 0x8066460
+.org 0x806645E
 	bl FreeSpaceFIH
-	cmp r0,4h
-	bhi 806647Eh
-	lsr r0,r0,1h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others

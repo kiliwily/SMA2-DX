@@ -669,6 +669,44 @@ DownFCS2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceSCD:
+	ldrb r0,[r5,1Ah]
+	ldrb r1,[r6,1Ah]
+	cmp r0,3Eh
+	beq Sprite1KeyPSwitch
+	cmp r0,80h
+	bne Sprite1OtherSprite
+Sprite1KeyPSwitch:
+	cmp r1,0B9h
+	beq DoCollisionCheck
+	cmp r1,0C8h
+	beq DoCollisionCheck
+	sub r1,83h
+	cmp r1,1h
+	bhi ReturnNoCollision
+DoCollisionCheck:
+	mov r0,0h
+	b ReturnContinueCollisionChecks
+Sprite1OtherSprite:
+	cmp r1,3Eh
+	beq Sprite2KeyPSwitch
+	cmp r1,80h
+	bne DoCollisionCheck
+Sprite2KeyPSwitch:
+	cmp r0,0B9h
+	beq DoCollisionCheck
+	cmp r0,0C8h
+	beq DoCollisionCheck
+	sub r0,83h
+	cmp r0,1h
+	bls DoCollisionCheck
+ReturnNoCollision:
+	mov r0,1h
+ReturnContinueCollisionChecks:
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceSSI2:
 	mov r1,0h
 	cmp r4,83h
@@ -972,6 +1010,124 @@ FreeSpaceCDH:
 	add r4,1h
 	strb r4,[r5]
 	bx r14
+
+FreeSpaceBTC:
+	push r4,r14
+	mov r4,r0
+	ldrb r0,[r4,1Ah]
+	cmp r0,0C9h
+	beq CoinCounterBlock
+	mov r0,r4
+	bl 8034964h
+CoinCounterBlock:
+	mov r0,r4
+	bl 8035324h
+	mov r0,r4
+	bl CheckCapeTrigger
+SwitchNotHit:
+	pop r4
+	pop r0
+	bx r0
+
+CheckCapeTrigger:
+	push r4-r6,r14
+	mov r6,r0
+	ldr r4,=3002340h
+	ldr r2,=1C58h
+	add r0,r4,r2
+	ldr r0,[r0]
+	ldr r1,=10FAh
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne ReturnNoCapeTrigger
+	ldr r1,[r4,20h]
+	add r1,0E0h
+	ldrb r0,[r1]
+	cmp r0,2h
+	bne ReturnNoCapeTrigger
+	ldr r5,=3007A48h
+	ldr r0,[r5]
+	ldr r1,=0EE1h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq ReturnNoCapeTrigger
+	add r2,6Ah
+	add r0,r4,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne ReturnNoCapeTrigger
+	sub r2,62h
+	add r0,r4,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne ReturnNoCapeTrigger
+	ldr r2,=894h
+	add r0,r4,r2
+	ldrb r0,[r0]
+	mov r0,1h
+	and r0,r1
+	cmp r0,0h
+	beq ReturnNoCapeTrigger
+	mov r0,r6
+	add r0,3Ch
+	ldrb r1,[r0]
+	ldr r2,=1C63h
+	add r0,r4,r2
+	mov r3,0h
+	ldsb r0,[r0,r3]
+	cmp r0,0h
+	bge DownNoLayerChange
+	mov r0,1h
+	eor r1,r0
+DownNoLayerChange:
+	add r2,5Dh
+	add r0,r4,r2
+	ldrb r0,[r0]
+	cmp r1,r0
+	bne ReturnNoCapeTrigger
+	mov r0,r6
+	bl 802FBF0h
+	bl 803CE40h
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq ReturnNoCapeTrigger
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=0EB6h
+	add r1,r0,r2
+	mov r3,0h
+	ldsh r1,[r1,r3]
+	add r1,0Ch
+	add r2,8h
+	add r0,r0,r2
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	cmp r1,r0
+	ble ReturnNoCapeTrigger
+	mov r1,r6
+	add r1,25h
+	ldrb r0,[r1]
+	cmp r0,0h
+	bne ReturnNoCapeTrigger
+	mov r0,14h
+	strb r0,[r1]
+	ldrb r0,[r6,1Bh]
+	cmp r0,0h
+	bne ReturnNoCapeTrigger
+	ldrb r0,[r6,1Bh]
+	add r0,1h
+	strb r0,[r6,1Bh]
+	sub r1,1h
+	mov r0,10h
+	strb r0,[r1]
+ReturnNoCapeTrigger:
+	pop r4-r6
+	pop r0
+	bx r0
+	.pool
 	
 FreeSpaceFYS:
 	ldrb r0,[r2,1Ah]
@@ -1116,15 +1272,61 @@ FreeSpaceFSB:
 	strh r1,[r0]
 	bx r14
 	
-FreeSpaceSLS:
-	push r14
-	bl 802F9F0h
-	mov r0,r7
-	add r0,24h
+FreeSpaceWIF:
+	push r4-r6
+	ldr r3,=3007A48h
+	ldr r0,[r3]
+	ldr r1,=0ED5h
+	add r0,r0,r1
+	ldrb r4,[r0]
+	ldr r2,=6CCh
+	mov r5,0h
+	mov r6,0Bh
+WIFLoop1Start:
+	cmp r6,r4
+	beq WIFLoop1Continue
+	mov r1,64h
+	mul r1,r6
+	add r1,r1,r2
+	ldr r0,[r3]
+	add r0,r0,r1
+	ldrb r1,[r0,1Ah]
+	cmp r1,86h
+	bne WIFLoop1Continue
+	ldrb r1,[r0,1Ch]
+	cmp r1,1h
+	bls WIFLoop1Continue
+	add r0,2Dh
 	ldrb r0,[r0]
-SwitchNotHit:
-	pop r1
-	bx r1
+	mov r1,3h
+	and r0,r1
+	mov r1,1h
+	lsl r1,r0
+	orr r5,r1
+WIFLoop1Continue:
+	sub r6,1h
+	cmp r6,0h
+	bge WIFLoop1Start
+	cmp r5,0Fh
+	beq WIFNoFreeSlot
+	mov r0,0h
+	cmp r5,0h
+	beq WIFLoop2Break
+	mov r1,1h
+WIFLoop2Start:
+	and r1,r5
+	cmp r1,0h
+	beq WIFLoop2Break
+	lsl r1,r1,1h
+	add r0,1h
+	cmp r0,3h
+	bls WIFLoop2Start
+WIFNoFreeSlot:
+	mov r0,0FFh
+WIFLoop2Break:
+	pop r4-r6
+	bx r14
+	.pool
 	
 FreeSpacePIA:
 	cmp r0,1h
@@ -1438,19 +1640,25 @@ ReturnNoTileChange:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFIH:
+	mov r0,0FFh
 	and r0,r2
 	cmp r0,0Ch
 	bne NotIggyOne
-	add r3,1Eh
+	ldr r2,=12Ah
 	b UpdateHair
+	.pool
 NotIggyOne:
 	cmp r0,2Ch
 	bne NotIggyTwo
-	sub r3,1h
+	ldr r2,=12Bh
 UpdateHair:
-	strh r3,[r4,4h]
+	mov r1,r3
+	and r1,r5
+	orr r1,r2
+	strh r1,[r4,4h]
 NotIggyTwo:
 	bx r14
+	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

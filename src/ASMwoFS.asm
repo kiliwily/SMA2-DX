@@ -3430,6 +3430,10 @@ DownOne:
 .pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Prevent thrown sprites from activating info boxes multiple times in a row
+.org 0x8033DAC
+	mov r0,14h
+
 .org 0x8033EAC	;Allow to get up to a 5up for throwing a shell etc. into multiple other enemies
 	ldr r2,=3002340h
 	ldr r0,=8C4h
@@ -3534,27 +3538,6 @@ DownThrownA4:
 	b 803413Ah
 	.pool
 	
-.org 0x803426A	;Make sprites interact with lightswitch like they interact with flying ?-Block (1)
-	ldrb r0,[r5,1Ah]
-	cmp r0,0C8h
-	beq DownLightSwitch
-	sub r0,83h
-	cmp r0,1h
-	bhi 803429Ch
-DownLightSwitch:
-	mov r0,r4
-	bl 802FCECh
-	mov r0,0h
-	str r0,[r4,0Ch]
-	mov r0,r5
-	bl 8033DA4h
-	b 803441Ah
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000	
-	
 .org 0x8034332	;Allow to get up to a 5up for throwing a shell etc. into multiple other enemies
 	ldr r0,=0FFFD0000h
 	str r0,[r5,0Ch]
@@ -3625,79 +3608,6 @@ DownThrownB4:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
-	
-.org 0x8034468	;Make sprites interact with lightswitch like they interact with flying ?-Block (2)
-	cmp r0,0C8h
-	beq 80344A0h
-	mov r2,r0
-	sub r2,83h
-	cmp r2,1h
-	bhi 80344B2h
-	
-.org 0x8034502
-	mov r6,0h
-	ldrb r0,[r4,1Ah]
-	cmp r0,0C8h
-	beq ActivateBlock1
-	sub r0,83h
-	cmp r0,1h
-	bhi KillSprite1
-ActivateBlock1:
-	mov r0,r4
-	bl 8033DA4h
-	b CheckSprite2
-KillSprite1:
-	mov r0,2h
-	strb r0,[r4,1Ch]
-	ldr r0,=0FFFD0000h
-	str r0,[r4,0Ch]
-	add r6,1h
-CheckSprite2:
-	ldrb r0,[r5,1Ah]
-	cmp r0,80h
-	beq EndOfSpriteCheck
-	cmp r0,0C8h
-	beq ActivateBlock2
-	sub r0,83h
-	cmp r0,1h
-	bhi KillSprite2
-ActivateBlock2:
-	mov r0,r5
-	bl 8033DA4h
-	b EndOfSpriteCheck
-KillSprite2:	
-	mov r0,2h
-	strb r0,[r5,1Ch]
-	ldr r0,=0FFFD0000h
-	str r0,[r5,0Ch]
-	add r6,1h
-EndOfSpriteCheck:
-	mov r0,r4
-	bl 8033E58h
-	cmp r6,0h
-	beq OneSpriteKilled
-	mov r1,1h
-	cmp r6,2h
-	bne OneSpriteKilled
-	mov r1,3h
-OneSpriteKilled:
-	mov r0,r4
-	bl 803E430h
-NoSpriteKilled:
-	mov r1,80h
-	lsl r1,r1,9h
-	ldr r0,[r4,8h]
-	cmp r0,0h
-	blt SpriteDirection
-	neg r1,r1
-SpriteDirection:
-	neg r0,r1
-	str r1,[r4,8h]
-	str r0,[r5,8h]
-	pop r4-r6
-	pop r0
-	bx r0
-	.pool
 	
 .org 0x803516A	;Fixes a bug that causes big sprites to lose their interaction with the Player if too big parts of their sprite is horizonztally offscreen (2)
 	bne DoPlayerInteraction
@@ -3803,7 +3713,13 @@ DownStar5up:
 	blt CheckSpriteDownwardsSpeed
 	b 80356F6h
 CheckSpriteDownwardsSpeed:
-	bl FreeSpaceSDS
+	mov r3,0h
+	ldr r1,[r5,0Ch]
+	cmp r1,0h
+	ble SpriteMovesNotDownwards
+	mov r3,10h
+SpriteMovesNotDownwards:
+	strb r3,[r0]
 	ldr r3,=1C94h
 	add r1,r2,r3
 	ldrh r1,[r1]
@@ -3821,11 +3737,17 @@ CheckSpriteDownwardsSpeed:
 	bne CheckSpriteId
 	b 80356F6h
 	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.halfword 0x0000
 	
 CheckSpriteId:
 	bl FreeSpaceCSH
 	cmp r0,0h
 	beq 803553Ah
+	mov r0,r5
+	bl 8033DA4h
+	b 80356F6h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x80357F4	;Fix a bug that causes the game to softlock if obtaining a feather offscreen during autoscroll
@@ -5250,112 +5172,6 @@ No1upSound:
 .org 0x8040A5C	;boo blocks
 	mov r1,0h
 
-.org 0x80413A0	;Swap draw order of amazing flying hammer bro and his platform to prevent the wings of the platform from getting drawn in front of the hammer bro
-	ldr r0,=3002340h
-	ldr r1,=894h
-	add r0,r0,r1
-	ldrb r0,[r0] 
-	lsr r0,r0,3h
-	mov r1,1h
-	and r0,r1
-	mov r1,r5
-	add r1,48h
-	strb r0,[r1]
-	sub r1,1Bh
-	mov r0,0FFh
-	strb r0,[r1]
-	mov r6,9h
-	ldr r2,=3007A48h
-HammerBroLoopStart:
-	mov r0,64h
-	mul r0,r6
-	ldr r1,=6CCh
-	add r0,r0,r1
-	ldr r1,[r2]
-	add r4,r0,r1
-	ldrb r0,[r4,1Ch]
-	cmp r0,8h
-	bne HammerBroLoopCheck
-	ldrb r0,[r4,1Ah]
-	cmp r0,9Bh
-	bne HammerBroLoopCheck
-	mov r1,r5
-	add r1,2Dh
-	strb r6,[r1]
-	ldr r0,[r5]
-	str r0,[r4]
-	ldrh r0,[r5,10h]
-	strh r0,[r4,10h]
-	ldr r0,[r5,4h]
-	ldr r1,=0FFF00000h
-	add r0,r0,r1
-	str r0,[r4,4h]
-	ldrh r0,[r5,12h]
-	sub r0,0Fh
-	strh r0,[r4,12h]
-	ldr r0,[r2]
-	mov r1,0F6h
-	lsl r1,r1,4h
-	add r2,r0,r1
-	mov r1,r5
-	add r1,34h
-	ldrb r0,[r1]
-	ldrb r3,[r2]
-	strb r3,[r1]
-	mov r1,r4
-	add r1,34h
-	strb r0,[r1]
-	ldr r3,=813A807h
-	ldrb r0,[r3]
-	ldrb r1,[r2]
-	add r0,r0,r1
-	strb r0,[r2]
-	mov r0,r4
-	bl 804191Ch
-	b HammerBroLoopEnd
-	.pool
-HammerBroLoopCheck:
-	sub r6,1h
-	cmp r6,0h
-	bge HammerBroLoopStart
-HammerBroLoopEnd:
-	mov r0,r5
-	bl 80415ACh
-	cmp r6,0h
-	bge HammerBroNotAlive
-	mov r0,1h
-	strb r0,[r5,1Bh]
-HammerBroNotAlive:
-	ldr r4,=3002340h
-	ldr r1,=1C58h
-	add r0,r4,r1
-	ldr r0,[r0]
-	ldr r2,=1190h
-	add r0,r0,r2
-	ldrb r0,[r0]
-	cmp r0,0h
-	beq HammerBroGameNotFrozen
-	b 8041566h
-HammerBroGameNotFrozen:
-	mov r0,r5
-	bl 802FA2Ch
-	ldr r1,=894h
-	add r0,r4,r1
-	ldrb r0,[r0]
-	mov r1,1h
-	and r0,r1
-	cmp r0,0h
-	bne 80414CAh
-	mov r2,r5
-	add r2,21h
-	ldrb r6,[r2]
-
-.org 0x8041560	;Make amazing flying hammer bro give 200p when killing him by hitting blocks from below like every other enemy does
-	mov r1,1h
-
-.org 0x804156C
-	.pool
-
 .org 0x804163C	;Fix wings of 2-tile flying gray turn blocks get drawn in front of blocks
 	mov r6,0h
 
@@ -5733,166 +5549,6 @@ LoopSuperKoopa:
 
 .org 0x8046AD6
 	b LoopSuperKoopa
-
-.org 0x8048D88	;Adjust draw height of flying question block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated
-	ldr r0,=3002340h
-	ldr r1,=1C58h
-	add r0,r0,r1
-	ldr r0,[r0]
-	ldr r2,=1190h
-
-.org 0x8048DB4
-	mov r0,r4
-	add r0,34h
-	ldrb r0,[r0]
-	lsl r0,r0,3h
-	ldr r5,=3002C28h
-	add r6,r0,r5
-	mov r0,r4
-	add r0,20h
-	mov r1,0h
-	strb r1,[r0]
-	ldrb r0,[r4,1Bh]
-	cmp r0,0h
-	bne DownFB4
-	mov r0,r4
-	bl 802E234h
-	ldr r3,=1370h
-	add r0,r5,r3
-	ldr r0,[r0]
-	ldr r1,=1190h
-	add r0,r0,r1
-	ldrb r0,[r0]
-	cmp r0,0h
-	bne DownFB4
-	mov r0,r5
-	sub r0,55h
-	ldrb r0,[r0]
-	mov r1,1h
-	and r0,r1
-	cmp r0,0h
-	bne DownFB1
-	mov r3,r4
-	add r3,2Dh
-	ldrb r0,[r3]
-	mov r2,r0
-	and r2,r1
-	ldr r0,=810D1DCh
-	lsl r2,r2,2h
-	add r0,r2,r0
-	ldr r1,[r4,0Ch]
-	ldr r0,[r0]
-	add r1,r1,r0
-	str r1,[r4,0Ch]
-	ldr r0,=810D1ECh
-	add r2,r2,r0
-	ldr r0,[r2]
-	cmp r1,r0
-	bne DownFB1
-	ldrb r0,[r3]
-	add r0,1h
-	strb r0,[r3]
-DownFB1:
-	mov r0,r4
-	bl 802F254h
-	ldrb r0,[r4,1Ah]
-	cmp r0,83h
-	beq DownFB2
-	mov r5,r4
-	add r5,22h
-	ldrb r0,[r5]
-	cmp r0,0h
-	bne DownFB3
-	ldr r0,=3002340h
-	ldr r2,=893h
-	add r0,r0,r2
-	ldrb r0,[r0]
-	mov r1,3h
-	and r0,r1
-	cmp r0,0h
-	bne DownFB3
-	mov r3,r4
-	add r3,21h
-	ldrb r1,[r3]
-	mov r0,1h
-	mov r2,r1
-	and r2,r0
-	ldr r0,=810D1E4h
-	lsl r2,r2,2h
-	add r0,r2,r0
-	ldr r1,[r4,8h]
-	ldr r0,[r0]
-	add r1,r1,r0
-	str r1,[r4,8h]
-	ldr r0,=810D1F4h
-	add r2,r2,r0
-	ldr r0,[r2]
-	cmp r1,r0
-	bne DownFB3
-	ldrb r0,[r3]
-	add r0,1h
-	strb r0,[r3]
-	mov r0,20h
-	strb r0,[r5]
-	b DownFB3
-	.pool
-	
-DownFB2:
-	ldr r0,=0FFFF4000h
-	str r0,[r4,8h]
-DownFB3:
-	mov r0,r4
-	bl 802F214h
-	ldr r0,=3007A48h
-	ldr r0,[r0]
-	ldr r3,=0EE9h
-	add r0,r0,r3
-	mov r1,r4
-	add r1,20h
-	ldrb r0,[r0]
-	strb r0,[r1]
-	add r1,9h
-	ldrb r0,[r1]
-	add r0,1h
-	strb r0,[r1]
-DownFB4:
-	mov r0,r4
-	bl 8034964h
-	mov r0,r4
-	bl 8035324h
-	mov r0,r4
-	bl 802F9D8h
-	mov r0,r4
-	add r0,24h
-	ldrb r7,[r0]
-	cmp r7,8h
-	bne 8048F60h
-	ldrb r2,[r4,1Bh]
-	cmp r2,2h
-	beq 8048F60h
-	ldrb r0,[r4,1Bh]
-	add r0,1h
-	strb r0,[r4,1Bh]
-	mov r0,0h
-	str r0,[r4,8h]
-	str r0,[r4,0Ch]
-	mov r1,r4
-	add r1,28h
-	mov r0,50h
-	strb r0,[r1]
-	ldr r3,=3002340h
-	ldr r5,=1C58h
-	add r2,r3,r5
-	ldr r1,[r2]
-	ldrh r0,[r4,10h]
-	strh r0,[r1,30h]
-	ldr r1,[r2]
-	ldrh r0,[r4,12h]
-	add r0,1h
-	strh r0,[r1,2Ch]
-
-.org 0x8048F92
-	.pool
 	
 .org 0x804A1AE	;Prevent thwomps from always falling when vertially offscreen
 	ble 804A210h
@@ -6364,6 +6020,9 @@ DownSnakeBlock6:
 
 .org 0x80518D8	;Make growing/shrinking pipe grow/shrink exactly to the block grid position
 	bls 8051900h
+
+.org 0x8052216	;Make 3-tile flying gray turn blocks check for collision with the Player even if the game is frozen
+	b 80522AEh
 	
 .org 0x80523DC	;Fix wings of 3-tile flying gray turn blocks get drawn in front of blocks
 	mov r4,0h
@@ -7717,19 +7376,11 @@ DownNotAirborne:
 	pop r0
 	bx r0
 	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceSDS:
-	mov r3,0h
-	ldr r1,[r5,0Ch]
-	cmp r1,0h
-	ble SpriteMovesNotDownwards
-	mov r3,10h
-SpriteMovesNotDownwards:
-	strb r3,[r0]
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.word 0x00000000
-	.halfword 0x0000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
 ;;;;;;;
 
 ;Fix bug that causes the Bravo Mario/Luigi to not get displayed when killing enough enemies with sliding and prevent the Player to slide when carrying an item
@@ -9808,6 +9459,9 @@ FreeSpaceSSI1:
 .org 0x8109F48 +26h	;Prevent thwomps and thwimps from turning around when touched, make koopalings inedible and turn sumo brother's lightning into coin when goal passed
 	.byte 0x11, 0x11, 0x19, 0x81, 0x00, 0x19
 
+.org 0x8109F48 +3Eh	;Make p-switch trigger flying question mark blocks, lightswitch and infoboxes
+	.byte 0x12
+
 .org 0x8109F48 +4Ah	;Turn ? goal sphere into coins when goal passed
 	.byte 0x09
 
@@ -9823,8 +9477,8 @@ FreeSpaceSSI1:
 .org 0x8109F48 +74h	;Turn power ups into coins when goal passed
 	.byte 0x08, 0x08, 0x08, 0x08, 0x08, 0x09
 	
-.org 0x8109F48 +7Dh	;Turn power ups into coins when goal passed
-	.byte 0x09, 0x08, 0x08, 0x1A, 0x08
+.org 0x8109F48 +7Dh	;Turn power ups into coins when goal passed and make keys trigger flying question mark blocks, lightswitch and infoboxes
+	.byte 0x09, 0x08, 0x08, 0x12, 0x08
 
 .org 0x8109F48 +83h	;Turn flying blocks into coins when goals passed
 	.byte 0x11, 0x11
@@ -9844,11 +9498,8 @@ FreeSpaceSSI1:
 .org 0x8109F48 +0B1h	;Prevent snake block from turning into a coin on the goal
 	.byte 0x3D
 
-.org 0x8109F48 +0B6h	;Prevent yoshi from eating reflecting fireball, prevents carrot lifts and timed lifts from turning into a coin on the goal
-	.byte 0x19, 0x39, 0x39, 0x19, 0x3D
-	
-.org 0x8109F48 +0BBh	;Prevent moving castle block from turning into a coin on the goal
-	.byte 0x39
+.org 0x8109F48 +0B6h	;Prevent yoshi from eating reflecting fireball, prevents carrot lifts and timed lifts from turning into a coin on the goal, make infobox triggerable with thrown sprites and prevent moving castle block from turning into a coin on the goal
+	.byte 0x19, 0x39, 0x39, 0x11, 0x3D, 0x39
 	
 .org 0x8109F48 +0C0h	;Prevent sinking gray platform from turning into a coin on the goal
 	.byte 0xB9
@@ -9921,6 +9572,9 @@ FreeSpaceSSI1:
 	
 .org 0x810A820	;Fill empty slot with empty function to prevent out of bounds reading
 	.word 0x0802B881
+
+.org 0x810AE72	;Let wigglers spawn in all free sprite slots
+	.byte 0xFF
 	
 .org 0x810B040	;Repoint sprite status table to make space for 1 more entry to prevent glitchy sprite spawn
 	.halfword 0x0004
