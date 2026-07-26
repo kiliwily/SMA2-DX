@@ -33,7 +33,7 @@
 - Removed a delay before you can press A or the Start button in the mode select screen only present in non-japanese versions.
 - Despawn the sprite in yoshis mouth when yoshi despawns.
 - Made the lightswitch and infoboxes triggerable with sprites.
-- Made the lightswitch, infoboxes, flying question blocks, the coin counter block in Donut Plains 1 and the 2 tile wide flying turnblock plattform triggerable with the cape.
+- Made the lightswitch, infoboxes, flying question blocks, the coin counter block in Donut Plains 1 and the 2-tile flying grey plattform triggerable with the cape.
 - Lemmy/Wendy no longer give points when stomping on them, because no other boss does that.
 - Made the amount of points the Player gets when crushing two sprites together depending on how many of the sprites die.
 - Animated the berries in the "Welcome to dinosaurland" and the Yoshi's house credits scene (Credits: Mister Man).
@@ -43,11 +43,11 @@
 - Player and Yoshi fireballs no longer despawn immediately when shooting them while being slightly offscreen (inspired by SMA4/SMB3).
 - Removed the unnecessary space between the coin symbol, the x and the coin number in the hud.
 - Made the life counter in the hud rightaligned like all the other counters in the hud.
-- Made the turnblocks of the 3 tile wide flying turnblock platform unpassable from below like all the other turnblocks in the game.
+- Made the turnblocks of the 3-tile flying grey platform unpassable from below like all the other turnblocks in the game.
 - Made the directional coin block reset the P-Switch/Directional coin active music when hit while the music is already playing, similar to how a P-Switch does it.
 - A sound effect now playes right before the directional coin timer runs out, similar to how it happens right before the P-Switch timer runs out.
-- The wings of the 2 and 3 tile wide flying turnblock platform now use their blue palette instead of the grey turnblock palette (They already use that palette in the enemy roll credits).
-- Changed the position of the wings of the 2 and 3 tile wide flying turnblock platform to be more in line with how they are positioned on other blocks and sprites.
+- The wings of the 2- and 3-tile flying grey platform now use their blue palette instead of the grey turnblock palette (They already use that palette in the enemy roll credits).
+- Changed the position of the wings of the 2- and 3-tile flying grey platform to be more in line with how they are positioned on other blocks and sprites.
 - Reznor now faces the Player when the Battle starts instead of looking away from them.
 - Line-guided platforms are now horizontally centerd on the line.
 - Made the growing/shrinking pipe sprite look more like the normal pipe.
@@ -58,7 +58,7 @@
 - The red berry and pink berry counter for yoshi now gets reset every time a new yoshi spawns.
 - Teleportation between levels is now unlocked from the start of the game.
 - Castles and fortresses can be reentered after beating them even before Bowser is defeated.
-- Made it possible for wigglers to also spawn in sprite slots greater then 2.
+- Made it possible for wigglers to also spawn in sprite slots greater than 2.
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.

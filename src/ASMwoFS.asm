@@ -6021,10 +6021,10 @@ DownSnakeBlock6:
 .org 0x80518D8	;Make growing/shrinking pipe grow/shrink exactly to the block grid position
 	bls 8051900h
 
-.org 0x8052216	;Make 3-tile flying gray turn blocks check for collision with the Player even if the game is frozen
+.org 0x8052216	;Make 3-tile flying gray turn block platform check for collision with the Player even if the game is frozen
 	b 80522AEh
 	
-.org 0x80523DC	;Fix wings of 3-tile flying gray turn blocks get drawn in front of blocks
+.org 0x80523DC	;Fix wings of 3-tile flying gray turn block platform get drawn in front of blocks
 	mov r4,0h
 
 .org 0x8052440	;Adjust draw height of 3-tile flying gray turn block platform
@@ -9459,7 +9459,7 @@ FreeSpaceSSI1:
 .org 0x8109F48 +26h	;Prevent thwomps and thwimps from turning around when touched, make koopalings inedible and turn sumo brother's lightning into coin when goal passed
 	.byte 0x11, 0x11, 0x19, 0x81, 0x00, 0x19
 
-.org 0x8109F48 +3Eh	;Make p-switch trigger flying question mark blocks, lightswitch and infoboxes
+.org 0x8109F48 +3Eh	;Make p-switch trigger flying ?-Blocks, lightswitch and infoboxes
 	.byte 0x12
 
 .org 0x8109F48 +4Ah	;Turn ? goal sphere into coins when goal passed
@@ -9477,7 +9477,7 @@ FreeSpaceSSI1:
 .org 0x8109F48 +74h	;Turn power ups into coins when goal passed
 	.byte 0x08, 0x08, 0x08, 0x08, 0x08, 0x09
 	
-.org 0x8109F48 +7Dh	;Turn power ups into coins when goal passed and make keys trigger flying question mark blocks, lightswitch and infoboxes
+.org 0x8109F48 +7Dh	;Turn power ups into coins when goal passed and make keys trigger flying ?-Blocks, lightswitch and infoboxes
 	.byte 0x09, 0x08, 0x08, 0x12, 0x08
 
 .org 0x8109F48 +83h	;Turn flying blocks into coins when goals passed

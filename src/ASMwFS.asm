@@ -1982,7 +1982,7 @@ ESDealDamage:
 	b 803E638h
 	.pool
 
-.org 0x80413A0	;Swap draw order of amazing flying hammer bro and his platform to prevent the wings of the platform from getting drawn in front of the hammer bro and make his flying grey blocks also triggerable with the cape
+.org 0x80413A0	;Swap draw order of amazing flying hammer bro and his platform to prevent the wings of the platform from getting drawn in front of the hammer bro and make the platform also triggerable with the cape
 	ldr r0,=3002340h
 	ldr r1,=894h
 	add r0,r0,r1
@@ -2318,7 +2318,7 @@ DownChucks1:
 .org 0x80441D0
 	.pool
 	
-.org 0x8048D88	;Adjust draw height of flying question block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated and make it triggerable with the cape
+.org 0x8048D88	;Adjust draw height of flying ?-Block and reset speed of flying ?-Block to prevent it from pushing the Player downwards when hitting it from below after it was already activated and make it triggerable with the cape
 	ldr r0,=3002340h
 	ldr r1,=1C58h
 	add r0,r0,r1
@@ -3694,7 +3694,7 @@ YoshiSolidSprite9:
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;Make the coin counter in Donut Plains 1 triggerable with the cape
+;Make the coin counter block in Donut Plains 1 triggerable with the cape
 .org 0x806082C
 	bl FreeSpaceBTC
 
