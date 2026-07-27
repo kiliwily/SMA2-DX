@@ -3695,41 +3695,47 @@ DownStar5up:
 	ldr r1,=10FAh
 
 .org 0x80354A0
-	ldr r2,=3002340h
+	ldr r4,=3002340h
 	ldr r3,=1C74h
-
-.org 0x80354AC
+	add r0,r4,r3
+	mov r2,0h
+	ldsh r1,[r0,r2]
+	add r1,r6,r1
 	ldr r0,=3007A48h
-	
-.org 0x80354B0
+	ldr r0,[r0]
 	ldr r3,=0EB4h
-	
-.org 0x80354BC
-	ldr r1,=1C6Dh
-	add r0,r2,r1
+	add r0,r0,r3
+	mov r2,0h
+	ldsh r0,[r0,r2]
+	cmp r1,r0
+	blt CheckSideCollision
+	ldr r2,=1C6Ch
+	add r0,r4,r2
 	mov r3,0h
-	ldsb r1,[r0,r3]
+	ldsh r1,[r0,r3]
 	cmp r1,0h
 	blt CheckSpriteDownwardsSpeed
 	b 80356F6h
 CheckSpriteDownwardsSpeed:
-	mov r3,0h
-	ldr r1,[r5,0Ch]
-	cmp r1,0h
+	mov r1,0h
+	ldr r0,[r5,0Ch]
+	cmp r0,0h
 	ble SpriteMovesNotDownwards
-	mov r3,10h
+	mov r1,10h
 SpriteMovesNotDownwards:
-	strb r3,[r0]
+	add r2,1h
+	add r0,r4,r2
+	strb r1,[r0]
 	ldr r3,=1C94h
-	add r1,r2,r3
+	add r1,r4,r3
 	ldrh r1,[r1]
-	ldr r3,=1C7Ch
-	add r0,r2,r3
+	ldr r2,=1C7Ch
+	add r0,r4,r2
 	ldrh r0,[r0]
 	cmp r1,r0
 	bcc CheckSpriteId
 	ldr r3,=1C66h
-	add r2,r2,r3
+	add r2,r4,r3
 	ldrb r0,[r2]
 	mov r1,4h
 	and r0,r1
@@ -3737,17 +3743,28 @@ SpriteMovesNotDownwards:
 	bne CheckSpriteId
 	b 80356F6h
 	.pool
-	.word 0x00000000
-	.word 0x00000000
-	.halfword 0x0000
 	
 CheckSpriteId:
 	bl FreeSpaceCSH
 	cmp r0,0h
-	beq 803553Ah
+	beq DownPlaySound
 	mov r0,r5
 	bl 8033DA4h
 	b 80356F6h
+DownPlaySound:
+	ldr r3,=8C4h
+	add r2,r4,r3
+	ldrh r0,[r5,10h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	ldr r2,=828h
+	add r1,r4,r2
+	strh r0,[r1]
+	mov r0,1Dh
+	bl 809C1C4h
+	b 80356F6h
+	.pool
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x80357F4	;Fix a bug that causes the game to softlock if obtaining a feather offscreen during autoscroll

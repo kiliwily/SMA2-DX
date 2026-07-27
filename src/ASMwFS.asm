@@ -1548,7 +1548,10 @@ DownSpriteCollision2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Make turnblocks from 3-tile flying turnblock platform impassable from below like all the other turnblocks
-.org 0x8035562
+.org 0x8035558
+CheckSideCollision:
+	ldrb r4,[r5,1Ah]
+	ldr r2,=3002340h
 	ldr r3,=1CEDh
 	add r0,r2,r3
 	ldrb r0,[r0]
@@ -2106,7 +2109,7 @@ HammerBroGameNotFrozen:
 CheckPlattformHit:
 	mov r0,r5
 	bl 8035324h
-	mov r0,r5
+	mov r1,r5
 	bl CheckCapeTrigger
 	mov r0,r5
 	add r0,24h

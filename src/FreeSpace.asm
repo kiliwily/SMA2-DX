@@ -1022,7 +1022,7 @@ FreeSpaceBTC:
 CoinCounterBlock:
 	mov r0,r4
 	bl 8035324h
-	mov r0,r4
+	mov r1,r4
 	bl CheckCapeTrigger
 SwitchNotHit:
 	pop r4
@@ -1031,7 +1031,10 @@ SwitchNotHit:
 
 CheckCapeTrigger:
 	push r4-r6,r14
-	mov r6,r0
+	mov r6,r1
+	lsl r0,r0,18h
+	cmp r0,0h
+	bne ReturnNoCapeTrigger
 	ldr r4,=3002340h
 	ldr r2,=1C58h
 	add r0,r4,r2
