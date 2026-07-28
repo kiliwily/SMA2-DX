@@ -1022,7 +1022,7 @@ FreeSpaceBTC:
 CoinCounterBlock:
 	mov r0,r4
 	bl 8035324h
-	mov r1,r4
+	mov r0,r4
 	bl CheckCapeTrigger
 SwitchNotHit:
 	pop r4
@@ -1031,10 +1031,7 @@ SwitchNotHit:
 
 CheckCapeTrigger:
 	push r4-r6,r14
-	mov r6,r1
-	lsl r0,r0,18h
-	cmp r0,0h
-	bne ReturnNoCapeTrigger
+	mov r6,r0
 	ldr r4,=3002340h
 	ldr r2,=1C58h
 	add r0,r4,r2
@@ -1074,6 +1071,18 @@ CheckCapeTrigger:
 	cmp r0,0h
 	beq ReturnNoCapeTrigger
 	mov r0,r6
+	add r0,32h
+	ldrb r1,[r0]
+	sub r0,0Fh
+	ldrb r0,[r0]
+	orr r1,r0
+	mov r0,r6
+	add r0,26h
+	ldrb r0,[r0]
+	orr r1,r0
+	cmp r1,0h
+	bne ReturnNoCapeTrigger
+	mov r0,r6
 	add r0,3Ch
 	ldrb r1,[r0]
 	ldr r2,=1C63h
@@ -1097,19 +1106,18 @@ DownNoLayerChange:
 	lsl r0,r0,18h
 	cmp r0,0h
 	beq ReturnNoCapeTrigger
-	ldr r0,=3007A48h
-	ldr r0,[r0]
+	ldr r0,[r5]
 	ldr r2,=0EB6h
 	add r1,r0,r2
 	mov r3,0h
 	ldsh r1,[r1,r3]
-	add r1,0Ch
+	add r1,8h
 	add r2,8h
 	add r0,r0,r2
 	mov r3,0h
 	ldsh r0,[r0,r3]
 	cmp r1,r0
-	ble ReturnNoCapeTrigger
+	blt ReturnNoCapeTrigger
 	mov r1,r6
 	add r1,25h
 	ldrb r0,[r1]

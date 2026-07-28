@@ -3684,12 +3684,11 @@ DownStar5up:
 ;Fix looping sound when hitting a solid sprite from below and fix bugs when touching certain solid sprites from below
 .org 0x803546E
 	ldr r1,=3002340h
-	ldr r4,=1C62h
-	add r0,r1,r4
+	ldr r3,=1C62h
 
 .org 0x8035486
 	ldr r0,=3002340h
-	sub r4,4h
+	ldr r4,=1C58h
 	
 .org 0x803548E
 	ldr r1,=10FAh
@@ -3764,7 +3763,6 @@ DownPlaySound:
 	bl 809C1C4h
 	b 80356F6h
 	.pool
-	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .org 0x80357F4	;Fix a bug that causes the game to softlock if obtaining a feather offscreen during autoscroll
@@ -6038,9 +6036,6 @@ DownSnakeBlock6:
 .org 0x80518D8	;Make growing/shrinking pipe grow/shrink exactly to the block grid position
 	bls 8051900h
 
-.org 0x8052216	;Make 3-tile flying gray turn block platform check for collision with the Player even if the game is frozen
-	b 80522AEh
-	
 .org 0x80523DC	;Fix wings of 3-tile flying gray turn block platform get drawn in front of blocks
 	mov r4,0h
 
@@ -6085,7 +6080,7 @@ DownSnakeBlock6:
 	mov r1,2h
 	
 .org 0x8054D58	;Update the hide in the shell timer of bony beetles properly if the game is not frozen 
-	.halfword 0x894
+	.halfword 0x0894
 	
 .org 0x8055A6A	;Fix priority of smasher
 	mov r0,0Ch

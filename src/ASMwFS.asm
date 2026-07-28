@@ -2070,7 +2070,7 @@ HammerBroNotAlive:
 	ldrb r0,[r0]
 	cmp r0,0h
 	beq HammerBroGameNotFrozen
-	b CheckPlattformHit
+	b 8041566h
 HammerBroGameNotFrozen:
 	mov r0,r5
 	bl 802FA2Ch
@@ -2106,10 +2106,9 @@ HammerBroGameNotFrozen:
 	add r1,20h
 	ldrb r0,[r0]
 	strb r0,[r1]
-CheckPlattformHit:
 	mov r0,r5
 	bl 8035324h
-	mov r1,r5
+	mov r0,r5
 	bl CheckCapeTrigger
 	mov r0,r5
 	add r0,24h
@@ -2424,7 +2423,7 @@ DownFB1:
 	strb r0,[r5]
 	b DownFB3
 	.pool
-	.halfword 0x0000
+	.word 0x00000000
 	
 DownFB2:
 	ldr r0,=0FFFF4000h
@@ -2440,10 +2439,11 @@ DownFB3:
 	add r1,20h
 	ldrb r0,[r0]
 	strb r0,[r1]
-	add r1,9h
-	ldrb r0,[r1]
-	add r0,1h
-	strb r0,[r1]
+	mov r0,r4
+	add r0,29h
+	ldrb r1,[r0]
+	add r1,1h
+	strb r1,[r0]
 DownFB4:
 	mov r0,r4
 	bl FreeSpaceBTC
