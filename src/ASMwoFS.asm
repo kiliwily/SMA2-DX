@@ -8380,6 +8380,18 @@ IggySecondRoomMessageSpanish:
 .org 0x80E64DA
 	.byte 0x73
 
+.org 0x80E6507	;Fix palette of falling spiny in enemy roll credits
+	.byte 0x09
+
+.org 0x80E650B
+	.byte 0x49
+
+.org 0x80E650F
+	.byte 0x89
+
+.org 0x80E6513
+	.byte 0xC9
+
 .org 0x80E6551	;Fix position of spiny in enemy roll credits
 	.byte 0x80
 
