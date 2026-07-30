@@ -1102,22 +1102,26 @@ DownNoLayerChange:
 	mov r0,r6
 	bl 802FBF0h
 	bl 803CE40h
+	ldr r0,[r5]
+	ldr r2,=0EB4h
+	add r0,r0,r2
+	ldrh r1,[r0]
+	add r1,0Ah
+	strh r1,[r0]
+	ldr r0,[r5]
+	add r2,4h
+	add r0,r0,r2
+	mov r1,0h
+	strh r1,[r0]
+	ldr r0,[r5]
+	add r2,2h
+	add r0,r0,r2
+	mov r1,8h
+	strh r1,[r0]
 	bl 8034AF8h
 	lsl r0,r0,18h
 	cmp r0,0h
 	beq ReturnNoCapeTrigger
-	ldr r0,[r5]
-	ldr r2,=0EB6h
-	add r1,r0,r2
-	mov r3,0h
-	ldsh r1,[r1,r3]
-	add r1,8h
-	add r2,8h
-	add r0,r0,r2
-	mov r3,0h
-	ldsh r0,[r0,r3]
-	cmp r1,r0
-	blt ReturnNoCapeTrigger
 	mov r1,r6
 	add r1,25h
 	ldrb r0,[r1]
