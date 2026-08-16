@@ -59,6 +59,7 @@
 - Teleportation between levels is now unlocked from the start of the game.
 - Castles and fortresses can be reentered after beating them even before Bowser is defeated.
 - Made it possible for wigglers to also spawn in sprite slots greater than 2.
+- Made the big boo boss interact with the Player and hurt him if he is visible (inspired by SMA4/SMB3 e-Reader levels).
 
 ## Bug Fixes
 - Fixed Wendy's castle has the wrong background color at the begin of the intro.
@@ -194,3 +195,5 @@
 - Fixed a bug that caused Yoshi's swallow animation to show a glitched tile in the underwater area of the sunken ghost ship and the rooms with the big switches in switch palaces.
 - Fixed a bug that caused the ghosts in sunken ghost ship to not consider Yoshi's hitbox in the collision detection routine.
 - Fixed a bug that caused several sprites to not consider the Player's hitbox in the collision detection routine when riding a Yoshi.
+- Fixed a bug that caused the cape's hitbox to overwrite the Player's hitbox when doing a spinjump on an enemy with the cape equipped.
+- Fixed a bug that caused the cape's hitbox to be asymmetric for collision detection with solid blocks.

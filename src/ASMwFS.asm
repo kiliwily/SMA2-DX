@@ -1755,9 +1755,6 @@ GoodItem:
 .org 0x8037AC2	;Prevent extra live counter overflow
 	bl FreeSpacePLO
 	
-.org 0x8037B78	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi (1)
-	bl FreeSpaceCSC
-	
 .org 0x8037FBC	;Make directional coin restart the music on activation in case a p-switch was pressed before
 	beq CheckStartMusic
 
@@ -1822,12 +1819,6 @@ CheckStartMusic:
 	.halfword 0x0894
 
 .org 0x803A870
-	.halfword 0x0894
-
-.org 0x803D620	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi (2)
-	.halfword 0x0894
-
-.org 0x803D674
 	.halfword 0x0894
 
 .org 0x803DF08	;Prevent point counter overflow
@@ -2495,12 +2486,6 @@ DownFB4:
 	pop r0
 	bx r0
 
-.org 0x804A304	;Fix thwomp sprite interaction
-	bl FreeSpaceSIR
-	
-.org 0x804A354	;Fix thwimp sprite interaction
-	bl FreeSpaceSIR
-	
 .org 0x804BC0C	;Adjust draw height of vulcano lotos
 	bl FreeSpaceHVL
 
@@ -2552,76 +2537,6 @@ DownBubbles3:
 	
 .org 0x804EB44	;Prevent a (baby) yoshi from hatching from an egg if another (adult) yoshi is in the level
 	bl FreeSpaceFMY
-	
-.org 0x804EBB4	;Reset several more values when a new yoshi spawns
-	ldr r5,=3007A48h
-	ldr r3,[r5]
-	ldr r1,=67Ah
-	add r0,r3,r1
-	mov r2,0h
-	strb r2,[r0]
-	bl FreeSpaceRYS
-	ldr r1,=3002340h
-	ldr r3,=1C58h
-	add r0,r1,r3
-	ldr r0,[r0]
-	ldr r3,=114Fh
-	add r0,r0,r3
-	strb r2,[r0]
-	ldr r0,[r5]
-	ldr r3,=0ED5h
-	add r2,r0,r3
-	ldr r3,=6C6h
-	add r0,r0,r3
-	ldrb r2,[r2]
-	strb r2,[r0]
-	mov r0,35h
-	strb r0,[r6,1Ah]
-	mov r0,8h
-	strb r0,[r6,1Ch]
-	ldr r3,=8C4h
-	add r2,r1,r3
-	ldrh r0,[r6,10h]
-	ldrh r2,[r2]
-	sub r0,r0,r2
-	sub r3,9Ch
-	add r1,r1,r3
-	strh r0,[r1]
-	mov r0,0Bh
-	bl 809C1C4h
-	ldrh r0,[r6,12h]
-	sub r0,10h
-	strh r0,[r6,12h]
-	ldr r0,[r6,4h]
-	ldr r3,=0FFF00000h
-	add r0,r0,r3
-	str r0,[r6,4h]
-	mov r7,r6
-	add r7,35h
-	ldrb r4,[r7]
-	mov r0,r6
-	bl 802F54Ch
-	mov r0,0FEh
-	and r4,r0
-	strb r4,[r7]
-	mov r1,r6
-	add r1,36h
-	mov r0,0Ch
-	strb r0,[r1]
-	add r1,1h
-	mov r0,0FFh
-	strb r0,[r1]
-	add r1,1h
-	strb r0,[r1]
-	ldr r0,[r5]
-	ldr r1,=6A5h
-	add r0,r0,r1
-	mov r1,40h
-	strb r1,[r0]
-	pop r4-r7
-	pop r0
-	bx r0
-	.pool
 
 .org 0x804FB9E	;Prevent the inputs to control lakitu's cloud from updating when the game is frozen
 	bl CheckFreezeFlagController
@@ -3802,7 +3717,7 @@ DownMushroom:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
-.org 0x80691FC	;Fix a glitch that causes Luigi to use Marios Voice when saying Bravo after collecting 5 Yoshi coins
+.org 0x80691FC	;Fix a bug that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins (1)
 	add r4,r1,r3
 	ldrb r0,[r4]
 	
@@ -4005,7 +3920,7 @@ DownOthers1:
 .org 0x806E59E
 	ldr r2,=1153h
 
-.org 0x806E5AA	;Fix a bug that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins
+.org 0x806E5AA	;Fix a bug that causes Luigi to use Marios voice or vice versa when saying Bravo after collecting 5 Yoshi coins (2)
 	add r4,r1,r2
 	ldrb r0,[r4]
 
@@ -4288,11 +4203,6 @@ DownFRW4:
 .org 0x8072B44
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;Fix smoke of yoshis house becomes garbeled when pressing A or Start during the beginning of the intro (YHI)
-.org 0x8074C40
-	bl FreeSpaceYHI
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of Prevent 1ups from beeing omited when exiting a level earlier than expected (ELO)
 .org 0x807C6E4

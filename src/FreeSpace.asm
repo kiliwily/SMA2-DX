@@ -832,48 +832,6 @@ DownPNPO1:
 	bx r14
 	.pool
 	
-FreeSpaceCSC:
-	push r14
-	ldr r2,=3002340h
-	ldr r1,=1C58h
-	add r3,r2,r1
-	ldr r0,[r3]
-	ldr r1,=1190h
-	add r0,r0,r1
-	ldrb r0,[r0]
-	cmp r0,0h
-	bne SkipCapeSpinCode
-	ldr r0,[r3]
-	ldr r1,=10FAh
-	add r0,r0,r1
-	ldrb r0,[r0]
-	cmp r0,0h
-	bne ResetCapeSpin
-	ldr r1,[r2,20h]
-	add r1,0E0h
-	ldrb r0,[r1]
-	cmp r0,2h
-	beq HandleCapeSpin
-	ldr r1,=1C63h
-	add r0,r2,r1
-	mov r3,0h
-	ldsb r0,[r0,r3]
-	cmp r0,0h
-	blt HandleCapeSpin
-ResetCapeSpin:
-	ldr r2,=3007A48h
-	ldr r0,[r2]
-	ldr r1,=0EE1h
-	add r0,r0,r1
-	mov r3,0h
-	strb r3,[r0]
-HandleCapeSpin:
-	bl 803D5BCh
-SkipCapeSpinCode:
-	pop r0
-	bx r0
-	.pool
-	
 FreeSpaceDCM:
 	push r14
 	bl 809C004h
@@ -1167,14 +1125,6 @@ NotSparky:
 	bx r14
 	.pool
 
-FreeSpaceSIR:
-	push r14
-	bl 803515Ch
-	mov r0,r4
-	bl 8034964h
-	pop r0
-	bx r0
-	
 FreeSpaceHVL:
 	ldrh r0,[r2]
 	add r0,1h
@@ -1232,18 +1182,6 @@ YoshiInTheLevel:
 NoYoshiEgg:
 	ldrb r0,[r4,1Fh]
 	strb r0,[r4,1Ah]
-	bx r14
-	
-FreeSpaceRYS:
-	add r1,2h
-	add r0,r3,r1
-	strb r2,[r0]
-	add r1,25h
-	add r0,r3,r1
-	strb r2,[r0]
-	add r1,1h
-	add r0,r3,r1
-	strb r2,[r0]
 	bx r14
 	
 FreeSpaceDCBF:
@@ -2026,19 +1964,6 @@ RightWall:
 	sub r4,r4,r3
 FixPos:
 	strh r4,[r5]
-	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceYHI:
-	ldr r1,[r4]
-	ldrb r0,[r1,14h]
-	add r1,54h
-	ldrb r1,[r1]
-	cmp r1,0h
-	beq NoButtonPressedDuringIntro
-	mov r0,0h
-NoButtonPressedDuringIntro:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

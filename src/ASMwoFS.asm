@@ -308,7 +308,7 @@ DownPSS1:
 	b 8003D3Eh
 	.pool
 
-.org 0x8003F9A	;Fix ram value is used before initializing and the game doesn't check if it needs to display the Bravo Mario message
+.org 0x8003F9A	;Fix ram value is used before initializing and the game doesn't check if it needs to display the Bravo Mario/Luigi message
 	bl InitializeValueAndCheckForBravoMessage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -4406,6 +4406,9 @@ SkipPlaySound:
 	
 .org 0x8037B64	;Part of Fix Bravo Mario/Luigi message from overwritng a reward pop-up
 	bl FreeSpaceFMO
+	
+.org 0x8037B78	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi (1)
+	bl FreeSpaceCSC
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Fix ?-Block sprite slot routine
@@ -4570,7 +4573,7 @@ SpriteInYoshisMouth:
 	ldr r1,=1164h
 
 .org 0x8037EE8
-	beq Down16Bit4
+	beq Down16Bit2
 	mov r0,r2
 	add r0,30h
 	ldrh r1,[r0]
@@ -4587,7 +4590,7 @@ SpriteInYoshisMouth:
 	.word 0x00000000
 	.halfword 0x0000
 	
-Down16Bit4:
+Down16Bit2:
 	ldr r2,=3002340h
 	ldr r3,=1C58h
 	add r0,r2,r3
@@ -4615,7 +4618,7 @@ Down16Bit4:
 	ldr r1,=1164h
 
 .org 0x803802A
-	beq Down16Bit5
+	beq Down16Bit3
 	mov r0,r2
 	add r0,30h
 	ldrh r1,[r0]
@@ -4647,7 +4650,7 @@ Down16Bit4:
 	.word 0x00000000
 	.word 0x00000000
 
-Down16Bit5:
+Down16Bit3:
 	ldr r2,=3002340h
 	ldr r0,=1C58h
 	add r2,r2,r0
@@ -4728,6 +4731,9 @@ DownCounter:
 	pop r0
 	bx r0
 	.pool
+	
+.org 0x803CE6E	;Fix bug that causes the cape's hitbox to overwrite the hitbox of the Player's feet when doing a spinjump on an enemy with the cape
+	mov r0,0Ch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Increases limit for cape trick with enemies to 5up
@@ -4800,21 +4806,39 @@ CallRewardFct:
 .org 0x803D106	;Fix bug that causes sprites, that are on top of a block, to not bounce when hitting the block while climbing on a vine (2)
 	bge 803D10Ch
 
-.org 0x803D23E	;Fix block check routine doesn't handle 16bit values properly (3)
+.org 0x803D216	;Fix block check routine doesn't handle 16bit values properly (3) and make cape hitbox for collision detection with solid blocks symmetric (1)
+	ldr r6,=3007A48h
+	ldr r1,[r6]
+	ldr r4,=3002340h
+	ldr r3,=1CB0h
+	add r2,r4,r3
+	ldrh r0,[r2]
+	add r0,8h
+	mov r2,0Fh
+	bic r0,r2
 	ldr r3,=0EB4h
-
-.org 0x803D244
-	ldr r1,=1C58h
-
-.org 0x803D24E
+	add r1,r1,r3
 	strh r0,[r1]
-
-.org 0x803D266
-	bne Down16Bit2
-	b Down16Bit3
-	.word 0x00000000
-	.word 0x00000000
-Down16Bit2:
+	ldr r1,=1C58h
+	add r7,r4,r1
+	ldr r1,[r7]
+	bic r0,r2
+	add r1,2Ch
+	strh r0,[r1]
+	ldr r2,[r6]
+	add r3,19h
+	add r0,r2,r3
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	add r0,1h
+	ldr r3,[r7]
+	ldrh r1,[r3,1Eh]
+	and r0,r1
+	cmp r0,0h
+	bne Down16Bit4
+	b Down16Bit8
+Down16Bit4:
 	ldr r1,=0EB4h
 	add r0,r2,r1
 	mov r1,0h
@@ -4822,25 +4846,31 @@ Down16Bit2:
 	lsl r0,r0,10h
 	lsr r0,r0,18h
 	ldr r3,=0EBAh
-	
-.org 0x803D286
+	add r1,r2,r3
+	strh r0,[r1]
+	ldr r3,[r6]
 	ldr r0,=0EB4h
-	
-.org 0x803D292
+	add r2,r3,r0
+	ldrh r0,[r2]
+	mov r1,0F0h
+	and r0,r1
+	strh r0,[r2]
 	ldr r2,=0EBAh
-	
-.org 0x803D298
+	add r1,r3,r2
+	ldr r0,[r7]
 	ldr r2,=1174h
-
-.org 0x803D2A8
+	add r0,r0,r2
+	mov r2,0h
+	ldsh r1,[r1,r2]
+	ldrb r0,[r0]
+	cmp r1,r0
+	blt Down16Bit5
+	b Down16Bit12
+Down16Bit5:
 	ldr r0,=1CACh
 	add r2,r4,r0
-	ldr r0,=810B9EEh
-	add r0,r5,r0
-	mov r1,0h
-	ldsb r1,[r0,r1]
-	ldrh r2,[r2]
-	add r1,r1,r2
+	ldrh r1,[r2]
+	add r1,8h
 	ldr r2,[r6]
 	ldr r3,=0EB6h
 	add r0,r2,r3
@@ -4860,21 +4890,66 @@ Down16Bit2:
 	mov r3,0h
 	ldsh r0,[r0,r3]
 	cmp r0,1h
-	ble 803D2F4h
-	b 803D526h
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.halfword 0x0000
-
-.org 0x803D348
+	ble Down16Bit6
+	b Down16Bit12
+Down16Bit6:
+	mov r4,0h
+	ldsh r0,[r1,r4]
+	asr r0,r0,4h
+	sub r5,4h
+	add r3,r2,r5
+	ldrh r1,[r3]
+	orr r0,r1
+	strh r0,[r3]
+	ldr r1,=0EBAh
+	add r0,r2,r1
+	ldrb r6,[r0]
+	ldr r4,=0ECDh
+	add r0,r2,r4
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bne Down16Bit7
+	ldr r0,=811A158h
+	lsl r2,r6,2h
+	add r0,r2,r0
+	mov r5,0h
+	ldsh r3,[r3,r5]
+	ldr r0,[r0]
+	add r4,r3,r0
+	ldr r0,[r7]
+	add r0,31h
+	ldrb r1,[r0]
+	lsl r1,r1,8h
+	add r4,r4,r1
+	ldr r0,=811A1C8h
+	b Down16Bit11
 	.pool
-
-.org 0x803D3B8
-	.word 0x00000000
-	.word 0x00000000
-Down16Bit3:
+Down16Bit7:
+	ldr r1,=811A238h
+	lsl r2,r6,2h
+	add r1,r2,r1
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r3,=0EB4h
+	add r0,r0,r3
+	mov r4,0h
+	ldsh r3,[r0,r4]
+	ldr r0,[r1]
+	add r4,r3,r0
+	ldr r0,=3002340h
+	ldr r5,=1C58h
+	add r0,r0,r5
+	ldr r0,[r0]
+	add r0,31h
+	ldrb r1,[r0]
+	lsl r1,r1,8h
+	add r4,r4,r1
+	ldr r0,=811A270h
+	b Down16Bit11
+	.pool
+Down16Bit8:
 	ldr r4,=3007A48h
 	ldr r2,[r4]
 	ldr r6,=3002340h
@@ -4887,22 +4962,27 @@ Down16Bit3:
 	lsl r0,r0,10h
 	lsr r0,r0,18h
 	ldr r1,=0EB8h
-	
-.org 0x803D3DE
+	add r2,r2,r1
+	strh r0,[r2]
+	ldr r3,[r4]
 	ldr r0,=0EB4h
-	
-.org 0x803D3EA
+	add r2,r3,r0
+	ldrh r0,[r2]
+	mov r1,0F0h
+	and r0,r1
+	strh r0,[r2]
 	ldr r1,=0EB8h
-	
-.org 0x803D3F8
+	add r0,r3,r1
+	mov r2,0h
+	ldsh r0,[r0,r2]
+	cmp r0,1h
+	ble Down16Bit9
+	b Down16Bit12
+Down16Bit9:
 	ldr r0,=1CACh
 	add r2,r6,r0
-	ldr r0,=810B9EEh
-	add r0,r5,r0
-	mov r1,0h
-	ldsb r1,[r0,r1]
-	ldrh r2,[r2]
-	add r1,r1,r2
+	ldrh r1,[r2]
+	add r1,8h
 	ldr r2,[r4]
 	ldr r3,=0EB6h
 	add r0,r2,r3
@@ -4927,7 +5007,7 @@ Down16Bit3:
 	ldsh r1,[r4,r5]
 	ldrb r0,[r0]
 	cmp r1,r0
-	bge 803D526h
+	bge Down16Bit12
 	mov r1,0h
 	ldsh r0,[r3,r1]
 	asr r0,r0,4h
@@ -4943,7 +5023,7 @@ Down16Bit3:
 	lsl r0,r0,18h
 	asr r0,r0,18h
 	cmp r0,0h
-	bne 803D4BCh
+	bne Down16Bit10
 	ldr r0,=8119FD8h
 	lsl r2,r6,2h
 	add r0,r2,r0
@@ -4957,17 +5037,121 @@ Down16Bit3:
 	lsl r1,r1,8h
 	add r4,r4,r1
 	ldr r0,=811A058h
-	b 803D4E4h
+	b Down16Bit11
 	.pool
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
+Down16Bit10:
+	ldr r1,=811A0D8h
+	lsl r2,r6,2h
+	add r1,r2,r1
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r5,=0EB4h
+	add r0,r0,r5
+	mov r4,0h
+	ldsh r3,[r0,r4]
+	ldr r0,[r1]
+	add r4,r3,r0
+	ldr r0,=3002340h
+	ldr r5,=1C58h
+	add r0,r0,r5
+	ldr r0,[r0]
+	add r0,2Dh
+	ldrb r1,[r0]
+	lsl r1,r1,8h
+	add r4,r4,r1
+	ldr r0,=811A118h
+Down16Bit11:
+	add r2,r2,r0
+	ldr r0,[r2]
+	add r3,r3,r0
+	add r3,r3,r1
+	ldr r5,=3007A48h
+	ldr r2,[r5]
+	ldrb r1,[r3]
+	lsl r1,r1,8h
+	ldrb r0,[r4]
+	orr r0,r1
+	strh r0,[r2]
+	bl 806DBB8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq Down16Bit12
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r0,r0,r1
+	ldr r1,[r0]
+	ldr r0,[r5]
+	ldr r2,=0ECDh
+	add r0,r0,r2
+	ldr r3,=1164h
+	add r1,r1,r3
+	ldrb r0,[r0]
+	strb r0,[r1]
+	ldr r0,[r5]
+	ldrb r0,[r0]
+	mov r1,r6
+	mov r2,0h
+	bl 806DFBCh
+Down16Bit12:
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+FreeSpaceCSC:
+	push r14
+	ldr r2,=3002340h
+	ldr r1,=1C58h
+	add r3,r2,r1
+	ldr r0,[r3]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne SkipCapeSpinCode
+	ldr r0,[r3]
+	ldr r1,=10FAh
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne ResetCapeSpin
+	ldr r1,[r2,20h]
+	add r1,0E0h
+	ldrb r0,[r1]
+	cmp r0,2h
+	beq HandleCapeSpin
+	ldr r1,=1C63h
+	add r0,r2,r1
+	mov r3,0h
+	ldsb r0,[r0,r3]
+	cmp r0,0h
+	blt HandleCapeSpin
+ResetCapeSpin:
+	ldr r2,=3007A48h
+	ldr r0,[r2]
+	ldr r1,=0EE1h
+	add r0,r0,r1
+	mov r3,0h
+	strb r3,[r0]
+HandleCapeSpin:
+	bl 803D5BCh
+SkipCapeSpinCode:
+	pop r0
+	bx r0
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent cape spin routine from executing while the game is frozen
 .org 0x803D5DE
 	cmp r0,0h
 	bne 803D658h
+
+.org 0x803D620	;Prevents cape spin code from running while the game is frozen and reset cape spin flag when riding a yoshi (2)
+	.halfword 0x0894
+
+.org 0x803D674
+	.halfword 0x0894
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Prevent Bravo Mario/Luigi message OAM from overwriting reward pop-ups on screen
@@ -5186,6 +5370,88 @@ No1upSound:
 	
 .org 0x8040A5C	;boo blocks
 	mov r1,0h
+	
+.org 0x8040FD8	;Make big boo boss interact with the player when he is visible
+	push r4-r7,r14
+	mov r6,r0
+	mov r5,0Bh
+	ldr r7,=3002340h
+BooBossLoopStart:
+	mov r0,64h
+	mul r0,r5
+	ldr r1,=6CCh
+	add r0,r0,r1
+	ldr r2,=3007A48h
+	ldr r1,[r2]
+	add r4,r0,r1
+	ldrb r0,[r4,1Ch]
+	cmp r0,9h
+	bne BooBossLoopContinue
+	mov r0,r4
+	bl 802FC64h
+	mov r0,r6
+	bl 802FBF0h
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq BooBossLoopContinue
+	mov r0,3h
+	strb r0,[r6,1Bh]
+	mov r1,r6
+	add r1,22h
+	mov r0,40h
+	strb r0,[r1]
+	mov r0,0h
+	strb r0,[r4,1Ch]
+	ldr r1,=1C58h
+	add r2,r7,r1
+	ldr r1,[r2]
+	ldrh r0,[r4,10h]
+	strh r0,[r1,30h]
+	ldr r1,[r2]
+	ldrh r0,[r4,12h]
+	strh r0,[r1,2Ch]
+	mov r0,0FFh
+	bl 802F044h
+	ldr r2,=8C4h
+	add r1,r7,r2
+	ldrh r0,[r4,10h]
+	ldrh r1,[r1]
+	sub r0,r0,r1
+	sub r2,9Ch
+	add r1,r7,r2
+	strh r0,[r1]
+	mov r0,36h
+	bl 809C1C4h
+	b BooBossLoopEnd
+	.pool
+BooBossLoopContinue:
+	sub r0,r5,1
+	lsl r0,r0,18h
+	lsr r5,r0,18h
+	cmp r5,0FFh
+	bne BooBossLoopStart
+BooBossLoopEnd:
+	mov r0,r6
+	bl 803515Ch
+	pop r4-r7
+	pop r0
+	bx r0
+	.halfword 0x0000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceRYS:
+	add r1,2h
+	add r0,r3,r1
+	strb r2,[r0]
+	add r1,25h
+	add r0,r3,r1
+	strb r2,[r0]
+	add r1,1h
+	add r0,r3,r1
+	strb r2,[r0]
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	.word 0x00000000
 
 .org 0x804163C	;Fix wings of 2-tile flying gray turn blocks get drawn in front of blocks
 	mov r6,0h
@@ -5571,6 +5837,12 @@ LoopSuperKoopa:
 .org 0x804A1F4
 	add r0,28h
 	
+.org 0x804A304	;Fix thwomp sprite interaction
+	bl FreeSpaceSIR
+	
+.org 0x804A354	;Fix thwimp sprite interaction
+	bl FreeSpaceSIR
+	
 .org 0x804A4FC	;Fix dino rhino get stuck when jumping in a corner (1)
 	lsl r0,r0,10h
 	ldr r1,[r2]
@@ -5714,6 +5986,76 @@ DownSumoBrother:
 
 .org 0x804DA64
 	lsl r0,r5,18h
+	
+.org 0x804EBB4	;Reset several more values when a new yoshi spawns
+	ldr r5,=3007A48h
+	ldr r3,[r5]
+	ldr r1,=67Ah
+	add r0,r3,r1
+	mov r2,0h
+	strb r2,[r0]
+	bl FreeSpaceRYS
+	ldr r1,=3002340h
+	ldr r3,=1C58h
+	add r0,r1,r3
+	ldr r0,[r0]
+	ldr r3,=114Fh
+	add r0,r0,r3
+	strb r2,[r0]
+	ldr r0,[r5]
+	ldr r3,=0ED5h
+	add r2,r0,r3
+	ldr r3,=6C6h
+	add r0,r0,r3
+	ldrb r2,[r2]
+	strb r2,[r0]
+	mov r0,35h
+	strb r0,[r6,1Ah]
+	mov r0,8h
+	strb r0,[r6,1Ch]
+	ldr r3,=8C4h
+	add r2,r1,r3
+	ldrh r0,[r6,10h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	sub r3,9Ch
+	add r1,r1,r3
+	strh r0,[r1]
+	mov r0,0Bh
+	bl 809C1C4h
+	ldrh r0,[r6,12h]
+	sub r0,10h
+	strh r0,[r6,12h]
+	ldr r0,[r6,4h]
+	ldr r3,=0FFF00000h
+	add r0,r0,r3
+	str r0,[r6,4h]
+	mov r7,r6
+	add r7,35h
+	ldrb r4,[r7]
+	mov r0,r6
+	bl 802F54Ch
+	mov r0,0FEh
+	and r4,r0
+	strb r4,[r7]
+	mov r1,r6
+	add r1,36h
+	mov r0,0Ch
+	strb r0,[r1]
+	add r1,1h
+	mov r0,0FFh
+	strb r0,[r1]
+	add r1,1h
+	strb r0,[r1]
+	ldr r0,[r5]
+	ldr r1,=6A5h
+	add r0,r0,r1
+	mov r1,40h
+	strb r1,[r0]
+	pop r4-r7
+	pop r0
+	bx r0
+	.pool
 	
 .org 0x804EDB8	;Fix 5th enemy eaten by baby yoshi doesn't give points and a coin
 	push r4-r7,r14
@@ -7388,10 +7730,16 @@ DownNotAirborne:
 	pop r0
 	bx r0
 	.pool
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
-	.word 0x00000000
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+FreeSpaceSIR:
+	push r14
+	bl 803515Ch
+	mov r0,r4
+	bl 8034964h
+	pop r0
+	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.word 0x00000000
 ;;;;;;;
 
@@ -7757,6 +8105,11 @@ DownSetNotZero:
 	mov r0,0h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix smoke of yoshis house becomes garbeled when pressing A or Start during the beginning of the intro (YHI)
+.org 0x8074C40
+	bl FreeSpaceYHI
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Part 2 of Highscore Tweaks (HST);;;;;;;;;;;;;
 .org 0x807A050
 	blt DownHST1
@@ -7818,11 +8171,19 @@ DownHST4:	;7A0E2
 .org 0x807A444
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .word 0x00000000
-.word 0x00000000
-.word 0x00000000
-.word 0x00000000
-.word 0x00000000
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceYHI:
+	ldr r1,[r4]
+	ldrb r0,[r1,14h]
+	add r1,54h
+	ldrb r1,[r1]
+	cmp r1,0h
+	beq NoButtonPressedDuringIntro
+	mov r0,0h
+NoButtonPressedDuringIntro:
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpacePSS3:
 	push r4,r5,r14
 	mov r5,r0
@@ -7839,6 +8200,7 @@ NoReInitializationNeeded:
 	pop r0
 	bx r0
 	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 BeginFuncFBI:
 	push r4-r7,r14
@@ -9425,6 +9787,9 @@ FreeSpaceSSI1:
 	
 .org 0x8109DA4 +0A3h
 	.byte 0xF3
+	
+.org 0x8109DA4 +0C5h
+	.byte 0xFF
 ;----------------------------------------------------------
 .org 0x8109E76 +0Eh	;Make keyhole not use default Player interaction
 	.byte 0x82
@@ -9474,8 +9839,8 @@ FreeSpaceSSI1:
 .org 0x8109E76 +0BCh	;Make bowser statue invincible
 	.byte 0xA2
 	
-.org 0x8109E76 +0C6h	;Prevent spotlight from triggering the item routine
-	.byte 0xBF
+.org 0x8109E76 +0C5h	;Make big boo boss interact with the player and prevent spotlight from triggering the item routine
+	.byte 0x03, 0xBF
 ;----------------------------------------------------------
 .org 0x8109F48 +08h	;Prevent green para koopa from changing direction when touched like other para koopas
 	.byte 0x52
@@ -9573,7 +9938,7 @@ FreeSpaceSSI1:
 	.byte 0x45, 0x44
 
 .org 0x810A01A +0C4h	;Fix spotlight properties and make grey platforms and big boo boss invincible
-	.byte 0x45, 0x45, 0x46
+	.byte 0x45, 0x44, 0x46
 ;----------------------------------------------------------
 .org 0x810A0EC +05Bh	;Make several sprites solid for yoshi
 	.byte 0x01, 0x01, 0x01, 0x01
@@ -9606,6 +9971,13 @@ FreeSpaceSSI1:
 
 .org 0x810B080
 	.word SpriteTableStatus
+	
+.org 0x810B9EC	;Make cape hitbox for collision detection with solid blocks symmetric (2)
+	.byte 0x00, 0x00, 0x00, 0x00
+
+.org 0x810B9F8
+	.word 0x00000000
+	.word 0x00000000
 	
 .org 0x810C37E	;Fix position of the wings of 2-tile flying gray turnblock platform
 	.byte 0xF5, 0x1B
