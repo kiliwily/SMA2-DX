@@ -5439,6 +5439,7 @@ BooBossLoopEnd:
 	bx r0
 	.halfword 0x0000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceRYS:
 	add r1,2h
 	add r0,r3,r1

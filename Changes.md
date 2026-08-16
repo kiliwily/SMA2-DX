@@ -195,5 +195,5 @@
 - Fixed a bug that caused Yoshi's swallow animation to show a glitched tile in the underwater area of the sunken ghost ship and the rooms with the big switches in switch palaces.
 - Fixed a bug that caused the ghosts in sunken ghost ship to not consider Yoshi's hitbox in the collision detection routine.
 - Fixed a bug that caused several sprites to not consider the Player's hitbox in the collision detection routine when riding a Yoshi.
-- Fixed a bug that caused the cape's hitbox to overwrite the Player's hitbox when doing a spinjump on an enemy with the cape equipped.
+- Fixed a bug that caused the cape's hitbox to overwrite the hitbox of the Player's feet when doing a spinjump on an enemy with the cape equipped.
 - Fixed a bug that caused the cape's hitbox to be asymmetric for collision detection with solid blocks.
