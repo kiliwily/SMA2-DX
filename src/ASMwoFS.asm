@@ -7006,7 +7006,7 @@ SpriteDoesNotHurt:
 
 .org 0x805FAD8
 	ldr r3,=0EB4h
-	
+
 .org 0x805FADE
 	ldr r0,=0EB8h
 
