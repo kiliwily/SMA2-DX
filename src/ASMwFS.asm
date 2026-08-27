@@ -3616,56 +3616,6 @@ YoshiSolidSprite9:
 .org 0x806082C
 	bl FreeSpaceBTC
 
-;Fixed a bug that causes the Player to climb in the air when getting pushed from a rope mechanism by a solid block and stop the rope mechanism carrying the Player when they touch the ground
-.org 0x8063322
-	ldr r5,=3002340h
-	ldr r3,=1C66h
-	add r0,r5,r3
-	bl FreespaceFRG
-	add r0,r5,r3
-	ldrb r0,[r0]
-	mov r1,3h
-	and r0,r1
-	cmp r0,0h
-	beq RopeDown
-	mov r2,r4
-	add r2,28h
-	b 8063394h
-RopeDown:
-	mov r0,r4
-	bl 8034BC4h
-	lsl r0,r0,18h
-	lsr r1,r0,18h
-	cmp r1,0h
-	bne 8063364h
-	mov r2,r4
-	add r2,28h
-	ldrb r0,[r2]
-	cmp r0,0h
-	bne 8063394h
-	b 8063518h
-	.pool
-	.word 0x00000000
-	
-.org 0x806336A
-	ldr r0,=3007A48h
-	ldr r1,[r0]
-	ldr r0,=0EDAh
-	add r1,r1,r0
-	ldr r5,=3002340h
-	ldr r2,=1C58h
-	add r0,r5,r2
-	ldr r0,[r0]
-	ldr r3,=10FAh
-	add r0,r0,r3
-
-.org 0x8063398
-	ldr r6,=1D0Fh
-	add r0,r5,r6
-	b 8063516h
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;Fix Fuzzy death animation (FDA)
 .org 0x806352A
 	bl FreeSpaceFDA

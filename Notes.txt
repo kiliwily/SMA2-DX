@@ -146,6 +146,7 @@ Misc. Sprite Ram (SNES): https://docs.google.com/spreadsheets/d/1YuEyTkBXl-BvXyA
 3EE2/A Related to Player ypos??
 3F01 Spriteslot currently processed
 3F06/7 Player is carrying a sprite flag
+3F08 Player is standing on top of a solid sprite (1 = On top of a floating rock, floating grass platform, floating skull, Mega Mole, carrot top lift, etc, 2 = On top of a springboard or a wall spring, 3 = on top of brown or gray rotating platforms)
 3F0D Cape spin interacts with sprites and blocks flag (0 = don't interact, 1 = do interact), also used when punching on a net
 3F50 Number of coins to give the player (Adress in 7A48h + 0F24h)
 3F52 Yoshi has a key in his mouth flag
@@ -223,6 +224,7 @@ Format: dFfcEebh:
 4016 if = 30h, then level ends via keyhole
 402D Flashing invulnerability timer (?)
 402E Picking up timer
+4031 Flashing palette timer
 4034 Player punches while climbing a net timer and flag
 4035 Cape take off timer
 4043 Blue P-Switch timer

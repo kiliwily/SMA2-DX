@@ -6998,7 +6998,7 @@ SpriteDoesNotHurt:
 .org 0x805F8FC
 	sub r0,1Fh
 	
-.org 0x805FA9A		;Fix yoshi's position on top of the rotating gray platform
+.org 0x805FA9A	;Fix yoshi's position on top of the rotating gray platforms
 	ldr r3,=811A76Ch
 
 .org 0x805FACE
@@ -7006,7 +7006,7 @@ SpriteDoesNotHurt:
 
 .org 0x805FAD8
 	ldr r3,=0EB4h
-
+	
 .org 0x805FADE
 	ldr r0,=0EB8h
 
@@ -7021,7 +7021,6 @@ SpriteDoesNotHurt:
 	ldrb r0,[r4,1Bh]
 	cmp r0,0h
 	bne DownYoshiPosRGP1
-	mov r0,0h
 	str r0,[r4,8h]
 DownYoshiPosRGP1:
 	lsl r0,r5,10h
@@ -7051,7 +7050,7 @@ DownYoshiPosRGP1:
 	ldsh r0,[r4,r3]
 	lsl r0,r0,10h
 	str r0,[r4]
-DownYoshiPosRGP2:	
+DownYoshiPosRGP2:
 	ldr r0,=3007A48h
 	ldr r1,[r0]
 	ldr r0,=0F2Eh
@@ -7062,7 +7061,7 @@ DownYoshiPosRGP2:
 DownYoshiPosRGP3:
 	pop r4-r6
 	pop r0
-	bx  r0
+	bx r0
 	.pool
 	
 .org 0x805FBA6	;Prevents Yoshi from standing on sprites that have not a normal status
@@ -7073,11 +7072,91 @@ DownYoshiPosRGP3:
 .org 0x8062BF4	;Fixed the smoke for the chainsaws and rope machines spawning in an incorrect Y position (Credits: Mister Man)
 	sub	r0,0Eh
 
+.org 0x8063104	;Fix several line-guided sprites use the unfreezable frame counter even if the game is frozen
+	.halfword 0x0894
+
+.org 0x806315C
+	.halfword 0x0894
+
 .org 0x806321E	;Center line-guided platforms
 	sub r0,6h
 
 .org 0x8063260
 	sub r0,6h
+	
+.org 0x80632AA	;Fix line-guided fuzzy sprite interaction
+	cmp r0,63h
+	bls 80632E6h
+	mov r0,r4
+	bl 803515Ch
+	ldrb r0,[r4,1Ah]
+	cmp r0,68h
+	bne NotFuzzys
+	mov r0,r4
+	bl 8034964h
+	mov r0,r4
+	bl 806249Ch
+	b ContinueLineGuidedAI
+NotFuzzys:
+	cmp r0,67h
+	bne NotGrinders
+	mov r0,r4
+	bl 8062528h
+	b ContinueLineGuidedAI
+NotGrinders:
+	cmp r0,66h
+	bhi 8063356h
+	mov r0,r4
+	bl 8062800h
+ContinueLineGuidedAI:
+	
+.org 0x8063322	;Fixed a bug that causes the Player to climb in the air when getting pushed from a rope mechanism by a solid block and stop the rope mechanism carrying the Player when they touch the ground
+	ldr r5,=3002340h
+	ldr r3,=1C66h
+	add r0,r5,r3
+	ldrb r2,[r0]
+	bl FreespaceFRG
+	mov r0,r2
+	mov r1,3h
+	and r0,r1
+	cmp r0,0h
+	beq RopeDown
+	mov r2,r4
+	add r2,28h
+	b 8063394h
+RopeDown:
+	mov r0,r4
+	bl 8034BC4h
+	lsl r0,r0,18h
+	lsr r1,r0,18h
+	cmp r1,0h
+	bne 8063364h
+	mov r2,r4
+	add r2,28h
+	ldrb r0,[r2]
+	cmp r0,0h
+	bne 8063394h
+	b 8063518h
+	.pool
+	.word 0x00000000
+	
+.org 0x806336A
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r0,=0EDAh
+	add r1,r1,r0
+	ldr r5,=3002340h
+	ldr r2,=1C58h
+	add r0,r5,r2
+	ldr r0,[r0]
+	ldr r3,=10FAh
+	add r0,r0,r3
+
+.org 0x8063398
+	ldr r6,=1D0Fh
+	add r0,r5,r6
+	b 8063516h
+	.pool
 
 .org 0x8063F04	;Adjust draw height of scaling mushrooms
 	ldr r2,=3002340h
@@ -7189,37 +7268,72 @@ DownScalingMushrooms2:
 .org 0x8064168
 	.pool
 	
+.org 0x806423E	;Fix the players position on top of the rotating gray platforms
+	bl 8064370h
+	mov r0,r4
+	bl 8064250h
+
+.org 0x80642BA
+	ldr r2,=811A76Ch
+
+.org 0x8064306
+	beq DownRGP1
+	mov r0,r6
+	add r0,37h
+	mov r1,3h
+	strb r1,[r0]
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r7,=0EDCh
+	add r0,r0,r7
+	strb r1,[r0]
+	b DownRGP2
+	.pool
+DownRGP1:
+	mov r1,r6
+	add r1,37h
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq DownRGP2
+	mov r0,0h
+	strb r0,[r1]
+DownRGP2:
+	pop r4-r7
+	pop r0
+	bx r0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFRG:
+	mov r0,r2
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
+	beq RopeNoGround
+	ldr r3,=854h
+	add r0,r5,r3
+	ldrh r0,[r0]
+	mov r1,40h
+	and r0,r1
+	cmp r0,0h
+	bne RopeNoGround
+	mov r0,r4
+	add r0,28h
+	mov r1,0h
+	strb r1,[r0]
+	ldr r3,=1D0Fh
+	add r0,r5,r3
+	strb r1,[r0]
+RopeNoGround:
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	.word 0x00000000
+	
 .org 0x8064FF8	;koopaling stomp
 	add r0,4h
 
 .org 0x8064FFE
 	cmp r0,0Bh
-	
-.org 0x80632AA	;Fix line-guided fuzzy sprite interaction
-	cmp r0,63h
-	bls 80632E6h
-	mov r0,r4
-	bl 803515Ch
-	ldrb r0,[r4,1Ah]
-	cmp r0,68h
-	bne NotFuzzys
-	mov r0,r4
-	bl 8034964h
-	mov r0,r4
-	bl 806249Ch
-	b ContinueLineGuidedAI
-NotFuzzys:
-	cmp r0,67h
-	bne NotGrinders
-	mov r0,r4
-	bl 8062528h
-	b ContinueLineGuidedAI
-NotGrinders:
-	cmp r0,66h
-	bhi 8063356h
-	mov r0,r4
-	bl 8062800h
-ContinueLineGuidedAI:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
@@ -7313,7 +7427,17 @@ DownReznorInit:
 	bx r0
 	.pool
 
-.org 0x8067CF8	;Makes goal item a 1-up if Player is big and has feather or flower in stock
+.org 0x8067A2A	;Fix the players position on top of reznor platforms
+	mov r0,r4
+	bl 806787Ch
+	ldrb r0,[r4,1Ch]
+	cmp r0,8h
+	bne DownReznorPlatform
+	mov r0,r4
+	bl 80677A0h
+DownReznorPlatform:	
+
+.org 0x8067CF8	;Makes goal item a 1-up if the player is big and has feather or flower in stock
 	push r4-r6,r14
 	mov r4,r0
 	ldr r6,=3002340h
@@ -7486,6 +7610,11 @@ ContinueGoalLoop:
 	sub r4,64h
 	sub r0,r5,1h
 	lsl r0,r0,18h
+
+.org 0x8069274	;Fix the position of yoshi coins on top of rotating gray platforms
+	bl 8068FD0h
+	mov r0,r7
+	bl 80692B0h
 	
 .org 0x80696C2	;Fix p-switch run out sfx plays in certain cases when p-switch timer is 1
 	ldrb r3,[r0]
@@ -7597,8 +7726,8 @@ DownDiagonalPipeShoot3:
 	mov r3,0h
 	b 806A650h
 	.pool
-	
-.org 0x806B452	;Fix star timer gets either never or every frame decremented when game freeze flag is set and gets not reset when the Player dies instandly  
+
+.org 0x806B452	;Fix star timer gets either never or every frame decremented when game freeze flag is set and gets not reset when the Player dies instandly
 	add r4,r0,r4
 	ldrb r6,[r4]
 	
@@ -7614,7 +7743,6 @@ DownDiagonalPipeShoot3:
 	strb r0,[r4]
 	b 806B45Ah
 	.pool
-
 NotDeadStarMan:
 	ldr r1,=1C67h
 	add r0,r2,r1
@@ -7696,7 +7824,6 @@ NormalizeMusic:
 	bl 8003D68h
 	b 806B580h
 	.pool
-	
 DifferentColorFlashing:
 	ldr r0,=3002340h
 	ldr r4,=893h

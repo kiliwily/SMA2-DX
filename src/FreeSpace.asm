@@ -1511,32 +1511,6 @@ NotCheckered:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceFRG:
-	ldrb r0,[r0]
-	mov r1,4h
-	and r0,r1
-	cmp r0,0h
-	beq RopeNoGround
-	ldr r2,=854h
-	add r0,r5,r2
-	ldrh r0,[r0]
-	mov r1,40h
-	and r0,r1
-	cmp r0,0h
-	bne RopeNoGround
-	mov r0,r4
-	add r0,28h
-	mov r1,0h
-	strb r1,[r0]
-	ldr r2,=1D0Fh
-	add r0,r5,r2
-	strb r1,[r0]
-RopeNoGround:
-	bx r14
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFDA:
 	push r14
 	bl 80632A0h
@@ -1610,6 +1584,19 @@ UpdateHair:
 	orr r1,r2
 	strh r1,[r4,4h]
 NotIggyTwo:
+	bx r14
+	.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceFLB:
+	mov r2,r9
+	ldr r0,[r2,20h]
+	add r0,0DCh
+	ldrb r0,[r0]
+	ldr r2,=82Ch
+	add r2,r9
+	strh r0,[r2]
 	bx r14
 	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1737,19 +1724,6 @@ GoodItemInStock:
 	mov r0,0h
 ReturnDMI:
 	bx r14
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceFLB:
-	mov r2,r9
-	ldr r0,[r2,20h]
-	add r0,0DCh
-	ldrb r0,[r0]
-	ldr r2,=82Ch
-	add r2,r9
-	strh r0,[r2]
-	bx r14
-	.pool
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
