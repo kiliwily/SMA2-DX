@@ -234,6 +234,7 @@ Format: dFfcEebh:
 404F Player can climb on air flag (used by rope mechanism)
 4054 Player palette offset
 4058 Amount of tiles for the Player GFX to load (6h in overworld, 0Ah in levels)
+4088 Eating/creating block flag (if=0FFh then blocks don't run, if=0h then blocks run)
 408A
 408E Yoshi ducking flag
 40C8 if =60h: teleporting is enabled

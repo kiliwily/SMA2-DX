@@ -191,18 +191,6 @@ MakePeachCoins:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceICC:
-	ldr r0,=3007A48h
-	ldr r0,[r0]
-	ldr r1,=0F24h
-	add r0,r0,r1
-	mov r1,0h
-	strb r1,[r0]
-	bx r14
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceCPG:
 	push r14
 	bl 800E8ECh
@@ -628,8 +616,31 @@ ReturnPositionAdjustment:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFGS1:
 	push r14
+	mov r0,r5
+	add r0,2Ah
+	ldrb r1,[r0]
+	mov r0,1h
+	eor r1,r0
+	mov r0,0E4h
+	lsl r0,r0,5h
+	add r0,r4,r0
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq DownFGS
+	add r0,r1,2h
+	lsl r0,r0,18h
+	lsr r1,r0,18h
+DownFGS:
+	add r2,r1,r2
+	ldrb r0,[r2]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	lsl r0,r0,0Ch
+	str r0,[r5,8h]
+	strb r7,[r5,1Fh]
+	mov r0,r5
 	bl 805EBDCh
-	add r0,r5,0h
+	mov r0,r5
 	add r0,2Dh
 	mov r2,0h
 	strb r2,[r0]
@@ -672,6 +683,8 @@ DownFCS2:
 FreeSpaceSCD:
 	ldrb r0,[r5,1Ah]
 	ldrb r1,[r6,1Ah]
+	cmp r0,2Dh
+	beq Sprite1KeyPSwitch
 	cmp r0,3Eh
 	beq Sprite1KeyPSwitch
 	cmp r0,80h
@@ -688,6 +701,8 @@ DoCollisionCheck:
 	mov r0,0h
 	b ReturnContinueCollisionChecks
 Sprite1OtherSprite:
+	cmp r1,2Dh
+	beq Sprite2KeyPSwitch
 	cmp r1,3Eh
 	beq Sprite2KeyPSwitch
 	cmp r1,80h
@@ -1644,34 +1659,6 @@ HandleCape:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceHPC:
-	push r14
-	bl 806A304h
-	bl 8006970h
-	ldr r1,=1C58h
-	add r0,r4,r1
-	ldr r0,[r0]
-	ldr r2,=1190h
-	add r0,r0,r2
-	mov r1,1h
-	strb r1,[r0]
-	pop r0
-	bx r0
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-FreeSpaceFTL:
-	ldr r0,=80F9EF8h
-	add r3,r0,r1
-	ldr r1,[r3]
-	add r1,3h
-	ldrb r0,[r1]
-	bx r14
-	.pool
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceGYC:
 	ldr r1,=689h
 	add r0,r2,r1
@@ -1806,16 +1793,17 @@ PlayerNotDied1:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceFBB:
-	mov r3,0h
-	ldsh r1,[r0,r3]
+	mov r2,0h
+	ldsh r1,[r0,r2]
 	mov r3,0A8h
-	ldr r0,[r4,20h]
+	ldr r2,=3002340h
+	ldr r0,[r2,20h]
 	add r0,0E0h
 	ldrb r0,[r0]
 	cmp r0,0h
 	beq PlayerIsSmall
 	ldr r0,=1C62h
-	add r0,r4,r0
+	add r0,r2,r0
 	ldrb r0,[r0]
 	cmp r0,0h
 	beq PlayerIsBig
@@ -1858,6 +1846,25 @@ FreeSpaceF0T3:
 	bne PlayerNotDied2
 	mov r1,0h
 PlayerNotDied2:
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceRDF:
+	mov r2,0h
+	strb r2,[r3]
+	add r1,1h
+	add r3,r0,r1
+	strb r2,[r3]
+	add r1,52h
+	add r3,r0,r1
+	strb r2,[r3]
+	add r1,1Ah
+	add r3,r0,r1
+	strb r2,[r3]
+	add r1,3h
+	add r3,r0,r1
+	strb r2,[r3]
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

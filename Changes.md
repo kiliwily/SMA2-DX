@@ -197,3 +197,15 @@
 - Fixed a bug that caused several sprites to not consider the Player's hitbox in the collision detection routine when riding a Yoshi.
 - Fixed a bug that caused the cape's hitbox to overwrite the hitbox of the Player's feet when doing a spinjump on an enemy with the cape equipped.
 - Fixed a bug that caused the cape's hitbox to be asymmetric for collision detection with solid blocks.
+- Fixed a bug that caused pokeys to sometimes take damage from thrown objects (Keys, P-Switches, etc.) that are not supposed to damage any enemy.
+- Fixed a bug that caused the Player to take damage when touching a muncher from the side while riding a Yoshi instead of loosing the Yoshi.
+- Fixed a bug that caused Luigi to use Mario's speed when getting hit from an enemy projectile or the ghosts in the sunken ghost ship while riding a Yoshi.
+- Fixed an oversight that caused Yoshi to always use the slower run speed when getting hit by certain non-regular sprites.
+- Fixed a bug that caused the Player to get into a glitched state when triggering a power-up animation in the same frame he enters a pipe.
+- Fixed an error in the layer check of the collision check between the Player's and Yoshis fireball and regular sprites.
+- Fixed the Player's air bubbles underwater don't initialize their layer.
+- Fixed a bug that caused torpedo ted to have a different speed cap when moving to the right than to the left.
+- Prevented enemies from sometimes respawning when killed with fireballs and the coin despawned.
+- Fixed a bug that caused the first block of the snake blocks to not trigger the snake to start moving (inspired by SMA4/SMB3 e-Reader levels).
+- Fixed the buggy behaviour of the snake blocks when a blue P-Switch is active.
+- Fixed a bug that caused stationary feathers to not despawn when they are offscreen.
