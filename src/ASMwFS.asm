@@ -1760,7 +1760,7 @@ DownMushroom:
 	.pool
 	
 .org 0x8035948	;Fix a bug that causes the Player to get in a glitched state when obtaining a flower while entering a pipe or a door
-	push r4,r14
+	push r4,r5,r14
 	mov r4,r0
 	ldr r3,=3002340h
 	ldr r2,=1CF1h
@@ -1790,16 +1790,16 @@ DownFlower:
 	bne PlayerIsNotSmallFlower
 	ldr r1,=1C70h
 	add r0,r3,r1
-	ldr r2,=828h
-	add r1,r3,r2
+	ldr r5,=828h
+	add r1,r3,r5
 	ldrh r0,[r0]
 	strh r0,[r1]
 	ldr r0,[r3,20h]
 	add r0,0DCh
-	ldrb r1,[r0]
-	add r2,4h
-	add r0,r3,r2
-	strh r1,[r0]
+	ldrb r2,[r0]
+	add r5,4h
+	add r0,r3,r5
+	strh r2,[r0]
 	mov r0,6Eh
 	bl 809C1C4h
 PlayerIsNotSmallFlower:
@@ -1810,7 +1810,7 @@ PlayerIsNotSmallFlower:
 	strb r1,[r0]
 	mov r0,r4
 	bl FreeSpaceMFIS
-	pop r4
+	pop r4,r5
 	pop r0
 	bx r0
 	.pool
