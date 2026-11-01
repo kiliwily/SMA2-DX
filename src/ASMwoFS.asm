@@ -4858,7 +4858,7 @@ DownCounter:
 	bx r0
 	.pool
 	
-.org 0x803C138	;Fix shooter use unfreezable timer even if game is frozen
+.org 0x803C138	;Fix shooter use unfreezable timer even if the game is frozen
 	.halfword 0x2BD4
 	
 .org 0x803CE6E	;Fix bug that causes the cape's hitbox to overwrite the hitbox of the Player's feet when doing a spinjump on an enemy with the cape
