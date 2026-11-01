@@ -4858,6 +4858,9 @@ DownCounter:
 	bx r0
 	.pool
 	
+.org 0x803C138	;Fix shooter use unfreezable timer even if game is frozen
+	.halfword 0x2BD4
+	
 .org 0x803CE6E	;Fix bug that causes the cape's hitbox to overwrite the hitbox of the Player's feet when doing a spinjump on an enemy with the cape
 	mov r0,0Ch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6878,6 +6881,12 @@ DownKeyhole7:
 
 .org 0x805759C
 	.pool
+	
+.org 0x8057BE2	;Fix spotlight animation doesn't stop when the game is frozen
+	sub r0,54h
+
+.org 0x8057C88
+	mov r3,0Bh
 
 .org 0x8058838	;Prevent wiggler stomp counter from overflowing
 	ldrh r2,[r0]
