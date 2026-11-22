@@ -6729,7 +6729,7 @@ DownBabyYoshi5:
 .org 0x804FD4A	;Make lakitu's cloud also find a lakitu in slots 0xA and 0xB
 	mov r3,0Bh
 
-.org 0x804FDB4	;Make kamek also consider sprites in slots 0xA and 0xB when ckeck if it should spawn
+.org 0x804FDB4	;Make kamek also consider sprites in slots 0xA and 0xB when check if it should spawn
 	mov r4,0Bh
 	
 .org 0x804FEA8	;Adjust draw height of magikoopa
@@ -7268,7 +7268,7 @@ DownKeyhole7:
 .org 0x805759C
 	.pool
 
-.org 0x8057A90	;Fix lightswitch doesnt find spotlight when it spawns in slot 0xA or 0xB
+.org 0x8057A90	;Fix lightswitch doesnt find spotlight when it spawns in slots 0xA or 0xB
 	mov r2,0Bh
 	
 .org 0x8057BE2	;Fix spotlight animation doesn't stop when the game is frozen

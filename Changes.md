@@ -62,11 +62,11 @@
 - Made the big boo boss interact with the Player and hurt him if he is visible (inspired by SMA4/SMB3 e-Reader levels).
 
 ## Bug Fixes
-- Fixed Wendy's castle has the wrong background color at the begin of the intro.
+- Fixed Wendy's castle had the wrong background color at the begin of the intro.
 - Fixed a bug, that caused the smoke that comes out of yoshis house during the beginning of the intro become garbled when pressing A or Start to skip the intro.
 - Fixed a tiling error in the intro level.
 - Fixed a bug that caused the choose Single Player/Multiplayer screen being garbled if pressing a button while the intro level fades out after Luigi flew over the intro level.
-- Fixed Yoshis bongos play in bonus room music even when Yoshi is not present.
+- Fixed Yoshis bongos played in bonus room music even when Yoshi is not present.
 - Fixed an oversight that caused Iggy to use Larry's hair during his bossfight.
 - Fixed a bug that caused the Player to glitch into the moving walls during Roy's boss fight.
 - Fixed Wendy's bow when she looks left/right during her bossfight.
@@ -82,8 +82,8 @@
 - Fixed top of directional coin being mirrored when P-Switch is active.
 - Made top of directional coin solid when P-Switch is active to prevent a bug when it touches Mario/Luigi.
 - Fixed a bug that caused several sprites and the Player's fireballs to not sink in underground lava.
-- Fixed blue Yoshi's overworld sprite has green dots.
-- Fixed yellow Yoshi's overworld sprites shoe color is overwritten by Mario/Luigi palette.
+- Fixed blue Yoshi's overworld sprite had green dots.
+- Fixed yellow Yoshi's overworld sprites shoe color gets overwritten by Mario/Luigi palette.
 - Fixed several bugs that occur if select and A, Start or a directional button was pressed at the same frame in the overworld.
 - Fixed an oversight that caused the life counter to go over 999 on the overworld.
 - Fixed an oversight that caused only Marios name being highlighted on the level map if he an Luigi got the same number of exits after all 96 exits were found.
@@ -213,6 +213,8 @@
 - Fixed a bug that caused the Player to sometimes glitch through slopes when flying or swimming against them in a certain angle.
 - Fixed a bug that caused shellless koopa to still mov up or down when the game is frozen.
 - Fixed a bug that allowed the Player to duck when riding a Yoshi or raise when Yoshis tongue is out if the game is frozen.
+- Fixed a bug that caused th sumo brother flames to erroneously overwrite the position and other data of the sprite in slot 0.
+- Fixed the offscreen flag check for several sprites was not symmetric, which caused some sprites to set their offscreen flag when jus touching the left side of the screen.
 - Fixed silver P-Switches do not change sprites in slot 0xA and 0xB into silver coins.
 - Fixed bob-omb explosion doesn't affect sprites in slots 0xA and 0xB.
 - Fixed several sprites where only one can spawn on screen at a time do not consider sprites in slots 0xA and 0xB.
