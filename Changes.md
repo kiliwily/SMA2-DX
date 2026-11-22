@@ -211,7 +211,7 @@
 - Fixed a bug that caused stationary feathers to not despawn when they are offscreen.
 - Fixed several occasions where the game uses the non-freezable framecounter when it should use the normal one and vice versa.
 - Fixed a bug that caused the Player to sometimes glitch through slopes when flying or swimming against them in a certain angle.
-- Fixed a bug that caused shellless koopa to still mov up or down when the game is frozen.
+- Fixed a bug that caused shellless koopa to still move up or down when the game is frozen.
 - Fixed a bug that allowed the Player to duck when riding a Yoshi or raise when Yoshis tongue is out if the game is frozen.
 - Fixed a bug that caused th sumo brother flames to erroneously overwrite the position and other data of the sprite in slot 0.
 - Fixed the offscreen flag check for several sprites was not symmetric, which caused some sprites to set their offscreen flag when jus touching the left side of the screen.
