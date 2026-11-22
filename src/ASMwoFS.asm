@@ -436,7 +436,7 @@ NoBGColor:
 	.pool
 	.word 0x00000000
 	.word 0x00000000
-	.halfword 0x0000
+	.word 0x00000000
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Part 2 of Perma SaveSlot (PSS)
@@ -2588,6 +2588,9 @@ LevelListTeleportRoutineReturn:
 	str r0,[r4,8h]
 	b 802B1E2h
 	.pool
+
+.org 0x802B22E	;Makes silver p-switch also change sprites in slots 0xA and 0xB into silver coins
+	mov r4,0Bh
 	
 .org 0x802B7D0	;Fixes limit of goal coins
 	cmp r2,0Ah
@@ -2887,6 +2890,83 @@ DownOthers:
 	cmp r1,0h
 	blt 802FBECh
 	
+.org 0x802FFEC	;Fix offscreen flag check is not centered
+	ldr r1,=3002340h
+	ldr r7,=8C4h
+
+.org 0x802FFF6
+	sub r3,r0,r1
+	add r3,1Fh
+	lsl r0,r3,10h
+	ldr r1,=11E0000h
+	cmp r0,r1
+	bls CheckOffscreenFlag1
+	mov r0,1h
+	mov r1,r12
+	strb r0,[r1]
+CheckOffscreenFlag1:
+	add r3,40h
+	lsl r0,r3,10h
+	ldr r1,=19E0000h
+	cmp r0,r1
+	bls 803002Ch
+	mov r1,r2
+	add r1,31h
+	mov r0,1h
+	b 8030032h
+	.pool
+
+.org 0x80300B8
+	ldr r1,=3002340h
+	ldr r7,=8C4h
+
+.org 0x80300C2
+	sub r3,r0,r1
+	add r3,1Fh
+	lsl r0,r3,10h
+	ldr r1,=11E0000h
+	cmp r0,r1
+	bls CheckOffscreenFlag2
+	mov r0,1h
+	mov r1,r12
+	strb r0,[r1]
+CheckOffscreenFlag2:
+	add r3,40h
+	lsl r0,r3,10h
+	ldr r1,=19E0000h
+	cmp r0,r1
+	bls 80300F8h
+	mov r1,r2
+	add r1,31h
+	mov r0,1h
+	b 80300FEh
+	.pool
+
+.org 0x8030182
+	ldr r1,=3002340h
+	ldr r0,=8C4h
+
+.org 0x803018E
+	sub r2,r0,r1
+	add r2,1Fh
+	lsl r0,r2,10h
+	ldr r1,=11E0000h
+	cmp r0,r1
+	bls CheckOffscreenFlag3
+	mov r0,1h
+	strb r0,[r3]
+CheckOffscreenFlag3:
+	add r2,40h
+	lsl r0,r2,10h
+	ldr r1,=19E0000h
+	cmp r0,r1
+	bls 80301C0h
+	mov r1,r12
+	add r1,31h
+	mov r0,1h
+	b 80301C6h
+	.pool
+	
 .org 0x80307C4	;Make every enemy give up to a 5up when killed by stomping
 	push r4-r6,r14
 	mov r5,r0
@@ -2923,7 +3003,6 @@ DownOthers:
 	strb r0,[r2]
 	b DownEnemyStomping
 	.pool
-	
 DownStomping1Ups1:
 	ldr r2,=3002340h
 	ldr r0,=8C4h
@@ -2966,7 +3045,6 @@ Stomping5up:
 	lsl r2,r2,3h
 	b StoreValueStomping
 	.pool
-	
 DownOtherFlagStomping:
 	ldr r2,=6BEh
 StoreValueStomping:
@@ -3000,7 +3078,6 @@ FreeSpaceRBT:
 	cmp r6,r0
 	bcc DownNotMaxLifes
 	sub r6,r0,1h
-
 DownNotMaxLifes:
 	ldr r2,=3002340h
 	mov r1,0E3h
@@ -3051,13 +3128,11 @@ DownNotMaxLifes:
 	sub r0,r0,r1
 	b DownMessage2
 	.pool
-
 DownMessage1:
 	mov r4,0h
 	add r0,r6,0h
 	mov r1,0Ah
 	bl 809EBBCh
-
 DownMessage2:
 	lsl r0,r0,18h
 	lsr r0,r0,18h
@@ -3081,7 +3156,6 @@ DownMessage2:
 	strh r0,[r2]
 	mov r0,9Dh
 	bl 809C1C4h
-
 EndOfFctMessage:
 	pop r4-r7
 	pop r0
@@ -3254,6 +3328,215 @@ NoBooCollision:
 	pop r0
 	bx r0
 	.pool
+
+.org 0x8031A00	;Fix sumo brother flames edit data of sprite in slot 0, even though sumo brother flames are a cluster sprite not a normal sprite
+	mov r4,r0
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	mov r0,0F6h
+	lsl r0,r0,4h
+	add r5,r1,r0
+	ldrb r0,[r5]
+	cmp r0,79h
+	bls SumoBrotherFlames1
+	b 8031C14h
+SumoBrotherFlames1:
+	ldr r3,=3002340h
+	ldr r1,=8C4h
+	add r0,r3,r1
+	ldrh r1,[r4,10h]
+	ldrh r0,[r0]
+	sub r1,r1,r0
+	lsl r1,r1,10h
+	ldr r0,=8C8h
+	add r2,r3,r0
+	ldrh r0,[r4,12h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	lsl r0,r0,10h
+	lsr r0,r0,10h
+	mov r9,r0
+	lsr r2,r1,10h
+	str r2,[sp]
+	mov r0,80h
+	lsl r0,r0,0Eh
+	add r1,r1,r0
+	ldr r0,=12F0000h
+	cmp r1,r0
+	bls SumoBrotherFlames2
+	b 8031C14h
+SumoBrotherFlames2:
+	mov r1,r9
+	lsl r0,r1,10h
+	asr r1,r0,10h
+	cmp r1,0BFh
+	ble SumoBrotherFlames3
+	b 8031C14h
+SumoBrotherFlames3:
+	mov r0,20h
+	cmn r1,r0
+	bge SumoBrotherFlames4
+	b 8031C14h
+SumoBrotherFlames4:
+	ldrb r0,[r5]
+	lsl r0,r0,3h
+	ldr r2,=8E8h
+	add r1,r3,r2
+	add r4,r0,r1
+	mov r3,1h
+	mov r10,r3
+	mov r6,3Fh
+	ldr r0,=3007A48h
+	mov r12,r0
+	ldr r1,=810A780h
+	str r1,[sp,4h]
+	ldr r2,=810A788h
+	str r2,[sp,8h]
+	ldr r0,=810A688h
+	str r0,[sp,0Ch]
+SumoBrotherFlames5:
+	mov r8,r3
+	ldr r1,[sp]
+	lsl r2,r1,10h
+	asr r2,r2,10h
+	ldr r0,=1FFh
+	and r2,r0
+	ldrh r0,[r4,2h]
+	ldr r1,=0FFFFFE00h
+	and r0,r1
+	orr r0,r2
+	strh r0,[r4,2h]
+	mov r1,r12
+	ldr r0,[r1]
+	ldr r2,=65Bh
+	add r0,r0,r2
+	ldrb r0,[r0]
+	orr r3,r0
+	lsl r0,r3,18h
+	asr r2,r0,18h
+	ldr r0,[sp,4h]
+	add r1,r2,r0
+	mov r0,0h
+	ldsb r0,[r1,r0]
+	cmp r0,0h
+	bge SumoBrotherFlames6
+	b 8031BF0h
+SumoBrotherFlames6:
+	ldrb r0,[r1]
+	add r0,r9
+	strb r0,[r4]
+	ldr r1,[sp,8h]
+	add r0,r2,r1
+	ldrb r1,[r0]
+	mov r0,80h
+	lsl r0,r0,1h
+	orr r1,r0
+	ldrh r0,[r4,4h]
+	mov r7,0FCh
+	lsl r7,r7,8h
+	and r0,r7
+	orr r0,r1
+	strh r0,[r4,4h]
+	ldr r2,=3002340h
+	ldr r1,=894h
+	add r0,r2,r1
+	ldrb r2,[r0]
+	mov r0,4h
+	and r2,r0
+	lsl r2,r2,4h
+	mov r0,5h
+	orr r2,r0
+	lsl r2,r2,18h
+	asr r0,r2,1Eh
+	mov r1,r10
+	and r0,r1
+	lsl r0,r0,4h
+	ldrb r3,[r4,3h]
+	mov r1,0EFh
+	and r3,r1
+	orr r3,r0
+	mov r0,0DFh
+	mov r5,r3
+	and r5,r0
+	strb r5,[r4,3h]
+	asr r2,r2,19h
+	mov r0,7h
+	and r2,r0
+	lsl r2,r2,18h
+	lsr r2,r2,18h
+	lsl r2,r2,4h
+	ldrb r3,[r4,5h]
+	mov r0,0Fh
+	and r3,r0
+	orr r3,r2
+	strb r3,[r4,5h]
+	ldr r2,=3003F98h
+	ldr r0,[r2]
+	ldr r1,=1177h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	lsr r0,r0,4h
+	ldr r2,[sp,0Ch]
+	add r0,r0,r2
+	ldrb r1,[r0]
+	mov r0,3h
+	and r1,r0
+	lsl r1,r1,2h
+	mov r0,0F3h
+	and r3,r0
+	orr r3,r1
+	strb r3,[r4,5h]
+	ldrb r1,[r4,1h]
+	mov r0,10h
+	mov r2,r1
+	orr r2,r0
+	strb r2,[r4,1h]
+	ldrh r0,[r4,4h]
+	lsl r0,r0,16h
+	mov r1,0F6h
+	lsl r1,r1,17h
+	cmp r0,r1
+	bne 8031BE0h
+	mov r0,r2
+	and r0,r6
+	mov r1,40h
+	orr r0,r1
+	strb r0,[r4,1h]
+	mov r0,r5
+	and r0,r6
+	strb r0,[r4,3h]
+	ldr r0,[r4]
+	ldr r1,[r4,4h]
+	str r0,[r4,8h]
+	str r1,[r4,0Ch]
+	ldrb r0,[r4,8h]
+	add r0,8h
+	strb r0,[r4,8h]
+	ldrh r0,[r4,0Ch]
+	and r0,r7
+	mov r1,0EEh
+	lsl r1,r1,1h
+	orr r0,r1
+	strh r0,[r4,0Ch]
+	add r4,8h
+	b 8031BF0h
+	.pool
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+	.word 0x00000000
+
+.org 0x8031C12
+	b SumoBrotherFlames5
 	
 .org 0x8031D70	;Fix ghost in sunken ghostship disappear and reappear if the game is frozen
 	ldr r1,=3002340h
@@ -3381,7 +3664,6 @@ SunkenGhostShipGhosts4:
 	add r1,r2,r4
 	ldrh r0,[r0,2Ch]
 	strh r0,[r1]
-
 Down16Bit1:
 	mov r2,r5
 	add r2,2Bh
@@ -3525,7 +3807,7 @@ DownThrownA4:
 	.word 0x00000000
 	.word 0x00000000
 
-.org 0x80340A8	;Fixes a bug that causes multiple koopas to hop into the same shell (1)
+.org 0x80340A8	;Fix a bug that causes multiple koopas to hop into the same shell (1)
 	mov r1,r12
 	add r1,22h
 	ldrb r0,[r1]
@@ -3533,7 +3815,7 @@ DownThrownA4:
 .org 0x80340B6	;Prevents shellless koopas from hopping into anything that's not a shell
 	cmp r0,0Ch
 	
-.org 0x80340BA	;Fixes a bug that causes multiple koopas to hop into the same shell (2)
+.org 0x80340BA	;Fix a bug that causes multiple koopas to hop into the same shell (2)
 	add r1,9h
 	ldrb r0,[r1]
 	mov r1,4h
@@ -3769,7 +4051,6 @@ SpriteMovesNotDownwards:
 	bne CheckSpriteId
 	b 80356F6h
 	.pool
-	
 CheckSpriteId:
 	bl FreeSpaceCSH
 	cmp r0,0h
@@ -3983,6 +4264,9 @@ PokeyLoopEnd:
 	
 .org 0x8035E38	;Fix yoshi's position on top of the growing/shrinking pipe
 	sub r0,1Fh
+	
+.org 0x8035EF8	;Fix growing/shrinking pipe doesn't trade a star like a power-up
+	cmp r0,2h
 ;;;;;;;
 
 ;Fix bug that causes extended sprites sometimes to recognize a wrong collision when they are offscreen
@@ -4565,11 +4849,9 @@ DownNotKeyBlock:
 	beq 8037E20h
 	b SearchSpriteSlot
 	.pool
-	
 CheckIf0Ch:
 	cmp r4,0Ch
 	bne 8037E20h
-	
 SearchSpriteSlot:
 	bl 802FD78h
 	lsl r0,r0,18h
@@ -4581,7 +4863,6 @@ SearchSpriteSlot:
 	ldr r0,=0F27h
 	add r4,r2,r0
 	mov r3,9h
-
 SpriteLoop1Start:
 	ldrb r0,[r4]
 	cmp r0,r3
@@ -4601,13 +4882,11 @@ SpriteLoop1Start:
 	ldrh r0,[r1,2Eh]
 	cmp r0,0h
 	bne 8037E92h
-
 SpriteLoop1Continue:
 	sub r3,1h
 	cmp r3,0h
 	bge SpriteLoop1Start
 	mov r3,9h
-
 SpriteLoop2Start:
 	ldrb r0,[r4]
 	cmp r0,r3
@@ -4624,7 +4903,6 @@ SpriteLoop2Start:
 	and r0,r5
 	cmp r0,0h
 	beq 8037E92h
-
 SpriteLoop2Continue:
 	sub r3,1h
 	cmp r3,0h
@@ -4640,7 +4918,6 @@ SpriteLoop2Continue:
 	ldrb r0,[r1,1Ah]
 	cmp r0,0F8h
 	bls 8037E92h
-
 SpriteInYoshisMouth:
 	sub r3,1h
 	b 8037E92h
@@ -4715,7 +4992,6 @@ SpriteInYoshisMouth:
 	.word 0x00000000
 	.word 0x00000000
 	.halfword 0x0000
-	
 Down16Bit2:
 	ldr r2,=3002340h
 	ldr r3,=1C58h
@@ -4775,7 +5051,6 @@ Down16Bit2:
 	.word 0x00000000
 	.word 0x00000000
 	.word 0x00000000
-
 Down16Bit3:
 	ldr r2,=3002340h
 	ldr r0,=1C58h
@@ -5286,18 +5561,15 @@ SkipCapeSpinCode:
 ;Prevent Bravo Mario/Luigi message OAM from overwriting reward pop-ups on screen
 .org 0x803DBE6
 	b EndOfAllLoopsMessageOAM
-
 .org 0x803DBEC
 	mov r5,6h
 	ldrh r0,[r6,16h]
 	cmp r0,0FFh
 	bls TwoDigitLifeMessage
 	mov r5,7h
-
 TwoDigitLifeMessage:
 	sub r7,r5,1h
 	mov r4,0Bh
-
 LifeMessageLoop1:
 	ldr r0,=3007A48h
 	ldr r1,[r0]
@@ -5326,7 +5598,6 @@ DownFirstGraphic1:
 	lsr r2,r2,18h
 	bl 809F040h
 	sub r5,1h
-
 NoSpaceMessageLoop1:
 	cmp r5,0h
 	beq EndOfAllLoopsMessageOAM
@@ -5334,7 +5605,6 @@ NoSpaceMessageLoop1:
 	cmp r4,0h
 	bge LifeMessageLoop1
 	mov r4,0Dh
-
 LifeMessageLoop2:
 	ldr r0,=3007A48h
 	ldr r0,[r0]
@@ -5351,7 +5621,6 @@ LifeMessageLoop2:
 	bhi DownFirstGraphic2
 	lsl r0,r5,2h
 	add r3,r3,r0
-
 DownFirstGraphic2:
 	ldr r0,=813A85Ch
 	add r0,r4,r0
@@ -5362,7 +5631,6 @@ DownFirstGraphic2:
 	lsr r2,r2,18h
 	bl 809F040h
 	sub r5,1h
-
 NoSpaceMessageLoop2:
 	cmp r5,0h
 	beq EndOfAllLoopsMessageOAM
@@ -5370,7 +5638,6 @@ NoSpaceMessageLoop2:
 	cmp r4,0h
 	bge LifeMessageLoop2
 	mov r4,7h
-
 LifeMessageLoop3:
 	ldr r0,=3007A48h
 	ldr r1,[r0]
@@ -5389,7 +5656,6 @@ LifeMessageLoop3:
 	bhi DownFirstGraphic3
 	lsl r0,r5,2h
 	add r3,r3,r0
-
 DownFirstGraphic3:
 	ldr r0,=813A871h
 	add r0,r4,r0
@@ -5400,14 +5666,12 @@ DownFirstGraphic3:
 	lsr r2,r2,18h
 	bl 809F040h
 	sub r5,1h
-
 NoSpaceMessageLoop3:
 	cmp r5,0h
 	beq EndOfAllLoopsMessageOAM
 	sub r4,1h
 	cmp r4,0h
 	bge LifeMessageLoop3
-
 EndOfAllLoopsMessageOAM:
 	pop r4-r7
 	pop r0
@@ -5814,24 +6078,74 @@ SetWhistleChuckValues:
 	ldrb r0,[r4,1Bh]
 	lsl r0,r0,1Ch
 	lsr r0,r0,1Ah
-	
-.org 0x80442DE	;Fixes a bug that causes multiple koopas to hop into the same shell (3)
-	b EndFctShellessKoopa
+
+.org 0x8044276	;Fix shellless koopas still move in y-direction if the game is frozen and fix a bug that causes multiple koopas to hop into the same shell (3)
+	ldr r0,=3002340h
+	ldr r1,=1C58h
+	add r4,r0,r1
+	ldr r0,[r4]
+	ldr r2,=1190h
+	add r3,r0,r2
+	ldrb r0,[r3]
+
+.org 0x8044294
+	bge ShelllessKoopa2
+	ldrb r0,[r3]
+	cmp r0,0h
+	bne ShelllessKoopa2
+ShelllessKoopa1:
+	mov r0,r6
+	bl 80446BCh
+	mov r1,r6
+	add r1,48h
+	ldrb r0,[r1]
+	add r0,5h
+	strb r0,[r1]
+ShelllessKoopa2:
+	mov r0,r6
+	bl 80446D4h
+	ldr r0,[r4]
+	ldr r2,=1190h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne ShelllessKoopa3
+	mov r0,r6
+	bl 802F17Ch
+ShelllessKoopa3:
+	mov r2,0h
+	str r2,[r6,8h]
+	mov r0,r6
+	add r0,2Bh
+	ldrb r0,[r0]
+	mov r1,4h
+	and r0,r1
+	cmp r0,0h
+	beq ShelllessKoopa4
+	str r2,[r6,0Ch]
+ShelllessKoopa4:
+	mov r0,r6
+	bl 8044948h
+	b 80446A6h
+	.pool
 
 .org 0x8044492
-	b EndFctShellessKoopa
+	b EndFctShelllessKoopa
+
+.org 0x80444C0
+	b ShelllessKoopa1
 
 .org 0x8044540
-	b EndFctShellessKoopa
+	b EndFctShelllessKoopa
 	
 .org 0x80445CA
-	b EndFctShellessKoopa
+	b EndFctShelllessKoopa
 	
 .org 0x8044630
-	b EndFctShellessKoopa
+	b EndFctShelllessKoopa
 	
 .org 0x8044642
-	b EndFctShellessKoopa
+	b EndFctShelllessKoopa
 	ldr r3,=3007A48h
 	mov r4,r6
 	add r4,2Dh
@@ -5844,16 +6158,16 @@ SetWhistleChuckValues:
 	add r7,r0,r1
 	ldrb r0,[r7,1Ch]
 	cmp r0,7h
-	bls EndFctShellessKoopa
+	bls EndFctShelllessKoopa
 	ldr r0,[r7,0Ch]
 	cmp r0,0h
-	blt EndFctShellessKoopa
+	blt EndFctShelllessKoopa
 	ldrb r0,[r7,1Ah]
 	cmp r0,0Ch
-	bhi EndFctShellessKoopa
+	bhi EndFctShelllessKoopa
 	ldrb r0,[r7,1Bh]
 	cmp r0,0h
-	bne EndFctShellessKoopa
+	bne EndFctShelllessKoopa
 	mov r0,r6
 	bl 802FBF0h
 	mov r0,r7
@@ -5861,7 +6175,7 @@ SetWhistleChuckValues:
 	bl 8034AF8h
 	lsl r0,r0,18h
 	cmp r0,0h
-	beq EndFctShellessKoopa
+	beq EndFctShelllessKoopa
 	mov r0,r6
 	bl 802F2F0h
 	mov r1,r7
@@ -5877,7 +6191,7 @@ SetWhistleChuckValues:
 	add r0,37h
 	mov r1,r9
 	strb r1,[r0]
-EndFctShellessKoopa:
+EndFctShelllessKoopa:
 	pop r3,r4
 	mov r8,r3
 	mov r9,r4
@@ -5885,9 +6199,15 @@ EndFctShellessKoopa:
 	pop r0
 	bx r0
 	.pool
+
+.org 0x8044AAC	;Make yellow koopas also jump over sprites in slots 0xA and 0xB
+	mov r6,0Bh
 	
 .org 0x80452F8	;Fix exploding bobomb death animation
 	mov r0,80h
+	
+.org 0x804558C	;Make exploding bobomb also kill sprites in slots 0xA and 0xB
+	mov r5,0Bh
 	
 .org 0x804572A	;Increase limit to 5up
 	b 8045834h
@@ -6207,6 +6527,61 @@ DownSumoBrother:
 .org 0x804DA64
 	lsl r0,r5,18h
 	
+.org 0x804DCE4	;Fix sumo brother lightning offscreen check is asymmetric
+	ldr r0,=3007A48h
+	
+.org 0x804DCEA
+	ldr r1,=0C9Ch
+	
+.org 0x804DCF4
+	ldr r6,=3007A48h
+	ldr r5,=0B7Ch
+
+.org 0x804DD1C
+	ldr r2,=3007A48h
+	ldr r1,[r2]
+	ldr r0,=0EEAh
+
+.org 0x804DD2C
+	ldr r2,=0EEAh
+	
+.org 0x804DD3C
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r2,=0EEAh
+
+.org 0x804DD4C
+	ldr r2,=0B7Ch
+
+.org 0x804DD56
+	ldr r1,=810DC64h
+
+.org 0x804DD88
+	ldr r4,=3002340h
+	ldr r6,=8C4h
+	add r3,r4,r6
+	ldrh r0,[r3]
+	sub r1,r1,r0
+	add r1,1Fh
+	lsl r1,r1,10h
+	ldr r0,=11E0000h
+	cmp r1,r0
+	bhi SumoBrotherLightningReturn
+	mov r0,6h
+	strb r0,[r2,18h]
+	ldrh r0,[r3]
+	sub r0,r5,r0
+	sub r6,9Ch
+	add r1,r4,r6
+	strh r0,[r1]
+	mov r0,72h
+	bl 809C1C4h
+SumoBrotherLightningReturn:
+	pop r4-r6
+	pop r0
+	bx r0
+	.pool
+
 .org 0x804EBB4	;Reset several more values when a new yoshi spawns
 	ldr r5,=3007A48h
 	ldr r3,[r5]
@@ -6350,6 +6725,12 @@ DownBabyYoshi4:
 	mov r0,1h
 DownBabyYoshi5:
 	pop r4-r7
+
+.org 0x804FD4A	;Make lakitu's cloud also find a lakitu in slots 0xA and 0xB
+	mov r3,0Bh
+
+.org 0x804FDB4	;Make kamek also consider sprites in slots 0xA and 0xB when ckeck if it should spawn
+	mov r4,0Bh
 	
 .org 0x804FEA8	;Adjust draw height of magikoopa
 	ldr r0,=3007A48h
@@ -6691,6 +7072,9 @@ FreeSpaceHPC:
 .org 0x80518D8	;Make growing/shrinking pipe grow/shrink exactly to the block grid position
 	bls 8051900h
 
+.org 0x80522D2	;Make 3-tile flying gray turn block platform also activate platforms in slots 0xA and 0xB when touching a platform in a lower slot
+	mov r3,0Bh
+
 .org 0x80523DC	;Fix wings of 3-tile flying gray turn block platform get drawn in front of blocks
 	mov r4,0h
 
@@ -6724,6 +7108,9 @@ FreeSpaceHPC:
 	lsr r4,r0,18h
 	cmp r4,4h
 	ble 80523FEh
+
+.org 0x8052E18	;Fix lakitu doesn't check for sprites in slots 0xA and 0xB when looking for a cloud during spawn
+	mov r4,0Bh
 	
 .org 0x8052F3E	;Fix lakitu's/fishin' lakitu's incorrect head positioning (Credits: Mister Man)
 	bne 8052F54h
@@ -6866,7 +7253,6 @@ DownKeyhole5:
 	blt 80574FAh
 	b DownKeyhole7
 	.pool
-	
 DownKeyhole6:
 	bl 80349DCh
 	b 8057494h
@@ -6881,6 +7267,9 @@ DownKeyhole7:
 
 .org 0x805759C
 	.pool
+
+.org 0x8057A90	;Fix lightswitch doesnt find spotlight when it spawns in slot 0xA or 0xB
+	mov r2,0Bh
 	
 .org 0x8057BE2	;Fix spotlight animation doesn't stop when the game is frozen
 	sub r0,54h
@@ -7201,48 +7590,6 @@ StartLoopCoinsEaten:
 ;Also contains code that resets the Yoshicolor when reseting the riding a Yoshi flag;;;;;;;;;;
 ;Also contains a fix for the collision with certain invincible sprites while riding Yoshi;;;;;
 ;Also prevents Yoshi from standing on sprites that have not a normal status;;;;;;;;;;;;;;;;;;;
-.org 0x805E8B0	;Prevent using the riding Yoshi flag before it was updated
-	ldr r3,=3002340h
-	ldr r1,=1CD6h
-
-.org 0x805E8BC
-	ldr r4,=854h
-
-.org 0x805E8CC
-	ldr r0,=1D4Eh
-
-.org 0x805E8E6
-	ldrb r0,[r1,1Bh]
-	cmp r0,1h
-	bne UpdateYoshiAnimation
-	ldr r3,=3002340h
-	ldr r4,=1C58h
-	add r0,r3,r4
-	ldr r1,[r0]
-	ldr r4,=114Ah
-	add r0,r1,r4
-	ldrb r0,[r0]
-	cmp r0,1h
-	bne UpdateYoshiAnimation
-	ldr r1,=893h
-	add r0,r3,r1
-	ldrb r0,[r0]
-	mov r1,8h
-	and r0,r1
-	lsl r0,r0,18h
-	lsr r0,r0,1Bh
-	mov r2,r0
-	add r2,8h
-UpdateYoshiAnimation:
-	mov r0,r12
-	add r0,36h
-	strb r2,[r0]
-	pop r4
-	pop r0
-	bx r0
-	.pool
-	.word 0x00000000
-
 .org 0x805EABE	;Prevent Yoshi updating when Yoshi is despawned
 	ldr r5,=3007A48h
 	ldr r6,[r5]
@@ -7317,7 +7664,7 @@ DownNoYoshi3:
 	bx r0
 	.pool
 	
-.org 0x805EF16	;Fixes collision with certain invincible sprites when riding yoshi
+.org 0x805EF16	;Fix collision with certain invincible sprites when riding yoshi
 	mov r0,r2
 	add r0,41h
 	ldrb r0,[r0]
@@ -7334,6 +7681,105 @@ SpriteDoesNotHurt:
 	add r1,0Ah
 	ldrb r1,[r1]
 	orr r0,r1
+	
+.org 0x805EFA4	;Fix can not eat sound plays when touching several non-enemy and invisible sprites with yoshis tongue
+	mov r2,r5
+	add r2,42h
+	ldrb r0,[r2]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	beq TryEatingSprite
+	sub r2,1h
+	ldrb r0,[r2]
+	mov r1,2h
+	and r0,r1
+	cmp r0,0h
+	bne 805F0ACh
+	ldr r4,=3007A48h
+	ldr r0,[r4]
+	ldr r1,=0F36h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	bne 805F0ACh
+	ldr r1,=3002340h
+	ldr r3,=8C4h
+	add r2,r1,r3
+	ldrh r0,[r5,10h]
+	ldrh r2,[r2]
+	sub r0,r0,r2
+	sub r3,9Ch
+	add r1,r1,r3
+	strh r0,[r1]
+	mov r0,1Dh
+	bl 809C1C4h
+	ldr r1,[r4]
+	ldr r0,=0F36h
+	add r1,r1,r0
+	ldrb r0,[r1]
+	add r0,1h
+	b 805F0AAh
+	.pool
+TryEatingSprite:
+	ldrb r1,[r5,1Ah]
+	mov r9,r1
+	cmp r1,70h
+	bne 805F098h
+	ldr r7,=3007A48h
+	ldr r2,[r7]
+	ldr r3,=0EB6h
+	add r0,r2,r3
+	ldrh r0,[r0]
+	ldrh r1,[r5,12h]
+	sub r0,r0,r1
+	add r3,10h
+	add r2,r2,r3
+	strh r0,[r2]
+	mov r0,0h
+	ldsh r1,[r2,r0]
+	mov r0,r5
+	bl 8035CA0h
+	bl 802FD78h
+	lsl r0,r0,18h
+	lsr r6,r0,18h
+	cmp r6,0FFh
+	beq 805F0ACh
+	mov r0,64h
+	mul r0,r6
+	ldr r1,=6CCh
+	add r0,r0,r1
+	ldr r1,[r7]
+	add r4,r0,r1
+	mov r0,8h
+	strb r0,[r4,1Ch]
+	mov r2,r9
+	strb r2,[r4,1Ah]
+	ldr r0,[r7]
+	ldr r2,=0EB6h
+	add r1,r0,r2
+	ldrh r1,[r1]
+	strh r1,[r4,12h]
+	sub r2,2h
+	add r0,r0,r2
+	ldrh r0,[r0]
+	strh r0,[r4,10h]
+	mov r1,12h
+	ldsh r0,[r4,r1]
+	lsl r0,r0,10h
+	str r0,[r4,4h]
+	mov r2,10h
+	ldsh r0,[r4,r2]
+	lsl r0,r0,10h
+	str r0,[r4]
+	mov r0,r4
+	bl 802F54Ch
+	ldrb r0,[r5,1Bh]
+	cmp r0,0h
+	bne 805F084h
+	mov r0,0h
+	b 805F086h
+	.pool
 
 .org 0x805F8E4	;Fix yoshis position when he stands on a turn block bridge
 	bl 805F5F0h
@@ -7680,6 +8126,9 @@ RopeNoGround:
 
 .org 0x8064FFE
 	cmp r0,0Bh
+	
+.org 0x8065B08	;Make bosses also kill sprites in slots 0xA and 0xB when they are dying
+	mov r2,0Bh
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;others
@@ -7875,7 +8324,6 @@ DownGIMA:
 	.pool
 	.word 0x00000000
 	.word 0x00000000
-	
 DownGIMB:
 	mov r3,0h
 DownGIMC:
@@ -8225,9 +8673,6 @@ DifferentColorFlashing:
 	.word 0x00000000
 	.word 0x00000000
 	
-.org 0x806D286	;Reduce level end timer to prevent the player from jumping over the message box when doing a yump on a switch palace switch
-	mov r1,1h
-
 .org 0x806D3D6	;Fix Player floating if they fell from Iggy's/Larry's tilting platform while sliding (Credits: Mister Man)
 	blt DownNotAirborne
 	
@@ -8489,7 +8934,6 @@ Checkpoint_Loop:
 	bge Checkpoint_Loop
 	b Checkpoint4
 .pool
-
 Checkpoint2:
 	cmp r2,7h
 	beq Checkpoint3

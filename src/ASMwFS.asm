@@ -1367,6 +1367,81 @@ DownThrowBlock4:
 	bl FreeSpaceFGS2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix cluster sprites do not check for Yoshis hitbox during collision detection
+.org 0x8031C24
+	push r4-r6,r14
+
+.org 0x8031C28
+	ldr r0,=3007A48h
+	ldr r2,[r0]
+	ldr r1,=0ED5h
+	add r0,r2,r1
+	ldr r5,=3002340h
+	ldr r3,=893h
+	
+.org 0x8031C4E
+	ldr r3,=0EBCh
+	
+.org 0x8031C5E
+	ldr r1,=810A7C8h
+	ldr r3,=65Bh
+	add r0,r2,r3
+	ldrb r0,[r0]
+	lsr r0,r0,1h
+	mov r6,3h
+	and r0,r6
+	add r0,r0,r1
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	ldrh r1,[r4,12h]
+	add r0,r0,r1
+	ldr r3,=0EBEh
+	add r1,r2,r3
+	strh r0,[r1]
+	add r3,4h
+	add r1,r2,r3
+	mov r0,14h
+	strh r0,[r1]
+	bl 80349DCh
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq CheckCollisionYoshi
+CheckStarCollisionYoshi:
+	ldr r1,=1C58h
+	add r0,r5,r1
+	ldr r0,[r0]
+	ldr r3,=1158h
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 8031CF8h
+	mov r0,0h
+	strb r0,[r4,18h]
+	b 8031CFCh
+	.pool
+CheckCollisionYoshi:
+	ldr r1,=1C58h
+	add r0,r5,r1
+	ldr r0,[r0]
+	ldr r3,=10FAh
+	add r0,r0,r3
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq 8031CFCh
+	bl FreeSpaceCSY
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq 8031CFCh
+	b CheckStarCollisionYoshi
+	.pool
+
+.org 0x8031CF8
+	bl 8031664h
+	pop r4-r6
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;Fix coins dropped by chucks when killed with fireballs don't sink in normal level lava
 .org 0x80338D0
 	b DoCoinCheck
@@ -1585,7 +1660,6 @@ SpriteIsNotAReznor:
 	add r0,r7,6h
 	b PrepareXOffset
 	.pool
-
 SpriteIsNotA3TurnblockFlyingPlatform:
 	cmp r4,9Ch
 	beq SpriteIs2TilesWide
@@ -2090,7 +2164,7 @@ ESDealDamage:
 	sub r1,1Bh
 	mov r0,0FFh
 	strb r0,[r1]
-	mov r6,9h
+	mov r6,0Bh
 	ldr r2,=3007A48h
 HammerBroLoopStart:
 	mov r0,64h
@@ -2515,7 +2589,6 @@ DownFB1:
 	b DownFB3
 	.pool
 	.word 0x00000000
-	
 DownFB2:
 	ldr r0,=0FFFF4000h
 	str r0,[r4,8h]
@@ -2897,7 +2970,10 @@ ItemNotCarried:
 .org 0x8056C8A
 	pop r4-r6
 
-.org 0x805785C	;Part of fix skull bug (FSB)
+.org 0x805782A	;Part of fix skull bug (FSB)
+	mov r3,0Bh
+
+.org 0x805785C
 	b DownSkull4
 
 .org 0x80578B4
@@ -2913,7 +2989,8 @@ ItemNotCarried:
 	ldr r0,[r0]
 	ldr r7,=0EB4h
 
-.org 0x80578D4
+.org 0x80578D2
+	mov r3,0Bh
 	ldr r6,=3007A48h
 	
 .org 0x80578E0
@@ -3468,40 +3545,163 @@ EndOfFctSwallow:
 
 .org 0x805E536	;Prevents Yoshi from using his pipe animation when he is not mounted by the Player (FYA)
 	bl FreeSpaceFYA
-	
-.org 0x805E880	;Fixes Player can slide up slopes when riding yoshi
+
+.org 0x805E734	;Fix Player can duck while riding Yoshi when the game is frozen, fix Player can slide up slopes when riding Yoshi and prevent using the riding Yoshi flag before it was updated
+	push r4,r5,r14
+
+.org 0x805E740
+	ldrb r5,[r0]
+	strb r2,[r0]
+	mov r4,r12
+	ldrb r0,[r4,1Bh]
+	cmp r0,1h
+	bhi 805E79Ch
+	sub r3,0E5h
+	add r0,r1,r3
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bne 805E768h
+	add r4,29h
+	strb r2,[r4]
+
+.org 0x805E7A0
+	ldr r0,=3002340h
+	ldr r3,=1C58h
+	add r0,r0,r3
+	ldr r0,[r0]
+	ldr r4,=1190h
+
+.org 0x805E7C4
+	ldr r0,=810FFDCh
+
+.org 0x805E7CC
+	ldr r2,=3007A48h
+	ldr r1,[r2]
+	ldr r0,=67Bh
+
+.org 0x805E7DC
+	ldr r2,=67Bh
+
+.org 0x805E7EC
+	ldr r1,=810FFE0h
 	ldr r0,=3007A48h
 	ldr r0,[r0]
-	ldr r3,=67Dh
+	ldr r3,=67Bh
 
-.org 0x805E88C
-	beq YoshiNotPunched
+.org 0x805E802
+	bhi ContinueYoshiChecks
+	ldr r1,=3002340h
+	ldr r3,=1C61h
 
-.org 0x805E896
-	ldr r3,=3002340h
-	b 805E8CCh
-	.pool
-	
-YoshiNotPunched:
-	ldr r3,=3002340h
-	ldr r1,=1CD6h
-	add r0,r3,r1
+.org 0x805E810
+	ldr r4,=1C6Dh
+
+.org 0x805E82E
+	ldr r1,=3002340h
+	ldr r3,=1C61h
+	add r0,r1,r3
 	ldrb r0,[r0]
 	cmp r0,0h
-	bne 805E8D6h
+	bne YoshiSkipDuckingFlag
+	mov r4,r12
+	ldrb r0,[r4,1Fh]
+	cmp r0,0h
+	beq CheckYoshiPunchTimer
+	mov r2,7h
+	ldr r3,=3002340h
+	bl FreeSpaceYDF
+	cmp r0,0h
+	bne YoshiSkipDuckingFlag
+	ldr r1,=854h
+	add r0,r3,r1
+	ldrh r0,[r0]
+	mov r1,40h
+	and r0,r1
+	cmp r0,0h
+	beq YoshiSetDuckingFlag2
+	mov r2,6h
+	b YoshiSkipDuckingFlag
+	.pool
+CheckYoshiPunchTimer:
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r4,=67Dh
+	add r1,r0,r4
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq YoshiNotPunched
+	ldrb r0,[r1]
+	sub r0,1h
+	strb r0,[r1]
+	b YoshiSetDuckingFlag1
+	.pool
+YoshiNotPunched:
+	ldr r3,=3002340h
+	bl FreeSpaceYDF
+	cmp r0,0h
+	bne YoshiSkipDuckingFlag
 	ldr r4,=854h
 	add r0,r3,r4
 	ldrh r0,[r0]
 	mov r1,80h
 	and r0,r1
 	cmp r0,0h
-	beq 805E8D6h
+	beq YoshiSkipDuckingFlag
 	bl FreeSpaceSYF
 	cmp r0,0h
-	bne 805E8D6h
-
-.org 0x805E91C
+	bne YoshiSkipDuckingFlag
+YoshiSetDuckingFlag1:
+	mov r2,4h
+YoshiSetDuckingFlag2:
+	ldr r3,=3002340h
+	ldr r0,=1D4Eh
+	add r1,r3,r0
+	ldrb r0,[r1]
+	add r0,1h
+	strb r0,[r1]
+YoshiSkipDuckingFlag:
+	mov r1,r12
+	ldrb r0,[r1,1Bh]
+	cmp r0,1h
+	beq ContinueYoshiChecks
+	ldrb r0,[r1,1Fh]
+	cmp r0,0h
+	bne ContinueYoshiChecks
+	mov r2,4h
+ContinueYoshiChecks:
+	ldrb r0,[r1,1Bh]
+	cmp r0,1h
+	bne UpdateYoshiAnimation
+	ldr r3,=3002340h
+	ldr r4,=1C58h
+	add r0,r3,r4
+	ldr r1,[r0]
+	ldr r4,=114Ah
+	add r0,r1,r4
+	ldrb r0,[r0]
+	cmp r0,1h
+	bne UpdateYoshiAnimation
+	ldr r1,=893h
+	add r0,r3,r1
+	ldrb r0,[r0]
+	mov r1,8h
+	and r0,r1
+	lsl r0,r0,18h
+	lsr r0,r0,1Bh
+	mov r2,r0
+	add r2,8h
+UpdateYoshiAnimation:
+	mov r0,r12
+	add r0,36h
+	strb r2,[r0]
+	pop r4,r5
+	pop r0
+	bx r0
 	.pool
+	.word 0x00000000
+	.word 0x00000000
 
 .org 0x805ED2C	;Reset Yoshicolor when reseting Yoshi
 	strh r4,[r0]
@@ -3898,10 +4098,183 @@ DownOthers1:
 	bl FreeSpaceMPM5
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;Fix a bug that caues Mario/Luigi to sometimes glitch through slopes and reduce level end timer to prevent the player from jumping over the message box when doing a yump on a switch palace switch
+.org 0x806C70E
+	bl ReturnSlope
+	
+.org 0x806C764
+	bl ReturnSlope
+	
+.org 0x806C79A
+	bl ReturnSlope
+	
+.org 0x806C7A6
+	bl ReturnSlope
+	
+.org 0x806C7FC
+	bl ReturnSlope
+	
+.org 0x806C848
+	bl ReturnSlope
+	
+.org 0x806C862
+	bl ReturnSlope
+
 ;Part 2 of Fix 0-time glitch (F0T)
 .org 0x806CA3A	;(Player enters a door)
 	bl FreeSpaceF0T2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.org 0x806CE86
+	b ReturnSlope
+	
+.org 0x806CF92
+	b ReturnSlope
+
+.org 0x806CFA2
+	b ReturnSlope
+	
+.org 0x806D030
+	b ReturnSlope
+	
+.org 0x806D188
+	b ReturnSlope
+
+.org 0x806D19C
+	ldr r0,=3007A48h
+
+.org 0x806D1AA
+	ldr r0,=3002340h
+	ldr r4,=1D48h
+
+.org 0x806D1B4
+	ldr r0,=3007A48h
+	
+.org 0x806D1D0
+	ldr r0,=3002340h
+	ldr r3,=1C58h
+	add r2,r0,r3
+	ldr r0,[r2]
+	ldr r4,=1154h
+	add r1,r0,r4
+	ldrb r0,[r1]
+	cmp r0,0h
+	beq DownSlope2
+	mov r0,r13
+	ldrb r1,[r1]
+	sub r1,1h
+	strb r1,[r0]
+	mov r0,3h
+	and r0,r1
+	cmp r0,0h
+	beq DownSlope1
+	cmp r0,1h
+	bhi DownSlope2
+	ldr r1,[r2]
+	add r1,30h
+	ldrb r0,[r1]
+	sub r0,10h
+	strb r0,[r1]
+DownSlope1:
+	mov r1,r13
+	mov r0,r13
+	ldrb r0,[r0]
+	lsr r0,r0,2h
+	strb r0,[r1]
+	ldr r4,=3002340h
+	ldr r0,[r4,20h]
+	mov r3,r0
+	add r3,0D4h
+	ldr r1,=8101AE8h
+	mov r0,r13
+	ldrb r0,[r0]
+	add r0,r0,r1
+	ldrb r2,[r3]
+	ldrb r1,[r0]
+	mov r0,r1
+	and r0,r2
+	cmp r0,0h
+	bne DownSlope2
+	mov r0,r2
+	orr r0,r1
+	strb r0,[r3]
+	ldr r0,[r4,20h]
+	ldr r5,=119h
+	add r1,r0,r5
+	mov r0,1h
+	strb r0,[r1]
+	mov r0,r13
+	ldr r2,=1D49h
+	add r1,r4,r2
+	ldrb r0,[r0]
+	strb r0,[r1]
+	bl 80720B8h
+	ldr r3,=1C70h
+	add r0,r4,r3
+	ldr r5,=828h
+	add r1,r4,r5
+	ldrh r0,[r0]
+	strh r0,[r1]
+	mov r0,83h
+	bl 809C1C4h
+	mov r0,0Bh
+	bl 809BF40h
+	ldr r0,[r4,20h]
+	add r0,0FCh
+	mov r1,0FFh
+	strh r1,[r0]
+	ldr r1,=1C5Ch
+	add r0,r4,r1
+	ldr r0,[r0]
+	add r0,5Ch
+	mov r1,1h
+	strb r1,[r0]
+DownSlope2:
+	ldr r3,=3002340h
+	ldr r5,=1C6Dh
+	add r0,r3,r5
+	ldrb r0,[r0]
+	lsl r0,r0,18h
+	asr r0,r0,18h
+	cmp r0,0h
+	bge DownSlope3
+	mov r1,r13
+	add r1,1h
+	ldrb r1,[r1]
+	bl FreeSpaceSGF
+	cmp r0,0h
+	bne ReturnSlope
+DownSlope3:
+	ldr r1,=3002340h
+	ldr r3,=1CB6h
+	add r2,r1,r3
+	ldrb r0,[r2]
+	add r0,1h
+	strb r0,[r2]
+	ldr r4,=1C94h
+	add r2,r1,r4
+	ldr r5,=1C8Ah
+	add r0,r1,r5
+	ldrb r0,[r0] 
+	lsl r0,r0,8h
+	sub r3,2Bh
+	add r1,r1,r3
+	ldrb r1,[r1]
+	orr r1,r0
+	ldrh r0,[r2]
+	sub r0,r0,r1
+	strh r0,[r2]
+	mov r0,r13
+	add r0,1h
+	ldrb r0,[r0]
+	bl 806D43Ch
+ReturnSlope:
+	add sp,4h
+	pop r4-r7
+	pop r0
+	bx r0
+.pool
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Reduces the death boundary below ground to prevent swimming or flying below blocks (FBB)
 .org 0x806DDF2

@@ -661,6 +661,72 @@ Invincible:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceCSY:
+	push r14
+	ldr r3,=3007A48h
+	ldr r0,[r3]
+	ldr r2,=689h
+	add r0,r0,r2
+	ldrb r0,[r0]
+	sub r0,1h
+	mov r1,64h
+	mul r1,r0
+	add r2,43h
+	add r1,r1,r2
+	ldr r0,[r3]
+	add r0,r0,r1
+	bl 802FC64h
+	mov r6,0Dh
+	ldr r1,=1D4Eh
+	add r0,r5,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq CSYNotDucking
+	sub r6,8h
+	ldr r0,=3007A48h
+	ldr r1,[r0]
+	ldr r2,=0EB6h
+	add r1,r1,r2
+	ldrh r0,[r1]
+	add r0,8h
+	strh r0,[r1]
+CSYNotDucking:
+	bl 8034AF8h
+	lsl r0,r0,18h
+	cmp r0,0h
+	beq CSYNoCollision
+	ldr r0,=3007A48h
+	ldr r0,[r0]
+	ldr r2,=0EB6h
+	add r1,r0,r2
+	mov r3,0h
+	ldsh r1,[r1,r3]
+	add r1,r1,r6
+	add r2,8h
+	add r0,r0,r2
+	mov r3,0h
+	ldsh r0,[r0,r3]
+	cmp r1,r0
+	blt CSYNoCollision
+	mov r1,8Ch
+	lsl r1,r1,4h
+	add r0,r5,r1
+	ldrb r0,[r0]
+	mov r1,1h
+	and r0,r1
+	cmp r0,0h
+	bne CSYNoCollision
+	mov r0,1h
+	b ReturnCSY
+	.pool
+CSYNoCollision:
+	mov r0,0h
+ReturnCSY:
+	pop r1
+	bx r1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 FreeSpaceSCL:
 	lsr r0,r1,18h
 	sub r0,59h
@@ -1404,6 +1470,46 @@ NotGhostShip:
 	add r2,40h
 EndOfFctYSA:
 	bx r14
+
+FreeSpaceYDF:
+	mov r0,r12
+	ldrb r0,[r0,1Bh]
+	cmp r0,1h
+	bne YoshiGameIsFrozen
+	ldr r1,=1C58h
+	add r0,r3,r1
+	ldr r0,[r0]
+	ldr r1,=1190h
+	add r0,r0,r1
+	ldrb r0,[r0]
+	cmp r0,0h
+	beq YoshiGameIsNotFrozen
+	cmp r5,0h
+	beq YoshiIsStanding
+YoshiDuckingTongueOut:
+	ldr r1,=1D4Eh
+	add r0,r3,r1
+	ldrb r1,[r0]
+	add r1,1h
+	strb r1,[r0]
+	cmp r2,7h
+	beq YoshiGameIsFrozen
+	mov r2,4h
+	b YoshiGameIsFrozen
+	.pool
+YoshiIsStanding:
+	cmp r2,7h
+	bne YoshiGameIsFrozen
+	mov r0,r12
+	add r0,36h
+	ldrb r0,[r0]
+	cmp r0,6h
+	bne YoshiDuckingTongueOut
+	mov r2,6h
+YoshiGameIsFrozen:
+	mov r0,1h
+YoshiGameIsNotFrozen:
+	bx r14
 	
 FreeSpaceYCD:
 	ldrb r0,[r4,1Ah]
@@ -1788,6 +1894,64 @@ FreeSpaceF0T2:
 	bne PlayerNotDied1
 	mov r0,0h
 PlayerNotDied1:
+	bx r14
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FreeSpaceSGF:
+	neg r4,r0
+	ldr r6,=8119AFCh
+	add r6,r6,r1
+	ldrb r0,[r6]
+	cmp r0,0h
+	beq ReturnNoSkipSlope
+	ldr r2,=1C69h
+	add r5,r3,r2
+	ldrb r1,[r5]
+	cmp r1,0h
+	beq ReturnSkipSlope
+	mov r2,80h
+	and r0,r2
+	and r1,r2
+	cmp r0,r1
+	beq ReturnSkipSlope
+	mov r1,0h
+	ldsb r6,[r6,r1]
+	cmp r6,0h
+	bge SlopeNotNegative1
+	neg r6,r6
+SlopeNotNegative1:
+	ldrb r5,[r5]
+	lsl r5,r5,18h
+	asr r5,r5,18h
+	cmp r5,0h
+	bge SlopeNotNegative2
+	neg r5,r5
+SlopeNotNegative2:
+	cmp r6,1h
+	beq GradualSlope
+	cmp r6,2h
+	beq NormalSlope
+	cmp r6,3h
+	beq SteepSlope
+	cmp r6,4h
+	bne ReturnNoSkipSlope
+	lsr r4,r4,1h
+	b SteepSlope
+	.pool
+GradualSlope:
+	lsr r5,r5,1h
+NormalSlope:
+	lsr r5,r5,1h
+SteepSlope:	
+	cmp r5,r4
+	bcs ReturnNoSkipSlope
+ReturnSkipSlope:
+	mov r0,1h
+	b ReturnProcessSlope
+ReturnNoSkipSlope:	
+	mov r0,0h
+ReturnProcessSlope:
 	bx r14
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
