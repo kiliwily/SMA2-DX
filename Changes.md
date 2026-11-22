@@ -215,6 +215,6 @@
 - Fixed a bug that allowed the Player to duck when riding a Yoshi or raise when Yoshis tongue is out if the game is frozen.
 - Fixed a bug that caused th sumo brother flames to erroneously overwrite the position and other data of the sprite in slot 0.
 - Fixed the offscreen flag check for several sprites was not symmetric, which caused some sprites to set their offscreen flag when jus touching the left side of the screen.
-- Fixed silver P-Switches do not change sprites in slot 0xA and 0xB into silver coins.
+- Fixed silver P-Switches do not change sprites in slots 0xA and 0xB into silver coins.
 - Fixed bob-omb explosion doesn't affect sprites in slots 0xA and 0xB.
 - Fixed several sprites where only one can spawn on screen at a time do not consider sprites in slots 0xA and 0xB.
