@@ -60,6 +60,7 @@
 - Castles and fortresses can be reentered after beating them even before Bowser is defeated.
 - Made it possible for wigglers to also spawn in sprite slots greater than 2.
 - Made the big boo boss interact with the Player and hurt him if he is visible (inspired by SMA4/SMB3 e-Reader levels).
+- The can not eat sound no longer plays when Yoshi's tongue touches invisible or non-enemy sprites.
 
 ## Bug Fixes
 - Fixed Wendy's castle had the wrong background color at the begin of the intro.
@@ -214,7 +215,7 @@
 - Fixed a bug that caused shellless koopa to still move up or down when the game is frozen.
 - Fixed a bug that allowed the Player to duck when riding a Yoshi or raise when Yoshis tongue is out if the game is frozen.
 - Fixed a bug that caused th sumo brother flames to erroneously overwrite the position and other data of the sprite in slot 0.
-- Fixed the offscreen flag check for several sprites was not symmetric, which caused some sprites to set their offscreen flag when jus touching the left side of the screen.
+- Fixed the offscreen flag check for several sprites was not symmetric, which caused some sprites to set their offscreen flag when just touching the left side of the screen.
 - Fixed silver P-Switches do not change sprites in slots 0xA and 0xB into silver coins.
 - Fixed bob-omb explosion doesn't affect sprites in slots 0xA and 0xB.
 - Fixed several sprites where only one can spawn on screen at a time do not consider sprites in slots 0xA and 0xB.
